@@ -55,20 +55,26 @@
             min-height: 100vh;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            padding-top: env(safe-area-inset-top, 60px);
+            /* Added top padding so content isn't hugging the top edge */
+            padding-top: calc(env(safe-area-inset-top, 40px) + 60px); 
             padding-bottom: env(safe-area-inset-bottom, 20px);
             transition: background-color 0.3s, color 0.3s;
         }
         
+        /* Top Navigation Bar */
         .top-nav {
-            position: absolute;
-            top: env(safe-area-inset-top, 20px);
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 900px;
+            height: calc(env(safe-area-inset-top, 20px) + 60px);
+            background-color: var(--bg-color);
             display: flex;
+            align-items: flex-end;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 10px 20px;
             z-index: 100;
+            transition: background-color 0.3s;
         }
 
         .action-btn {
@@ -83,6 +89,9 @@
             font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .action-btn:hover {
@@ -90,10 +99,40 @@
             color: var(--card-bg);
         }
 
+        .nav-buttons-left {
+            display: flex;
+            gap: 10px;
+        }
+
         #backBtn { display: none; }
 
-        h1 { color: var(--primary-color); margin-top: 50px; margin-bottom: 5px; text-align: center; font-size: 1.8em; letter-spacing: -0.5px; }
-        .subtitle { color: #6b7280; margin-bottom: 25px; text-align: center; font-weight: bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+        /* Left Side Menu (Global Navigation) */
+        #leftMenuOverlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 1002; opacity: 0; transition: opacity 0.3s ease; cursor: pointer;
+        }
+        #leftMenuOverlay.open { display: block; opacity: 1; }
+
+        #leftNavMenu {
+            position: fixed; top: 0; left: -300px; width: 280px; max-width: 80vw; height: 100vh;
+            background-color: var(--card-bg); box-shadow: 4px 0 25px rgba(0,0,0,0.2);
+            transition: left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); z-index: 1003; overflow-y: auto;
+            border-right: 4px solid var(--primary-color); padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        #leftNavMenu.open { left: 0; }
+
+        .left-menu-content { padding: calc(env(safe-area-inset-top, 20px) + 20px) 20px; }
+        .left-menu-content h3 { color: var(--primary-color); margin-top: 0; font-size: 1.3em; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; text-transform: uppercase; }
+        .left-menu-btn {
+            background: none; border: none; width: 100%; text-align: left; padding: 15px 10px;
+            font-size: 1.1em; color: var(--text-color); font-weight: bold; cursor: pointer;
+            border-bottom: 1px solid var(--border-color); transition: 0.2s;
+        }
+        .left-menu-btn:hover { background-color: var(--hover-color); color: var(--primary-color); }
+
+        /* Typography & Layout */
+        h1 { color: var(--primary-color); margin-top: 0; margin-bottom: 5px; text-align: center; font-size: 1.8em; letter-spacing: -0.5px; }
+        .subtitle { color: #6b7280; margin-bottom: 35px; text-align: center; font-weight: bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
         body.dark-mode .subtitle { color: #9ca3af; }
         
         .container {
@@ -108,7 +147,7 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
         
-        /* Parent Categories */
+        /* Parent Categories Grid */
         .parent-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -297,7 +336,7 @@
         .score-val { font-size: 3.5em; font-weight: bold; color: var(--primary-color); margin: 15px 0; }
         .home-btn { background-color: var(--hover-color); color: var(--text-color); margin-top: 15px; border: 1px solid var(--border-color); }
 
-        /* ================== SIDE PANEL STYLES ================== */
+        /* ================== RIGHT SIDE PANEL STYLES (Study Material) ================== */
         #panelOverlay {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; transition: opacity 0.3s ease; cursor: pointer;
@@ -312,9 +351,9 @@
         }
         #flowSidePanel.open { right: 0; }
 
-        .panel-content { padding: 25px 20px; padding-bottom: 80px; }
+        .panel-content { padding: calc(env(safe-area-inset-top, 20px) + 20px) 20px 80px 20px; }
         .panel-content h3 {
-            color: var(--primary-color); margin-top: env(safe-area-inset-top, 20px); margin-bottom: 15px;
+            color: var(--primary-color); margin-top: 0; margin-bottom: 15px;
             font-size: 1.2em; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; text-transform: uppercase;
         }
         .panel-content ol { padding-left: 20px; color: var(--text-color); font-size: 1em; line-height: 1.5; margin: 0; }
@@ -327,6 +366,7 @@
             z-index: 1001; transition: right 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
             font-size: 0.9em; font-weight: bold; display: none; outline: none;
             writing-mode: vertical-rl; text-orientation: mixed; letter-spacing: 2px; text-transform: uppercase;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.3);
         }
         body.dark-mode #panelToggleBtn { color: #111827; }
         #panelToggleBtn.open { right: 320px; }
@@ -342,14 +382,31 @@
 </head>
 <body>
 
+    <!-- Fixed Top Navigation -->
     <div class="top-nav">
-        <button class="action-btn" id="backBtn" onclick="navigateBack()">Back</button>
-        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()" style="margin-left: auto;">Dark Mode</button>
+        <div class="nav-buttons-left">
+            <button class="action-btn" id="menuBtn" onclick="toggleLeftMenu()">&#9776;</button>
+            <button class="action-btn" id="backBtn" onclick="goBackLogic()">Back</button>
+        </div>
+        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()">Dark Mode</button>
     </div>
 
-    <!-- Overlay & Side Panel -->
+    <!-- Left Global Navigation Menu -->
+    <div id="leftMenuOverlay" onclick="closeLeftMenu()"></div>
+    <div id="leftNavMenu">
+        <div class="left-menu-content">
+            <h3>Navigation</h3>
+            <button class="left-menu-btn" onclick="navigateTo('Home')">Home Menu</button>
+            <button class="left-menu-btn" onclick="navigateTo('Checklists')">Checklists</button>
+            <button class="left-menu-btn" onclick="navigateTo('Flows')">Flows & Emergencies</button>
+            <button class="left-menu-btn" onclick="navigateTo('Weather')">Weather</button>
+            <button class="left-menu-btn" onclick="navigateTo('Acronyms')">Acronyms</button>
+        </div>
+    </div>
+
+    <!-- Right Study Material Panel -->
     <div id="panelOverlay" onclick="closeSidePanel()"></div>
-    <button id="panelToggleBtn" onclick="toggleSidePanel()">View List</button>
+    <button id="panelToggleBtn" onclick="toggleSidePanel()">Study Material</button>
     <div id="flowSidePanel">
         <div class="panel-content">
             <h3 id="sidePanelTitle">Title</h3>
@@ -358,7 +415,7 @@
     </div>
 
     <h1 id="mainTitle">C-172 Knowledge Master</h1>
-    <div class="subtitle" id="mainSubtitle">Comprehensive Flight Training</div>
+    <div class="subtitle" id="mainSubtitle">Memory Items & Procedures</div>
 
     <!-- MAIN CONTAINER -->
     <div class="container" id="dynamicContent">
@@ -461,8 +518,38 @@
             document.getElementById('themeToggleBtn').innerText = "Light Mode";
         }
 
-        // UI Render Functions
-        function renderHome() {
+        // ================== HISTORY API (Swipe Back Support) ==================
+        
+        window.addEventListener('popstate', (e) => {
+            if (!e.state || e.state.page === 'home') {
+                renderHome(false);
+            } else if (e.state.page === 'category') {
+                renderCategory(e.state.cat, false);
+            } else if (e.state.page === 'quiz') {
+                let foundQuiz = findQuizById(e.state.quizId);
+                if (foundQuiz) startQuiz(foundQuiz, false);
+                else renderHome(false);
+            }
+        });
+
+        function findQuizById(id) {
+            for (const cat in appDatabase) {
+                for (const subCat in appDatabase[cat]) {
+                    for (const quiz of appDatabase[cat][subCat]) {
+                        if (quiz.id === id) return quiz;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function goBackLogic() {
+            history.back(); // Triggers popstate, supporting native swipe-back seamlessly
+        }
+
+        // ================== UI RENDER FUNCTIONS ==================
+
+        function renderHome(pushToHistory = true) {
             currentParent = null;
             document.getElementById('backBtn').style.display = 'none';
             document.getElementById('quizScreen').style.display = 'none';
@@ -484,16 +571,25 @@
                 const btn = document.createElement('button');
                 btn.className = 'parent-card';
                 btn.innerText = catName;
-                btn.onclick = () => renderCategory(catName);
+                btn.onclick = () => renderCategory(catName, true);
                 grid.appendChild(btn);
             });
 
             container.appendChild(grid);
+
+            if (pushToHistory) {
+                history.pushState({ page: 'home' }, '');
+            }
         }
 
-        function renderCategory(catName) {
+        function renderCategory(catName, pushToHistory = true) {
             currentParent = catName;
-            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('scoreScreen').style.display = 'none';
+            document.getElementById('panelToggleBtn').style.display = 'none';
+            closeSidePanel();
+            
+            document.getElementById('backBtn').style.display = 'flex';
             
             const container = document.getElementById('dynamicContent');
             container.style.display = 'block';
@@ -522,30 +618,35 @@
                     if (quizObj.isMemory) btn.classList.add('highlight-blue');
                     
                     btn.innerHTML = `${quizObj.title} <small>${quizObj.text}</small>`;
-                    btn.onclick = () => startQuiz(quizObj);
+                    btn.onclick = () => startQuiz(quizObj, true);
                     grid.appendChild(btn);
                 });
 
                 section.appendChild(grid);
                 container.appendChild(section);
             });
-        }
 
-        function navigateBack() {
-            if (document.getElementById('quizScreen').style.display === 'block' || document.getElementById('scoreScreen').style.display === 'block') {
-                // Inside a quiz, go back to Category
-                document.getElementById('quizScreen').style.display = 'none';
-                document.getElementById('scoreScreen').style.display = 'none';
-                closeSidePanel();
-                document.getElementById('panelToggleBtn').style.display = 'none';
-                renderCategory(currentParent);
-            } else if (currentParent !== null) {
-                // Inside a Category, go back to Home
-                renderHome();
+            if (pushToHistory) {
+                history.pushState({ page: 'category', cat: catName }, '');
             }
         }
 
-        // Side Panel Logic
+        // Left Navigation Menu
+        function toggleLeftMenu() {
+            document.getElementById('leftNavMenu').classList.add('open');
+            document.getElementById('leftMenuOverlay').classList.add('open');
+        }
+        function closeLeftMenu() {
+            document.getElementById('leftNavMenu').classList.remove('open');
+            document.getElementById('leftMenuOverlay').classList.remove('open');
+        }
+        function navigateTo(target) {
+            closeLeftMenu();
+            if (target === 'Home') renderHome();
+            else renderCategory(target);
+        }
+
+        // Right Side Panel Logic (Study Material)
         function toggleSidePanel() {
             const panel = document.getElementById('flowSidePanel');
             const btn = document.getElementById('panelToggleBtn');
@@ -555,7 +656,7 @@
             btn.classList.toggle('open');
             overlay.classList.toggle('open');
             
-            btn.innerText = panel.classList.contains('open') ? 'Hide List' : 'View List';
+            btn.innerText = panel.classList.contains('open') ? 'Hide Material' : 'Study Material';
         }
 
         function updateSidePanelContent(q) {
@@ -565,16 +666,18 @@
 
         function closeSidePanel() {
             document.getElementById('flowSidePanel').classList.remove('open');
-            document.getElementById('panelToggleBtn').classList.remove('open');
+            const btn = document.getElementById('panelToggleBtn');
+            btn.classList.remove('open');
+            btn.innerText = 'Study Material';
             document.getElementById('panelOverlay').classList.remove('open');
-            document.getElementById('panelToggleBtn').innerText = 'View List';
         }
 
         function renderFlowList(items) {
             return "<ol>" + items.map(item => `<li>${item}</li>`).join('') + "</ol>";
         }
 
-        // Question Generators
+        // ================== QUESTION GENERATORS ==================
+
         function getRandomOtherItems(currentFlow, count) {
             let allItems = [];
             Object.values(appDatabase).forEach(cat => {
@@ -670,7 +773,7 @@
             };
         }
 
-        function startQuiz(quizObj) {
+        function startQuiz(quizObj, pushToHistory = true) {
             currentActiveFlow = quizObj;
             generatedQuestions = [];
             
@@ -694,7 +797,9 @@
             document.getElementById('scoreScreen').style.display = 'none';
             document.getElementById('quizScreen').style.display = 'block';
             
+            document.getElementById('backBtn').style.display = 'flex';
             document.getElementById('panelToggleBtn').style.display = 'block';
+            
             document.getElementById('mainTitle').innerText = quizObj.title;
             document.getElementById('mainSubtitle').innerText = "Drill in progress";
 
@@ -704,6 +809,10 @@
             
             closeSidePanel();
             loadQuestion();
+
+            if (pushToHistory) {
+                history.pushState({ page: 'quiz', quizId: quizObj.id }, '');
+            }
         }
 
         function loadQuestion() {
@@ -764,7 +873,7 @@
                 <strong>${isCorrect ? 'Correct' : 'Incorrect'}</strong><br>
                 <span>${q.explanation}</span>
                 <div class="flow-box">
-                    <h4>Word Bank / List (${q.flowTitle}):</h4>
+                    <h4>Study Material (${q.flowTitle}):</h4>
                     ${renderFlowList(q.flowItems)}
                 </div>
             `;
@@ -804,11 +913,14 @@
         }
 
         function restartSameQuiz() {
-            startQuiz(currentActiveFlow);
+            startQuiz(currentActiveFlow, false); // Don't push a new history state when retrying
         }
 
-        // Initialize App
-        document.addEventListener("DOMContentLoaded", renderHome);
+        // Initialize App on load and set the initial history state
+        document.addEventListener("DOMContentLoaded", () => {
+            history.replaceState({ page: 'home' }, '');
+            renderHome(false);
+        });
 
     </script>
 </body>
