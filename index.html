@@ -4,41 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="C172 Master">
     <title>C-172 Knowledge Master</title>
+    
+    <!-- Premium Font Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         /* =========================================================
-           iOS NATIVE DESIGN SYSTEM
+           PREMIUM LUXURY DESIGN SYSTEM
            ========================================================= */
         :root {
-            --bg-color: #F2F2F7;
-            --card-bg: #FFFFFF;
-            --text-main: #000000;
-            --text-muted: #8A8A8E;
-            --primary-color: #007AFF; 
-            --hover-color: #E5E5EA;
-            --correct-color: #34C759;
-            --wrong-color: #FF3B30;
-            --border-color: #C6C6C8;
+            /* Light Mode - Pearl & Azure */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary-color: #0284c7; 
+            --primary-gradient: linear-gradient(135deg, #0284c7 0%, #3b82f6 100%);
+            --hover-color: #f1f5f9;
+            --correct-color: #10b981;
+            --correct-bg: #ecfdf5;
+            --wrong-color: #ef4444;
+            --wrong-bg: #fef2f2;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
+            --shadow-btn: 0 8px 20px -6px rgba(2, 132, 199, 0.4);
+            --nav-glass: rgba(255, 255, 255, 0.85);
         }
 
         body.dark-mode {
-            --bg-color: #000000;
-            --card-bg: #1C1C1E;
-            --text-main: #FFFFFF;
-            --text-muted: #98989D;
-            --primary-color: #0A84FF;
-            --hover-color: #2C2C2E;
-            --correct-color: #32D74B;
-            --wrong-color: #FF453A;
-            --border-color: #38383A;
+            /* Dark Mode - Deep Midnight */
+            --bg-color: #020617;
+            --card-bg: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-color: #38bdf8;
+            --primary-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            --hover-color: #1e293b;
+            --correct-color: #34d399;
+            --correct-bg: rgba(16, 185, 129, 0.15);
+            --wrong-color: #f87171;
+            --wrong-bg: rgba(239, 68, 68, 0.15);
+            --border-color: rgba(51, 65, 85, 0.6);
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.5);
+            --shadow-btn: 0 8px 20px -6px rgba(56, 189, 248, 0.3);
+            --nav-glass: rgba(2, 6, 23, 0.85);
         }
 
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            box-sizing: border-box; 
+        }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0; padding: 0;
@@ -47,30 +70,31 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
-            font-size: 15px; /* Optimized for mobile */
-            transition: background-color 0.3s, color 0.3s;
+            font-size: 15px; 
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
         
         /* =========================================================
-           TOP NAVIGATION
+           TOP NAVIGATION (GLASS EFFECT)
            ========================================================= */
         .top-nav {
             position: fixed; top: 0; left: 0; width: 100%;
-            height: calc(env(safe-area-inset-top, 20px) + 50px);
-            background-color: rgba(242, 242, 247, 0.85);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 0.5px solid var(--border-color);
+            height: calc(env(safe-area-inset-top, 20px) + 60px);
+            background-color: var(--nav-glass);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
             display: flex; align-items: flex-end; justify-content: space-between;
-            padding: 8px 16px; z-index: 100;
+            padding: 12px 20px; z-index: 100;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
         }
-        body.dark-mode .top-nav { background-color: rgba(0, 0, 0, 0.85); }
 
         .icon-btn {
             background: none; border: none; color: var(--primary-color);
-            padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
         }
-        .icon-btn:active { opacity: 0.5; }
-        .nav-group { display: flex; gap: 12px; }
+        .icon-btn:active { opacity: 0.6; transform: scale(0.92); }
+        .nav-group { display: flex; gap: 14px; }
         #backBtn, #studyBtn { display: none; }
 
         /* =========================================================
@@ -78,82 +102,102 @@
            ========================================================= */
         .main-wrapper {
             flex: 1; display: flex; flex-direction: column; align-items: center;
-            width: 100%; padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 70px);
-            padding-bottom: 40px;
+            width: 100%; padding: 20px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 85px);
+            padding-bottom: 50px;
         }
 
-        .page { display: none; width: 100%; max-width: 600px; }
+        .page { display: none; width: 100%; max-width: 650px; }
         .page.active { 
             display: block; 
-            animation: iOSFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+            animation: elegantFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         }
 
-        @keyframes iOSFadeIn {
-            from { opacity: 0; transform: scale(0.98) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        @keyframes elegantFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Typography */
-        h1 { margin: 0 0 4px 0; font-size: 1.4rem; font-weight: 700; text-align: center; }
-        .subtitle { color: var(--text-muted); margin-bottom: 24px; font-size: 0.85rem; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        h1 { margin: 0 0 6px 0; font-size: 1.7rem; font-weight: 800; text-align: center; letter-spacing: -0.03em; color: var(--text-main); }
+        .subtitle { color: var(--primary-color); margin-bottom: 35px; font-size: 0.85rem; text-align: center; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
 
         /* =========================================================
-           iOS GROUPED LISTS (CARDS)
+           PREMIUM CARDS & LISTS
            ========================================================= */
-        .list-group { margin-bottom: 24px; }
-        .list-group-header { font-size: 0.8rem; color: var(--text-muted); margin-left: 16px; margin-bottom: 6px; text-transform: uppercase; font-weight: 600; }
-        .list-group-body { background: var(--card-bg); border-radius: 12px; overflow: hidden; }
+        .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+        
+        .parent-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 30px 20px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+        .parent-card:active { transform: scale(0.96); border-color: var(--primary-color); }
+
+        .list-group { margin-bottom: 35px; }
+        .list-group-header { font-size: 0.8rem; color: var(--text-muted); margin-left: 8px; margin-bottom: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+        .list-group-body { background: var(--card-bg); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); }
         
         .list-row {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 16px; border-bottom: 0.5px solid var(--border-color); cursor: pointer;
+            padding: 16px 20px; border-bottom: 1px solid var(--border-color); cursor: pointer;
+            transition: background-color 0.2s;
         }
         .list-row:last-child { border-bottom: none; }
         .list-row:active { background-color: var(--hover-color); }
         
-        .list-title { font-size: 1rem; font-weight: 500; color: var(--text-main); margin-bottom: 2px; }
-        .list-subtitle { font-size: 0.8rem; color: var(--text-muted); }
-        .chevron { color: var(--border-color); }
+        .list-title { font-size: 1.05rem; font-weight: 600; color: var(--text-main); margin-bottom: 4px; letter-spacing: -0.01em; }
+        .list-subtitle { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .chevron { color: var(--text-muted); opacity: 0.5; }
 
         /* Static rows for Study material */
-        .list-row-static { padding: 12px 16px; border-bottom: 0.5px solid var(--border-color); font-size: 0.95rem; line-height: 1.4; color: var(--text-main); }
+        .list-row-static { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-size: 1rem; line-height: 1.5; color: var(--text-main); font-weight: 500; }
         .list-row-static:last-child { border-bottom: none; }
 
         /* =========================================================
            QUIZ UI
            ========================================================= */
-        .progress-container { width: 100%; height: 6px; background: var(--hover-color); border-radius: 3px; margin-bottom: 16px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.3s ease; }
+        .progress-container { width: 100%; height: 6px; background: var(--hover-color); border-radius: 4px; margin-bottom: 25px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary-gradient); width: 0%; transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 4px; }
 
-        .question-header { display: flex; justify-content: space-between; margin-bottom: 16px; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
-        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 24px; line-height: 1.35; color: var(--text-main); }
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .question-text { font-size: 1.3rem; font-weight: 800; margin-bottom: 30px; line-height: 1.4; color: var(--text-main); letter-spacing: -0.02em; }
         
-        .options { display: flex; flex-direction: column; gap: 10px; }
+        .options { display: flex; flex-direction: column; gap: 14px; }
         .option-btn { 
             background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); 
-            border-radius: 12px; padding: 14px 16px; font-size: 0.95rem; text-align: left; font-weight: 500; line-height: 1.4; 
+            border-radius: 16px; padding: 18px 20px; font-size: 1.05rem; text-align: left; font-weight: 600; line-height: 1.4; 
+            box-shadow: var(--shadow-soft); transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
         }
-        .option-btn:active:not(:disabled) { background: var(--hover-color); transform: scale(0.98); }
-        .option-btn:disabled { cursor: default; }
-        .option-btn.correct { background: var(--correct-color) !important; color: #fff; border-color: var(--correct-color); font-weight: 600; }
-        .option-btn.wrong { background: var(--wrong-color) !important; color: #fff; border-color: var(--wrong-color); font-weight: 600; }
+        .option-btn:active:not(:disabled) { background: var(--hover-color); transform: scale(0.98); border-color: var(--primary-color); }
+        .option-btn:disabled { cursor: default; box-shadow: none; }
+        .option-btn.correct { background: var(--correct-color) !important; color: #fff; border-color: var(--correct-color); }
+        .option-btn.wrong { background: var(--wrong-color) !important; color: #fff; border-color: var(--wrong-color); }
 
-        .feedback { margin-top: 20px; padding: 16px; border-radius: 12px; font-size: 0.9rem; display: none; line-height: 1.4; font-weight: 500; }
-        .feedback.show { display: block; animation: iOSFadeIn 0.3s ease forwards; }
-        .feedback.success { background: var(--correct-bg); color: var(--correct-color); }
-        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); }
+        .feedback { margin-top: 25px; padding: 20px; border-radius: 16px; font-size: 0.95rem; display: none; line-height: 1.5; font-weight: 600; }
+        .feedback.show { display: block; animation: elegantFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(239, 68, 68, 0.2); }
 
         .primary-btn { 
-            background: var(--primary-color); color: #fff; border: none; padding: 16px; font-size: 1rem; 
-            border-radius: 12px; font-weight: 600; margin-top: 24px; width: 100%; display: none; text-transform: uppercase;
+            background: var(--primary-gradient); color: #fff; border: none; padding: 18px; font-size: 1.05rem; 
+            border-radius: 16px; font-weight: 700; margin-top: 30px; width: 100%; display: none; text-transform: uppercase;
+            letter-spacing: 1px; box-shadow: var(--shadow-btn); transition: opacity 0.2s, transform 0.2s; cursor: pointer;
         }
-        .primary-btn:active { opacity: 0.8; }
-        .start-btn { display: block; margin-top: 24px; }
+        .primary-btn:active { opacity: 0.9; transform: scale(0.97); }
+        .start-btn { display: block; margin-top: 30px; }
 
         /* Score Screen */
-        .score-val { font-size: 4rem; font-weight: 800; color: var(--primary-color); margin: 10px 0; letter-spacing: -2px; text-align: center; }
-        .secondary-btn { background: var(--card-bg); color: var(--primary-color); border: 1px solid var(--primary-color); margin-top: 12px; }
+        .score-val { font-size: 4.5rem; font-weight: 800; color: transparent; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; margin: 15px 0; letter-spacing: -2px; text-align: center; }
+        .secondary-btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 15px; box-shadow: var(--shadow-soft); }
         .secondary-btn:active { background: var(--hover-color); }
 
         /* =========================================================
@@ -161,46 +205,47 @@
            ========================================================= */
         #leftMenuOverlay, #rightMenuOverlay {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4); z-index: 998; opacity: 0; transition: opacity 0.3s ease;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            z-index: 998; opacity: 0; transition: opacity 0.4s ease;
         }
         #leftMenuOverlay.open, #rightMenuOverlay.open { display: block; opacity: 1; }
 
         .side-menu {
             position: fixed; top: 0; height: 100vh; background: var(--bg-color);
-            transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 1000; overflow-y: auto; 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1000; overflow-y: auto; 
             padding-bottom: env(safe-area-inset-bottom, 20px);
         }
-        #leftNavMenu { left: 0; width: 280px; border-right: 0.5px solid var(--border-color); transform: translateX(-100%); }
+        #leftNavMenu { left: 0; width: 300px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
         #leftNavMenu.open { transform: translateX(0); }
         
-        #rightNavMenu { right: 0; width: 300px; border-left: 0.5px solid var(--border-color); transform: translateX(100%); }
+        #rightNavMenu { right: 0; width: 320px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
         #rightNavMenu.open { transform: translateX(0); }
 
-        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 20px) 16px 12px 16px; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 25px) 20px 15px 20px; color: var(--primary-color); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         .sidebar-item {
             display: flex; align-items: center; justify-content: space-between;
-            background: var(--card-bg); border-bottom: 0.5px solid var(--border-color);
+            background: var(--card-bg); border-bottom: 1px solid var(--border-color);
         }
-        .sidebar-item:first-of-type { border-top: 0.5px solid var(--border-color); }
+        .sidebar-item:first-of-type { border-top: 1px solid var(--border-color); }
         
-        .sidebar-text { flex: 1; padding: 14px 16px; font-size: 1rem; font-weight: 500; color: var(--text-main); cursor: pointer; }
+        .sidebar-text { flex: 1; padding: 18px 20px; font-size: 1.05rem; font-weight: 600; color: var(--text-main); cursor: pointer; }
         .sidebar-text:active { background: var(--hover-color); }
         
-        .sidebar-icon { padding: 14px 16px; cursor: pointer; color: var(--text-muted); transition: transform 0.2s; border-left: 0.5px solid var(--border-color); }
+        .sidebar-icon { padding: 18px 20px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); border-left: 1px solid var(--border-color); }
         .sidebar-icon:active { background: var(--hover-color); }
         
-        .sidebar-sub { max-height: 0; overflow: hidden; background: var(--bg-color); transition: max-height 0.3s ease; }
+        .sidebar-sub { max-height: 0; overflow: hidden; background: var(--bg-color); transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .sidebar-sub button {
-            width: 100%; text-align: left; padding: 12px 16px 12px 32px; background: none; border: none;
-            font-size: 0.9rem; color: var(--text-muted); border-bottom: 0.5px solid var(--border-color);
+            width: 100%; text-align: left; padding: 15px 20px 15px 40px; background: none; border: none;
+            font-size: 0.95rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-weight: 500; font-family: 'Inter', sans-serif;
         }
-        .sidebar-sub button:active { background: var(--hover-color); }
+        .sidebar-sub button:active { background: var(--hover-color); color: var(--primary-color); }
 
         /* =========================================================
            FOOTER
            ========================================================= */
-        .footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.75rem; width: 100%; margin-top: auto; }
+        .footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 0.75rem; width: 100%; margin-top: auto; font-weight: 500; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -208,21 +253,17 @@
     <!-- TOP NAVIGATION (SVG ICONS) -->
     <div class="top-nav">
         <div class="nav-group">
-            <!-- Hamburger Menu -->
             <button class="icon-btn" onclick="toggleLeftMenu()">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <!-- Back Arrow -->
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
-            <!-- Study Material (Book) -->
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
-            <!-- Theme Toggle (Sun/Moon injected by JS) -->
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()"></button>
         </div>
     </div>
@@ -286,11 +327,11 @@
             <div class="score-val" id="finalScore">0%</div>
             <div class="subtitle" id="finalStats" style="margin-bottom: 30px;"></div>
             <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
-            <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
+            <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Dashboard</button>
         </div>
         
         <!-- FOOTER -->
-        <div class="footer">v1.3.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.4.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -358,10 +399,10 @@
         let isAnswered = false;
 
         // SVGs
-        const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF9500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const chevronSvg = `<svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`;
-        const arrowDownSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+        const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const chevronSvg = `<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`;
+        const arrowDownSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 
         // Theme
         function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
@@ -425,13 +466,11 @@
             Object.keys(appDatabase).forEach(catName => {
                 const itemDiv = document.createElement('div');
                 itemDiv.innerHTML = `
-                    <div class="list-group-body" style="margin-bottom:12px;">
-                        <div class="sidebar-item">
-                            <div class="sidebar-text" onclick="renderCategory('${catName}')">${catName}</div>
-                            <div class="sidebar-icon">${arrowDownSvg}</div>
-                        </div>
-                        <div class="sidebar-sub"></div>
-                    </div>`;
+                    <div class="sidebar-item">
+                        <div class="sidebar-text" onclick="renderCategory('${catName}')">${catName}</div>
+                        <div class="sidebar-icon">${arrowDownSvg}</div>
+                    </div>
+                    <div class="sidebar-sub"></div>`;
                 
                 const iconBtn = itemDiv.querySelector('.sidebar-icon');
                 const subContent = itemDiv.querySelector('.sidebar-sub');
@@ -505,7 +544,6 @@
             document.getElementById('studySubtitle').innerText = quizObj.text;
             document.getElementById('studyListContent').innerHTML = buildListRows(quizObj.items);
             
-            // Populate right sidebar
             document.getElementById('rightPanelContent').innerHTML = buildListRows(quizObj.items);
 
             showPage('studyScreen', pushToHistory, {page: 'study', quizId: quizObj.id});
