@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-title" content="C172 Master">
     <title>C-172 Knowledge Master</title>
     
-    <!-- Premium Google-like Font -->
+    <!-- Premium Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
            GEMINI / MATERIAL 3 DESIGN SYSTEM
            ========================================================= */
         :root {
-            /* Light Mode (Google Material Light) */
+            /* Light Mode */
             --bg-color: #f0f4f9;
             --card-bg: #ffffff;
             --text-main: #1f1f1f;
@@ -31,12 +31,14 @@
             --wrong-color: #b3261e;
             --wrong-bg: #fce8e6;
             --border-color: #e0e0e0;
-            --shadow-soft: 0 2px 6px rgba(0,0,0,0.05);
+            --focus-ring: rgba(11, 87, 208, 0.4);
+            --shadow-soft: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
             --nav-bg: rgba(240, 244, 249, 0.9);
         }
 
         body.dark-mode {
-            /* Dark Mode (Google Material Dark) */
+            /* Dark Mode */
             --bg-color: #131314;
             --card-bg: #1e1f22;
             --text-main: #e3e3e3;
@@ -49,7 +51,9 @@
             --wrong-color: #f28b82;
             --wrong-bg: rgba(179, 38, 30, 0.2);
             --border-color: #444746;
-            --shadow-soft: 0 4px 12px rgba(0,0,0,0.2);
+            --focus-ring: rgba(168, 199, 250, 0.4);
+            --shadow-soft: 0 4px 12px rgba(0,0,0,0.3);
+            --shadow-hover: 0 12px 28px rgba(0,0,0,0.5);
             --nav-bg: rgba(19, 19, 20, 0.9);
         }
 
@@ -67,9 +71,9 @@
             display: flex; flex-direction: column;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            touch-action: manipulation; /* Blocks double-tap zoom */
+            touch-action: manipulation;
             font-size: 16px; 
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
         
         /* =========================================================
@@ -82,137 +86,182 @@
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             display: flex; align-items: flex-end; justify-content: space-between;
             padding: 12px 16px; z-index: 100;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.4s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .icon-btn {
             background: none; border: none; color: var(--primary-color);
-            padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; transition: background-color 0.2s ease;
+            padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
         }
-        .icon-btn:active { background-color: var(--hover-color); }
+        
+        /* Hover & Focus for Nav Buttons */
+        .icon-btn:hover { background-color: var(--card-hover); transform: translateY(-2px); }
+        .icon-btn:active { transform: scale(0.9); background-color: var(--hover-color); }
+        .icon-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
         .nav-group { display: flex; gap: 8px; }
         #backBtn, #studyBtn { display: none; }
 
         /* =========================================================
-           LAYOUT & TRANSITIONS
+           LAYOUT & CENTERING (The Wrapper)
            ========================================================= */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            flex: 1;
+        }
+
         .main-wrapper {
             flex: 1; display: flex; flex-direction: column; align-items: center;
-            width: 100%; padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 80px);
+            width: 100%; max-width: 800px; /* Centered max width */
+            padding: 16px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 90px); /* Space for fixed nav */
             padding-bottom: 40px;
         }
 
-        .page { display: none; width: 100%; max-width: 700px; }
+        /* Smooth Page Transitions */
+        .page { display: none; width: 100%; }
         .page.active { 
             display: block; 
-            animation: materialFadeIn 0.4s cubic-bezier(0.2, 0, 0, 1) forwards; 
+            animation: smoothSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         }
 
-        @keyframes materialFadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes smoothSlideUp {
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Typography */
-        h1 { margin: 0 0 6px 0; font-size: 1.8rem; font-weight: 600; text-align: center; letter-spacing: -0.5px; }
-        .subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 0.95rem; text-align: center; font-weight: 400; letter-spacing: 0.5px; }
+        h1 { margin: 0 0 8px 0; font-size: 1.85rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; }
 
         /* =========================================================
-           MATERIAL CARDS & LISTS
+           INTERACTIVE CARDS & LISTS
            ========================================================= */
-        .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+        .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
         
         .parent-card {
             background-color: var(--card-bg);
-            border: none;
+            border: 1.5px solid transparent;
             color: var(--text-main);
             border-radius: 20px;
-            padding: 28px 16px;
-            font-size: 1.15rem;
-            font-weight: 500;
+            padding: 30px 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
             text-align: center;
             box-shadow: var(--shadow-soft);
-            transition: transform 0.2s, background-color 0.2s;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
         }
-        .parent-card:active { transform: scale(0.97); background-color: var(--card-hover); }
+        
+        /* Rich Hover/Focus states for Parent Cards */
+        .parent-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); }
+        .parent-card:active { transform: scale(0.96); background-color: var(--card-hover); }
+        .parent-card:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 
-        .category-section { margin-bottom: 35px; }
-        .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.2px; }
+        .category-section { margin-bottom: 40px; width: 100%; }
+        .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.2px; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
         
         .menu-btn {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             border-radius: 16px;
-            padding: 18px 14px;
+            padding: 20px 16px;
             font-size: 1.05rem;
-            font-weight: 500;
+            font-weight: 600;
             text-align: left;
-            min-height: 80px;
+            min-height: 90px;
             display: flex; flex-direction: column; justify-content: center;
             box-shadow: var(--shadow-soft);
-            transition: transform 0.2s, background-color 0.2s;
             font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
         }
-        .menu-btn:active { transform: scale(0.98); background-color: var(--card-hover); }
-        .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; }
+        
+        /* Rich Hover/Focus states for Menu Buttons */
+        .menu-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); }
+        .menu-btn:active { transform: scale(0.97); background-color: var(--card-hover); }
+        .menu-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+        
+        .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; transition: color 0.3s; }
+        .menu-btn:hover small { color: var(--primary-color); }
 
         /* =========================================================
            STUDY & QUIZ SCREENS
            ========================================================= */
         #studyScreen, #quizScreen, #scoreScreen { display: none; }
         
-        .study-title { font-size: 1.8rem; margin: 0 0 8px 0; color: var(--text-main); font-weight: 600; }
-        .study-subtitle { font-size: 1.05rem; color: var(--primary-color); margin-bottom: 16px; font-weight: 500; }
-        .study-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; background: var(--card-bg); padding: 16px; border-radius: 16px; box-shadow: var(--shadow-soft); }
-
-        .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
-        .question-text { font-size: 1.35rem; font-weight: 500; margin-bottom: 32px; line-height: 1.4; color: var(--text-main); }
+        .study-title { font-size: 1.8rem; margin: 0 0 8px 0; color: var(--text-main); font-weight: 700; }
+        .study-subtitle { font-size: 1.05rem; color: var(--primary-color); margin-bottom: 20px; font-weight: 600; }
         
-        .options { display: flex; flex-direction: column; gap: 12px; }
-        .option-btn { 
-            background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); 
-            border-radius: 16px; padding: 18px 20px; font-size: 1.05rem; text-align: left; font-weight: 400; line-height: 1.4; 
-            box-shadow: var(--shadow-soft); transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
-            font-family: inherit;
+        .study-desc { 
+            font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; 
+            background: var(--card-bg); padding: 18px; border-radius: 16px; 
+            box-shadow: var(--shadow-soft); border: 1px solid var(--border-color);
+            transition: box-shadow 0.3s ease;
         }
-        .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-hover); }
-        .option-btn:disabled { cursor: default; box-shadow: none; }
-        .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color); color: var(--correct-color); font-weight: 600; }
-        .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color); color: var(--wrong-color); font-weight: 600; }
+        .study-desc:hover { box-shadow: var(--shadow-hover); }
 
-        .feedback { margin-top: 24px; padding: 20px; border-radius: 16px; font-size: 1rem; display: none; line-height: 1.5; font-weight: 500; }
-        .feedback.show { display: block; animation: materialFadeIn 0.3s ease forwards; }
-        .feedback.success { background: var(--correct-bg); color: var(--correct-color); }
-        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); }
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
+        .question-text { font-size: 1.4rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
+        
+        .options { display: flex; flex-direction: column; gap: 14px; }
+        
+        .option-btn { 
+            background: var(--card-bg); border: 1.5px solid var(--border-color); color: var(--text-main); 
+            border-radius: 16px; padding: 20px 22px; font-size: 1.05rem; text-align: left; font-weight: 500; line-height: 1.4; 
+            box-shadow: var(--shadow-soft); font-family: inherit; cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+        }
+        
+        /* Rich Hover/Focus for Options */
+        .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); background-color: var(--card-hover); }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); }
+        .option-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: var(--primary-color); }
+        .option-btn:disabled { cursor: default; box-shadow: none; transform: none; }
+        
+        .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color) !important; color: var(--correct-color); font-weight: 700; transform: scale(1.02); }
+        .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color) !important; color: var(--wrong-color); font-weight: 700; transform: scale(0.98); }
 
-        .flow-box { background: var(--card-bg); padding: 20px; margin-top: 20px; border-radius: 16px; border: 1px solid var(--border-color); }
-        .flow-box h4 { margin: 0 0 12px 0; color: var(--primary-color); font-size: 0.95rem; font-weight: 600; }
-        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 400; font-size: 1.05rem; line-height: 1.6; }
-        .flow-box li { margin-bottom: 8px; }
+        .feedback { margin-top: 28px; padding: 20px; border-radius: 16px; font-size: 1.05rem; display: none; line-height: 1.5; font-weight: 500; box-shadow: var(--shadow-soft); }
+        .feedback.show { display: block; animation: smoothSlideUp 0.35s ease forwards; }
+        .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(20, 108, 46, 0.2); }
+        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(179, 38, 30, 0.2); }
+
+        .flow-box { background: var(--card-bg); padding: 22px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s; }
+        .flow-box:hover { box-shadow: var(--shadow-hover); }
+        .flow-box h4 { margin: 0 0 14px 0; color: var(--primary-color); font-size: 1rem; font-weight: 700; }
+        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 500; font-size: 1.05rem; line-height: 1.6; }
+        .flow-box li { margin-bottom: 10px; }
 
         .primary-btn { 
             background: var(--primary-color); color: #fff; border: none; padding: 18px; font-size: 1.1rem; 
-            border-radius: 100px; /* Pill shape like Google */
-            font-weight: 500; margin-top: 32px; width: 100%; display: none;
-            transition: opacity 0.2s, transform 0.2s; cursor: pointer; font-family: inherit;
+            border-radius: 100px; font-weight: 600; margin-top: 35px; width: 100%; display: none;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
         }
-        .primary-btn:active { opacity: 0.8; transform: scale(0.98); }
-        .start-btn { display: block; margin-top: 32px; }
+        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(11, 87, 208, 0.4); filter: brightness(1.1); }
+        .primary-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(11, 87, 208, 0.3); filter: brightness(0.9); }
+        .primary-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+        
+        .start-btn { display: block; margin-top: 35px; }
 
         /* Progress Bar */
-        .progress-container { width: 100%; height: 4px; background: var(--hover-color); border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.3s ease; }
+        .progress-container { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-bottom: 28px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); border-radius: 3px; }
 
         /* Score Screen */
-        .score-val { font-size: 4rem; font-weight: 600; color: var(--primary-color); margin: 16px 0; text-align: center; }
-        .secondary-btn { background: transparent; color: var(--primary-color); border: 1px solid var(--primary-color); margin-top: 16px; }
-        .secondary-btn:active { background: var(--correct-bg); }
+        .score-val { font-size: 4.5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
+        .secondary-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 16px; box-shadow: none; }
+        .secondary-btn:hover { background: var(--hover-color); box-shadow: var(--shadow-soft); }
 
         /* =========================================================
            SIDE MENUS
@@ -225,7 +274,7 @@
 
         .side-menu {
             position: fixed; top: 0; height: 100vh; background: var(--bg-color);
-            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto; 
+            transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto; 
             padding-bottom: env(safe-area-inset-bottom, 20px);
         }
         #leftNavMenu { left: 0; width: 300px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
@@ -234,48 +283,49 @@
         #rightNavMenu { right: 0; width: 320px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
         #rightNavMenu.open { transform: translateX(0); }
 
-        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .sidebar-item {
-            display: flex; align-items: center; justify-content: space-between;
-            background: transparent;
-        }
+        .sidebar-item { display: flex; align-items: center; justify-content: space-between; background: transparent; }
         
-        .sidebar-text { flex: 1; padding: 16px 20px; font-size: 1.05rem; font-weight: 500; color: var(--text-main); cursor: pointer; transition: background 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
+        .sidebar-text { flex: 1; padding: 16px 20px; font-size: 1.05rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
+        .sidebar-text:hover { background: var(--card-hover); color: var(--primary-color); padding-left: 24px; }
         .sidebar-text:active { background: var(--hover-color); }
         
-        .sidebar-icon { padding: 16px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease; }
+        .sidebar-icon { padding: 16px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease, color 0.2s; }
+        .sidebar-icon:hover { color: var(--primary-color); }
         
-        .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.2, 0, 0, 1); }
         .sidebar-sub button {
             width: 100%; text-align: left; padding: 14px 20px 14px 40px; background: none; border: none;
-            font-size: 0.95rem; color: var(--text-muted); font-weight: 400; font-family: inherit;
+            font-size: 0.95rem; color: var(--text-muted); font-weight: 500; font-family: inherit;
+            transition: all 0.2s ease; cursor: pointer;
         }
-        .sidebar-sub button:active { background: var(--hover-color); color: var(--primary-color); }
+        .sidebar-sub button:hover { background: var(--card-hover); color: var(--primary-color); padding-left: 45px; }
+        .sidebar-sub button:active { background: var(--hover-color); }
 
         /* =========================================================
            FOOTER
            ========================================================= */
-        .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.8rem; width: 100%; margin-top: auto; font-weight: 400; }
+        .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem; width: 100%; margin-top: auto; font-weight: 500; }
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION (SVG ICONS) -->
+    <!-- TOP NAVIGATION -->
     <div class="top-nav">
         <div class="nav-group">
-            <button class="icon-btn" onclick="toggleLeftMenu()">
+            <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <button class="icon-btn" id="backBtn" onclick="goBackLogic()">
+            <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
-            <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()">
+            <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
-            <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()"></button>
+            <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
         </div>
     </div>
 
@@ -292,56 +342,60 @@
         <div id="rightPanelContent" style="padding: 16px;"></div>
     </div>
 
-    <div class="main-wrapper">
-        <!-- HOME SCREEN -->
-        <div class="page active" id="homeScreen">
-            <h1>C-172 Master</h1>
-            <div class="subtitle">Select Training Category</div>
-            <div id="homeCategories"></div>
-        </div>
-
-        <!-- CATEGORY SCREEN -->
-        <div class="page" id="categoryScreen">
-            <h1 id="catTitle">Title</h1>
-            <div class="subtitle">Select Topic</div>
-            <div id="catContent"></div>
-        </div>
-
-        <!-- STUDY SCREEN -->
-        <div class="page" id="studyScreen">
-            <h1 id="studyTitle">Title</h1>
-            <div class="subtitle" id="studySubtitle">Subtitle</div>
-            <div class="study-desc" id="studyScreenDesc">Context description goes here.</div>
-            <div class="flow-box">
-                <div id="studyScreenContent"></div>
+    <!-- MAIN APP CONTAINER (Centers everything) -->
+    <div class="app-container">
+        <div class="main-wrapper">
+            
+            <!-- HOME SCREEN -->
+            <div class="page active" id="homeScreen">
+                <h1>C-172 Master</h1>
+                <div class="subtitle">Select Training Category</div>
+                <div id="homeCategories"></div>
             </div>
-            <button class="primary-btn start-btn" onclick="startQuizFromStudy()">Start Drill</button>
-        </div>
 
-        <!-- QUIZ SCREEN -->
-        <div class="page" id="quizScreen">
-            <div class="progress-container"><div class="progress-bar" id="quizProgress"></div></div>
-            <div class="question-header">
-                <span id="qNumber">Q 1/15</span>
-                <span id="qScore" style="color: var(--primary-color);">Score: 0</span>
+            <!-- CATEGORY SCREEN -->
+            <div class="page" id="categoryScreen">
+                <h1 id="catTitle">Title</h1>
+                <div class="subtitle">Select Topic</div>
+                <div id="catContent"></div>
             </div>
-            <div class="question-text" id="qText">Question</div>
-            <div class="options" id="optionsContainer"></div>
-            <div class="feedback" id="feedbackBox"></div>
-            <button class="primary-btn" id="nextBtn" onclick="nextQuestion()">Continue</button>
-        </div>
 
-        <!-- SCORE SCREEN -->
-        <div class="page" id="scoreScreen">
-            <h1>Drill Completed</h1>
-            <div class="score-val" id="finalScore">0%</div>
-            <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
-            <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
-            <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
+            <!-- STUDY SCREEN -->
+            <div class="page" id="studyScreen">
+                <h1 id="studyTitle">Title</h1>
+                <div class="subtitle" id="studySubtitle">Subtitle</div>
+                <div class="study-desc" id="studyScreenDesc">Context description goes here.</div>
+                <div class="flow-box">
+                    <div id="studyScreenContent"></div>
+                </div>
+                <button class="primary-btn start-btn" onclick="startQuizFromStudy()">Start Drill</button>
+            </div>
+
+            <!-- QUIZ SCREEN -->
+            <div class="page" id="quizScreen">
+                <div class="progress-container"><div class="progress-bar" id="quizProgress"></div></div>
+                <div class="question-header">
+                    <span id="qNumber">Q 1/15</span>
+                    <span id="qScore" style="color: var(--primary-color);">Score: 0</span>
+                </div>
+                <div class="question-text" id="qText">Question</div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="feedback" id="feedbackBox"></div>
+                <button class="primary-btn" id="nextBtn" onclick="nextQuestion()">Continue</button>
+            </div>
+
+            <!-- SCORE SCREEN -->
+            <div class="page" id="scoreScreen">
+                <h1>Drill Completed</h1>
+                <div class="score-val" id="finalScore">0%</div>
+                <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
+                <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
+                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
+            </div>
+            
         </div>
-        
         <!-- FOOTER -->
-        <div class="footer">v1.0.5 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.0.6 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -451,12 +505,22 @@
         // Page Router
         function showPage(pageId, pushToHistory = true, historyState = {page: 'home'}) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+            const newPage = document.getElementById(pageId);
+            
+            // Re-trigger animation
+            newPage.style.animation = 'none';
+            void newPage.offsetWidth; 
+            newPage.style.animation = null;
+            newPage.classList.add('active');
             
             document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
             document.getElementById('studyBtn').style.display = (pageId === 'quizScreen') ? 'flex' : 'none';
             
             closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
             if (pushToHistory) history.pushState(historyState, '');
         }
 
@@ -726,6 +790,7 @@
             currentQ++;
             if (currentQ < QUESTIONS_PER_DRILL) loadQuestion();
             else showScore();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function showScore() {
