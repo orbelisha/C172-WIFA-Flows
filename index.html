@@ -68,9 +68,9 @@
             color: var(--text-main);
             margin: 0; padding: 0;
             height: 100vh;
-            height: 100dvh; /* Fix for mobile browser UI elements */
+            height: 100dvh; 
             display: flex; flex-direction: column;
-            overflow: hidden; /* Locks body, allows only the app-container to scroll */
+            overflow: hidden; 
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
             font-size: 16px; 
@@ -112,20 +112,20 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            overflow-y: auto; /* Handles all the scrolling perfectly */
-            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
         }
 
         .main-wrapper {
-            flex: 1 0 auto; /* Allow to grow and center, but won't shrink below content */
+            flex: 1 0 auto; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             width: 100%; 
             max-width: 800px; 
-            margin: 0 auto; /* Center horizontally */
+            margin: 0 auto; 
             padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 80px); /* Avoid top nav */
+            padding-top: calc(env(safe-area-inset-top, 20px) + 80px); 
         }
 
         .page { 
@@ -137,7 +137,7 @@
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-soft);
             transition: background-color 0.4s ease, border-color 0.4s ease;
-            margin: auto 0; /* Smart vertical centering! Centers only if there is space */
+            margin: auto 0; 
         }
         
         .page.active { 
@@ -150,7 +150,6 @@
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Typography */
         h1 { margin: 0 0 8px 0; font-size: 1.85rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
         .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
 
@@ -198,7 +197,6 @@
         .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; transition: color 0.3s; }
         .menu-btn:hover small { color: var(--primary-color); }
 
-        /* Rich Hover/Focus states for Cards & Buttons */
         .parent-card:hover, .menu-btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); background-color: var(--card-bg); }
         .parent-card:focus-visible, .menu-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
         .parent-card:active, .menu-btn:active { transform: scale(0.96); background-color: var(--card-hover); transition: none; }
@@ -217,7 +215,7 @@
         .study-desc:hover { box-shadow: var(--shadow-soft); }
 
         .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
-        .question-text { font-size: 1.45rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
+        .question-text { font-size: 1.45rem; font-weight: 500; margin-bottom: 35px; line-height: 1.5; color: var(--text-main); }
         
         .options { display: flex; flex-direction: column; gap: 14px; }
         
@@ -227,7 +225,6 @@
             font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
         }
         
-        /* Rich Hover/Focus for Options */
         .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-soft); border-color: var(--primary-color); background-color: var(--card-hover); }
         .option-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
         .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-bg); transition: none; }
@@ -244,7 +241,7 @@
         .flow-box { background: var(--bg-color); padding: 24px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s; }
         .flow-box:hover { box-shadow: var(--shadow-hover); }
         .flow-box h4 { margin: 0 0 16px 0; color: var(--primary-color); font-size: 1.05rem; font-weight: 700; }
-        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 500; font-size: 1.1rem; line-height: 1.6; }
+        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 400; font-size: 1.1rem; line-height: 1.6; }
         .flow-box li { margin-bottom: 10px; }
 
         .primary-btn { 
@@ -259,11 +256,9 @@
         
         .start-btn { display: block; margin-top: 35px; }
 
-        /* Progress Bar */
         .progress-container { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-bottom: 28px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); border-radius: 3px; }
 
-        /* Score Screen */
         .score-val { font-size: 5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
         .secondary-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 16px; box-shadow: none; }
         .secondary-btn:hover { background: var(--hover-color); box-shadow: var(--shadow-soft); }
@@ -308,18 +303,7 @@
         .sidebar-sub button:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 54px; }
         .sidebar-sub button:active { background: var(--hover-color); transition: none; }
 
-        /* =========================================================
-           FOOTER
-           ========================================================= */
-        .footer { 
-            flex-shrink: 0; /* Prevents footer from collapsing */
-            text-align: center; 
-            padding: 24px; 
-            color: var(--text-muted); 
-            font-size: 0.85rem; 
-            width: 100%; 
-            font-weight: 500; 
-        }
+        .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem; width: 100%; margin-top: auto; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -328,15 +312,15 @@
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
         </div>
@@ -408,60 +392,60 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.0.9 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.1.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
         const QUESTIONS_PER_DRILL = 15;
 
-        // FIXED DATABASE
+        // FIXED DATABASE - Added clear "Item ➔ Action" formatting
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
-                    { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing COMPLETE", "Doors and Seatbelts SECURED", "Parking Brake SET", "Fuel Selector BOTH", "Carburetor Heat COLD", "Mixture FULL RICH", "Primer 2-5 STROKES & LOCK", "Master Switch ON", "Lights AS REQUIRED", "Throttle OPEN 1/8 INCH", "Prop Area CLEAR", "Starter ENGAGE", "Throttle 1,000 RPM & ADJUST", "Oil Pressure GREEN", "Mixture LEAN FOR TAXI", "Radio Master ON"] },
-                    { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps SET FOR TAKEOFF", "Lights AS REQUIRED", "Aux Fuel Pump ON", "Mixture RICH <3000 D.A.", "Carburetor Heat OFF", "Doors, Windows & Seatbelts SECURED", "Fuel Timer SET", "Traffic CLEAR", "Assigned RWY/HDG CONFIRMED"] },
-                    { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps UP", "Taxi Light OFF", "Engine Instruments CHECK"] },
-                    { id: "AfterLanding", type: "sequence", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps UP", "Mixture LEAN FOR TAXI", "Carburetor Heat OFF", "Trim RESET FOR TAKEOFF", "Pitot Heat OFF", "Taxi Light ON", "Landing Light OFF", "Contact/Monitor Ground AS REQUIRED"] },
-                    { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake SET", "Radio Master OFF", "Exterior Lights OFF", "Cabin / Panel Lights OFF", "Throttle IDLE", "Mixture IDLE CUTOFF", "Ignition Switch OFF & KEY OUT", "Master Switch OFF", "Parking Brake RELEASE"] },
-                    { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ALL ON", "Tie Downs & Chocks APPLY", "Control Lock & Pitot Cover INSTALL", "Fuel Selector LEFT or RIGHT", "Engine Instruments CHECK", "Seatbelts FASTENED", "Cabin Air/Heat OFF", "Windows CLOSE", "Flight Plan CLOSE", "Binder & Fuel Load RECORD", "FSP & Squawks COMPLETE", "Garbage VERIFY CLEAN"] }
+                    { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing ➔ COMPLETE", "Doors and Seatbelts ➔ SECURED", "Parking Brake ➔ SET", "Fuel Selector ➔ BOTH", "Carburetor Heat ➔ COLD", "Mixture ➔ FULL RICH", "Primer ➔ 2-5 STROKES & LOCK", "Master Switch ➔ ON", "Lights ➔ AS REQUIRED", "Throttle ➔ OPEN 1/8 INCH", "Prop Area ➔ CLEAR", "Starter ➔ ENGAGE", "Throttle ➔ 1,000 RPM & ADJUST", "Oil Pressure ➔ GREEN", "Mixture ➔ LEAN FOR TAXI", "Radio Master ➔ ON"] },
+                    { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps ➔ SET FOR TAKEOFF", "Lights ➔ AS REQUIRED", "Aux Fuel Pump ➔ ON", "Mixture ➔ RICH <3000 D.A.", "Carburetor Heat ➔ OFF", "Doors, Windows & Seatbelts ➔ SECURED", "Fuel Timer ➔ SET", "Traffic ➔ CLEAR", "Assigned RWY/HDG ➔ CONFIRMED"] },
+                    { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
+                    { id: "AfterLanding", type: "sequence", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps ➔ UP", "Mixture ➔ LEAN FOR TAXI", "Carburetor Heat ➔ OFF", "Trim ➔ RESET FOR TAKEOFF", "Pitot Heat ➔ OFF", "Taxi Light ➔ ON", "Landing Light ➔ OFF", "Contact/Monitor Ground ➔ AS REQUIRED"] },
+                    { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake ➔ SET", "Radio Master ➔ OFF", "Exterior Lights ➔ OFF", "Cabin / Panel Lights ➔ OFF", "Throttle ➔ IDLE", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF & KEY OUT", "Master Switch ➔ OFF", "Parking Brake ➔ RELEASE"] },
+                    { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ➔ ALL ON", "Tie Downs & Chocks ➔ APPLY", "Control Lock & Pitot Cover ➔ INSTALL", "Fuel Selector ➔ LEFT or RIGHT", "Engine Instruments ➔ CHECK", "Seatbelts ➔ FASTENED", "Cabin Air/Heat ➔ OFF", "Windows ➔ CLOSE", "Flight Plan ➔ CLOSE", "Binder & Fuel Load ➔ RECORD", "FSP & Squawks ➔ COMPLETE", "Garbage ➔ VERIFY CLEAN"] }
                 ],
                 "Emergency Procedures": [
-                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking CONTINUE", "If Fails: Throttle FULL OPEN", "Mixture IDLE CUTOFF", "Cranking CONTINUE for 3 MINS", "Fire Extinguisher OBTAIN", "Master/Ignition/Fuel OFF"] },
-                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch OFF", "Cabin Air & Heat OFF", "Fire Extinguisher CONSIDER USING"] }
+                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking ➔ CONTINUE", "If Fails: Throttle ➔ FULL OPEN", "Mixture ➔ IDLE CUTOFF", "Cranking ➔ CONTINUE for 3 MINS", "Fire Extinguisher ➔ OBTAIN", "Master/Ignition/Fuel ➔ OFF"] },
+                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch ➔ OFF", "Cabin Air & Heat ➔ OFF", "Fire Extinguisher ➔ CONSIDER USING"] }
                 ]
             },
             "Flows": {
                 "Ground": [
-                    { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Before Taxi Check", desc: "Instrument setup flow executed before taxiing.", items: ["Flaps UP (CHECK VISUALLY)", "6 Flight Instruments CHECK", "1. Clearance/Transponder OBTAIN/SET", "2. Barometers (ATIS/AWOS) OBTAIN/SET", "3. Altitude Select SET", "4. Comms SET", "5. Navs SET", "6. GPS & Map Range SET", "Taxi Light ON", "Taxi Area CLEAR", "Parking Brake RELEASE", "Brakes CHECK", "TC, Ball & DG CHECK ON FIRST TURN"] },
-                    { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake SET", "Taxi Light OFF", "Throttle 1,000 RPM", "Controls FREE & CORRECT", "Fuel Selector BOTH", "Primer VERIFY LOCKED", "Circuit Breakers VERIFY IN", "Departure Frequency SET", "Transponder ALT", "Aux Fuel Pump ON (CHECK RISE), OFF", "Mixture FULL RICH", "Throttle 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) CHECK", "Engine Instruments CHECK", "Alternator CHECK", "Carburetor Heat ON, CHECK", "Throttle IDLE", "Carburetor Heat OFF", "Throttle 1,000 RPM", "Pitot Heat AS REQUIRED", "Mixture LEAN FOR TAXI", "Crew Briefing COMPLETE", "Parking Brake RELEASE", "Taxi Light ON"] }
+                    { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Before Taxi Check", desc: "Instrument setup flow executed before taxiing. The '6+6' separates the 6 flight instruments from the 6 avionics setups.", items: ["Flaps ➔ UP (CHECK VISUALLY)", "6 Flight Instruments ➔ CHECK", "(1) Clearance/Transponder ➔ OBTAIN/SET", "(2) Barometers (ATIS/AWOS) ➔ OBTAIN/SET", "(3) Altitude Select ➔ SET", "(4) Comms ➔ SET", "(5) Navs ➔ SET", "(6) GPS & Map Range ➔ SET", "Taxi Light ➔ ON", "Taxi Area ➔ CLEAR", "Parking Brake ➔ RELEASE", "Brakes ➔ CHECK", "TC, Ball & DG ➔ CHECK ON FIRST TURN"] },
+                    { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake ➔ SET", "Taxi Light ➔ OFF", "Throttle ➔ 1,000 RPM", "Controls ➔ FREE & CORRECT", "Fuel Selector ➔ BOTH", "Primer ➔ VERIFY LOCKED", "Circuit Breakers ➔ VERIFY IN", "Departure Frequency ➔ SET", "Transponder ➔ ALT", "Aux Fuel Pump ➔ ON (CHECK RISE), OFF", "Mixture ➔ FULL RICH", "Throttle ➔ 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) ➔ CHECK", "Engine Instruments ➔ CHECK", "Alternator ➔ CHECK", "Carburetor Heat ➔ ON, CHECK", "Throttle ➔ IDLE", "Carburetor Heat ➔ OFF", "Throttle ➔ 1,000 RPM", "Pitot Heat ➔ AS REQUIRED", "Mixture ➔ LEAN FOR TAXI", "Crew Briefing ➔ COMPLETE", "Parking Brake ➔ RELEASE", "Taxi Light ➔ ON"] }
                 ],
                 "Air": [
-                    { id: "DIMS", type: "sequence", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump OFF", "Pitch Attitude OBTAIN", "Power CRUISE RPM", "D - Directional Gyro ADJUST", "I - Instruments (Engine) CHECK", "M - Mixture LEAN", "S - Switches (Landing Light) AS REQUIRED", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
-                    { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
-                    { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A - ATIS/AWOS OBTAIN", "B - Brief (Approach/Arrival) PERFORM", "C - Checklist PERFORM"] },
-                    { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN and WELDED", "M - Mixture RICH <3000 D.A.", "Props & Pumps ON", "S - Seatbelts & Switches CHECK"] },
-                    { id: "GoAround", type: "sequence", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle FULL FWD", "Carburetor Heat OFF", "Pitch UP TO 8-10 DEG", "Flaps UP INCREMENTALLY", "Navigate", "Communicate", "IFR: GPS UNSUSPEND"] }
+                    { id: "DIMS", type: "sequence", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump ➔ OFF", "Pitch Attitude ➔ OBTAIN", "Power ➔ CRUISE RPM", "D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED", "Next Frequencies ➔ PREPARE", "Map Range ➔ AS APPROPRIATE", "TOD ➔ DETERMINE"] },
+                    { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns ➔ PERFORM", "Non Congested Area ➔ VERIFY", "Checklist ➔ PERFORM", "Declare ➔ PERFORM"] },
+                    { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A ➔ ATIS/AWOS OBTAIN", "B ➔ Brief (Approach/Arrival) PERFORM", "C ➔ Checklist PERFORM"] },
+                    { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C ➔ Clearance & Carb Heat OBTAIN", "G ➔ Gas BOTH", "U ➔ Undercarriage DOWN and WELDED", "M ➔ Mixture RICH <3000 D.A.", "P ➔ Props & Pumps ON", "S ➔ Seatbelts & Switches CHECK"] },
+                    { id: "GoAround", type: "sequence", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle ➔ FULL FWD", "Carburetor Heat ➔ OFF", "Pitch ➔ UP TO 8-10 DEG", "Flaps ➔ UP INCREMENTALLY", "Navigate ➔ FLY A/C", "Communicate ➔ TOWER", "IFR: GPS ➔ UNSUSPEND"] }
                 ],
                 "Emergencies": [
-                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land FIND and TURN", "C - Checklist PERFORM", "D - Declare CURRENT FREQ/121.5 & SQK 7700"] }
+                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700"] }
                 ]
             },
             "Weather": {
                 "TAF / METAR": [
-                    { id: "WxPrecip", type: "definition", title: "Precipitation", text: "Codes", desc: "Standard aviation weather codes indicating actual precipitation falling.", items: ["RA - Rain", "SN - Snow", "DZ - Drizzle", "GR - Hail", "GS - Small Hail", "PL - Ice Pellets"] },
-                    { id: "WxObscure", type: "definition", title: "Obscurations", text: "Restrictions", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["FG - Fog", "BR - Mist", "HZ - Haze", "FU - Smoke", "DU - Dust", "SA - Sand", "VA - Volcanic Ash"] },
-                    { id: "WxDesc", type: "definition", title: "Descriptors", text: "Modifiers", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["TS - Thunderstorm", "SH - Showers", "FZ - Freezing", "BL - Blowing", "PR - Partial", "BC - Patches", "MI - Shallow"] }
+                    { id: "WxPrecip", type: "definition", title: "Precipitation", text: "Codes", desc: "Standard aviation weather codes indicating actual precipitation falling.", items: ["RA ➔ Rain", "SN ➔ Snow", "DZ ➔ Drizzle", "GR ➔ Hail", "GS ➔ Small Hail", "PL ➔ Ice Pellets"] },
+                    { id: "WxObscure", type: "definition", title: "Obscurations", text: "Restrictions", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["FG ➔ Fog", "BR ➔ Mist", "HZ ➔ Haze", "FU ➔ Smoke", "DU ➔ Dust", "SA ➔ Sand", "VA ➔ Volcanic Ash"] },
+                    { id: "WxDesc", type: "definition", title: "Descriptors", text: "Modifiers", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["TS ➔ Thunderstorm", "SH ➔ Showers", "FZ ➔ Freezing", "BL ➔ Blowing", "PR ➔ Partial", "BC ➔ Patches", "MI ➔ Shallow"] }
                 ]
             },
             "Acronyms": {
                 "Emergencies": [
-                    { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W - Wind", "O - Obstructions", "S - Size", "S - Shape", "S - Surface"] },
-                    { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A - Airspeed", "B - Best Field", "C - Checklist", "D - Declare", "E - Execute"] }
+                    { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W ➔ Wind", "O ➔ Obstructions", "S ➔ Size", "S ➔ Shape", "S ➔ Surface"] },
+                    { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A ➔ Airspeed", "B ➔ Best Field", "C ➔ Checklist", "D ➔ Declare", "E ➔ Execute"] }
                 ],
                 "Equipment & Rules": [
-                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A - Altimeter", "T - Tachometer", "O - Oil Pressure", "M - Manifold Pressure", "A - Airspeed", "T - Temperature Gauge", "O - Oil Temp", "F - Fuel Gauge", "L - Landing Gear Pos", "A - Anti-collision Lights", "M - Magnetic Compass", "E - ELT", "S - Seatbelts"] },
-                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F - Fuses", "L - Landing Light", "A - Anti-collision", "P - Position lights", "S - Source of power"] },
-                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A - Airworthiness Certificate", "R - Registration", "R - Radio license", "O - Operating limitations", "W - Weight and balance"] }
+                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A ➔ Altimeter", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Airspeed", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
+                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
+                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
                 ]
             }
         };
@@ -522,7 +506,7 @@
             });
             
             const newPage = document.getElementById(pageId);
-            void newPage.offsetWidth; // Trigger reflow for animation
+            void newPage.offsetWidth; 
             newPage.classList.add('active');
             
             document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
@@ -530,18 +514,21 @@
             
             closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
             
-            // INSTANT AND RELIABLE SCROLL TO TOP OF APP
             const appContainer = document.getElementById('appScrollContainer');
-            if (appContainer) {
-                appContainer.scrollTop = 0;
-            }
+            if (appContainer) { appContainer.scrollTop = 0; }
 
             if (pushToHistory) history.pushState(historyState, '');
         }
 
-        // HTML Builders
+        // HTML Builders - Added Auto-Bolding for the Action Items
         function buildFlowList(items) {
-            return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => `<li style='margin-bottom:8px;'>${item}</li>`).join('') + "</ul>";
+            return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => {
+                if (item.includes('➔')) {
+                    let parts = item.split('➔');
+                    return `<li style='margin-bottom:10px;'><strong>${parts[0].trim()}</strong> ➔ ${parts[1].trim()}</li>`;
+                }
+                return `<li style='margin-bottom:10px;'>${item}</li>`;
+            }).join('') + "</ul>";
         }
 
         function buildLeftMenu() {
@@ -678,10 +665,10 @@
             let nextItem = flow.items[idx + 1];
             let wrong1 = flow.items[(idx + 2) % flow.items.length];
             let wrong2 = getRandomOtherItems(flow, 1)[0];
-            if(wrong1 === nextItem) wrong1 = "Master Switch OFF";
+            if(wrong1 === nextItem) wrong1 = "Master Switch ➔ OFF";
 
             return {
-                question: `In "${flow.title}", what follows:\n"${currentItem}"?`,
+                question: `In "${flow.title}", what follows:<br><br><strong>${currentItem}</strong> ?`,
                 options: [nextItem, wrong1, wrong2],
                 correctAnswer: 0,
                 explanation: `Correct sequence: <strong>${nextItem}</strong>`
@@ -692,7 +679,7 @@
             let flow = currentActiveFlow;
             return {
                 question: `What is the **first** item in "${flow.title}"?`,
-                options: [flow.items[0], flow.items[1] || "Throttle IDLE", flow.items[flow.items.length - 1] || "Mixture CUTOFF"],
+                options: [flow.items[0], flow.items[1] || "Throttle ➔ IDLE", flow.items[flow.items.length - 1] || "Mixture ➔ CUTOFF"],
                 correctAnswer: 0,
                 explanation: `It starts with: <strong>${flow.items[0]}</strong>`
             };
@@ -700,7 +687,7 @@
 
         function genNotIncludedSequence() {
             let flow = currentActiveFlow;
-            let wrongItem = getRandomOtherItems(flow, 1)[0] || "Declare Emergency";
+            let wrongItem = getRandomOtherItems(flow, 1)[0] || "Declare ➔ Emergency";
             return {
                 question: `Which is **NOT** part of "${flow.title}"?`,
                 options: [wrongItem, flow.items[0], flow.items[flow.items.length - 1] || flow.items[1]],
@@ -715,7 +702,7 @@
             
             let idx = Math.floor(Math.random() * flow.items.length);
             let correctItem = flow.items[idx];
-            let parts = correctItem.split(" - ");
+            let parts = correctItem.split(" ➔ ");
             if (parts.length !== 2) return null;
             
             let code = parts[0];
@@ -725,27 +712,30 @@
             while(wrongDefs.length < 2) {
                 let randomIdx = Math.floor(Math.random() * flow.items.length);
                 if (randomIdx !== idx) {
-                    let wrongPart = flow.items[randomIdx].split(" - ")[1];
-                    if (!wrongDefs.includes(wrongPart)) wrongDefs.push(wrongPart);
+                    let wParts = flow.items[randomIdx].split(" ➔ ");
+                    if (wParts.length === 2) {
+                        let wrongPart = wParts[1];
+                        if (!wrongDefs.includes(wrongPart)) wrongDefs.push(wrongPart);
+                    }
                 }
             }
 
             return {
-                question: `What does **${code}** stand for in ${flow.title}?`,
+                question: `What does <strong>${code}</strong> stand for in ${flow.title}?`,
                 options: [definition, wrongDefs[0], wrongDefs[1]],
                 correctAnswer: 0,
-                explanation: `**${code}** stands for **${definition}**.`
+                explanation: `<strong>${code}</strong> stands for <strong>${definition}</strong>.`
             };
         }
 
         function genNotIncludedDefinition() {
             let flow = currentActiveFlow;
-            let wrongItem = getRandomOtherItems(flow, 1)[0] || "XYZ - Unknown";
+            let wrongItem = getRandomOtherItems(flow, 1)[0] || "XYZ ➔ Unknown";
             let correct1 = flow.items[0];
             let correct2 = flow.items[flow.items.length - 1] || flow.items[1];
 
             return {
-                question: `Which of the following is **NOT** part of the ${flow.title} acronym/codes?`,
+                question: `Which of the following is **NOT** part of the ${flow.title} list?`,
                 options: [wrongItem, correct1, correct2],
                 correctAnswer: 0,
                 explanation: `<strong>${wrongItem}</strong> is not part of this list.`
@@ -820,7 +810,7 @@
             q.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.innerText = opt;
+                btn.innerHTML = opt; 
                 btn.onclick = () => checkAnswer(index, btn);
                 optsContainer.appendChild(btn);
             });
