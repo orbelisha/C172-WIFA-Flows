@@ -67,9 +67,9 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0; padding: 0;
-            min-height: 100vh;
+            height: 100vh;
             display: flex; flex-direction: column;
-            overflow-x: hidden;
+            overflow: hidden; /* Prevent body scroll, handle scroll in app-container */
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
             font-size: 16px; 
@@ -80,7 +80,7 @@
            TOP NAVIGATION
            ========================================================= */
         .top-nav {
-            position: fixed; top: 0; left: 0; width: 100%;
+            position: absolute; top: 0; left: 0; width: 100%;
             height: calc(env(safe-area-inset-top, 20px) + 60px);
             background-color: var(--nav-bg);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -104,22 +104,24 @@
         #backBtn, #studyBtn { display: none; }
 
         /* =========================================================
-           LAYOUT & CENTERING
+           LAYOUT & PERFECT CENTERING
            ========================================================= */
         .app-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center; /* PERFECT VERTICAL CENTERING */
             width: 100%;
-            flex: 1;
+            height: 100%;
+            padding: 16px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 76px); /* Space for fixed nav */
+            overflow-y: auto; /* Allow scrolling if content is taller than screen */
         }
 
         .main-wrapper {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; max-width: 800px; 
-            padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 90px);
-            padding-bottom: 40px;
+            margin: auto; /* Ensure it stays in the middle */
         }
 
         /* Pages are now styled as Gemini Cards */
@@ -132,6 +134,8 @@
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-soft);
             transition: background-color 0.4s ease, border-color 0.4s ease;
+            max-height: 85vh; /* Keep card within screen */
+            overflow-y: auto; /* Scroll inside the card if needed */
         }
         
         .page.active { 
@@ -211,20 +215,21 @@
         .study-desc:hover { box-shadow: var(--shadow-soft); }
 
         .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
-        .question-text { font-size: 1.45rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
+        .question-text { font-size: 1.3rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
         
         .options { display: flex; flex-direction: column; gap: 14px; }
         
         .option-btn { 
             background: var(--bg-color); border: 1.5px solid var(--border-color); color: var(--text-main); 
-            border-radius: 16px; padding: 20px 22px; font-size: 1.1rem; text-align: left; font-weight: 500; line-height: 1.4; 
+            border-radius: 16px; padding: 20px 22px; font-size: 1.05rem; text-align: left; font-weight: 500; line-height: 1.4; 
             font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
         }
         
+        /* Rich Hover/Focus for Options */
         .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-soft); border-color: var(--primary-color); background-color: var(--card-hover); }
         .option-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
         .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-bg); transition: none; }
-        .option-btn:disabled { cursor: default; transform: none; box-shadow: none; }
+        .option-btn:disabled { cursor: default; box-shadow: none; transform: none; }
         
         .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color) !important; color: var(--correct-color); font-weight: 700; transform: scale(1.02); }
         .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color) !important; color: var(--wrong-color); font-weight: 700; transform: scale(0.98); }
@@ -234,8 +239,8 @@
         .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(20, 108, 46, 0.2); }
         .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(179, 38, 30, 0.2); }
 
-        .flow-box { background: var(--bg-color); padding: 24px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); transition: box-shadow 0.3s; }
-        .flow-box:hover { box-shadow: var(--shadow-soft); }
+        .flow-box { background: var(--bg-color); padding: 24px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s; }
+        .flow-box:hover { box-shadow: var(--shadow-hover); }
         .flow-box h4 { margin: 0 0 16px 0; color: var(--primary-color); font-size: 1.05rem; font-weight: 700; }
         .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 500; font-size: 1.1rem; line-height: 1.6; }
         .flow-box li { margin-bottom: 10px; }
@@ -244,10 +249,11 @@
             background: var(--primary-color); color: #fff; border: none; padding: 20px; font-size: 1.15rem; 
             border-radius: 100px; font-weight: 600; margin-top: 35px; width: 100%; display: none;
             cursor: pointer; font-family: inherit; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
         }
-        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11, 87, 208, 0.3); filter: brightness(1.1); }
+        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11, 87, 208, 0.4); filter: brightness(1.1); }
         .primary-btn:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
-        .primary-btn:active { transform: scale(0.97); filter: brightness(0.9); transition: none; }
+        .primary-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(11, 87, 208, 0.3); filter: brightness(0.9); transition: none; }
         
         .start-btn { display: block; margin-top: 35px; }
 
@@ -303,7 +309,7 @@
         /* =========================================================
            FOOTER
            ========================================================= */
-        .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem; width: 100%; margin-top: auto; font-weight: 500; }
+        .footer { text-align: center; padding: 16px; color: var(--text-muted); font-size: 0.85rem; width: 100%; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -312,15 +318,15 @@
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
         </div>
@@ -387,12 +393,12 @@
                 <div class="score-val" id="finalScore">0%</div>
                 <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
                 <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
-                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
+                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Dashboard</button>
             </div>
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.0.7 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.0.8 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -402,50 +408,50 @@
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
-                    { id: "EngineStart", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing COMPLETE", "Doors and Seatbelts SECURED", "Parking Brake SET", "Fuel Selector BOTH", "Carburetor Heat COLD", "Mixture FULL RICH", "Primer 2-5 STROKES & LOCK", "Master Switch ON", "Lights AS REQUIRED", "Throttle OPEN 1/8 INCH", "Prop Area CLEAR", "Starter ENGAGE", "Throttle 1,000 RPM & ADJUST", "Oil Pressure GREEN", "Mixture LEAN FOR TAXI", "Radio Master ON"] },
-                    { id: "PreLineup", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps SET FOR TAKEOFF", "Lights AS REQUIRED", "Aux Fuel Pump ON", "Mixture RICH <3000 D.A.", "Carburetor Heat OFF", "Doors, Windows & Seatbelts SECURED", "Fuel Timer SET", "Traffic CLEAR", "Assigned RWY/HDG CONFIRMED"] },
-                    { id: "ClimbCheck", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps UP", "Taxi Light OFF", "Engine Instruments CHECK"] },
-                    { id: "AfterLanding", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps UP", "Mixture LEAN FOR TAXI", "Carburetor Heat OFF", "Trim RESET FOR TAKEOFF", "Pitot Heat OFF", "Taxi Light ON", "Landing Light OFF", "Contact/Monitor Ground AS REQUIRED"] },
-                    { id: "ShutDown", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake SET", "Radio Master OFF", "Exterior Lights OFF", "Cabin / Panel Lights OFF", "Throttle IDLE", "Mixture IDLE CUTOFF", "Ignition Switch OFF & KEY OUT", "Master Switch OFF", "Parking Brake RELEASE"] },
-                    { id: "Securing", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ALL ON", "Tie Downs & Chocks APPLY", "Control Lock & Pitot Cover INSTALL", "Fuel Selector LEFT or RIGHT", "Engine Instruments CHECK", "Seatbelts FASTENED", "Cabin Air/Heat OFF", "Windows CLOSE", "Flight Plan CLOSE", "Binder & Fuel Load RECORD", "FSP & Squawks COMPLETE", "Garbage VERIFY CLEAN"] }
+                    { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing COMPLETE", "Doors and Seatbelts SECURED", "Parking Brake SET", "Fuel Selector BOTH", "Carburetor Heat COLD", "Mixture FULL RICH", "Primer 2-5 STROKES & LOCK", "Master Switch ON", "Lights AS REQUIRED", "Throttle OPEN 1/8 INCH", "Prop Area CLEAR", "Starter ENGAGE", "Throttle 1,000 RPM & ADJUST", "Oil Pressure GREEN", "Mixture LEAN FOR TAXI", "Radio Master ON"] },
+                    { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps SET FOR TAKEOFF", "Lights AS REQUIRED", "Aux Fuel Pump ON", "Mixture RICH <3000 D.A.", "Carburetor Heat OFF", "Doors, Windows & Seatbelts SECURED", "Fuel Timer SET", "Traffic CLEAR", "Assigned RWY/HDG CONFIRMED"] },
+                    { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps UP", "Taxi Light OFF", "Engine Instruments CHECK"] },
+                    { id: "AfterLanding", type: "sequence", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps UP", "Mixture LEAN FOR TAXI", "Carburetor Heat OFF", "Trim RESET FOR TAKEOFF", "Pitot Heat OFF", "Taxi Light ON", "Landing Light OFF", "Contact/Monitor Ground AS REQUIRED"] },
+                    { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake SET", "Radio Master OFF", "Exterior Lights OFF", "Cabin / Panel Lights OFF", "Throttle IDLE", "Mixture IDLE CUTOFF", "Ignition Switch OFF & KEY OUT", "Master Switch OFF", "Parking Brake RELEASE"] },
+                    { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ALL ON", "Tie Downs & Chocks APPLY", "Control Lock & Pitot Cover INSTALL", "Fuel Selector LEFT or RIGHT", "Engine Instruments CHECK", "Seatbelts FASTENED", "Cabin Air/Heat OFF", "Windows CLOSE", "Flight Plan CLOSE", "Binder & Fuel Load RECORD", "FSP & Squawks COMPLETE", "Garbage VERIFY CLEAN"] }
                 ],
                 "Emergency Procedures": [
-                    { id: "EngineFireStart", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking CONTINUE", "If Fails: Throttle FULL OPEN", "Mixture IDLE CUTOFF", "Cranking CONTINUE for 3 MINS", "Fire Extinguisher OBTAIN", "Master/Ignition/Fuel OFF"] },
-                    { id: "ElecFire", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch OFF", "Cabin Air & Heat OFF", "Fire Extinguisher CONSIDER USING"] }
+                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking CONTINUE", "If Fails: Throttle FULL OPEN", "Mixture IDLE CUTOFF", "Cranking CONTINUE for 3 MINS", "Fire Extinguisher OBTAIN", "Master/Ignition/Fuel OFF"] },
+                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch OFF", "Cabin Air & Heat OFF", "Fire Extinguisher CONSIDER USING"] }
                 ]
             },
             "Flows": {
                 "Ground": [
-                    { id: "SixPlusSix", title: "6+6 Flow", text: "Before Taxi Check", desc: "Instrument setup flow executed before taxiing.", items: ["Flaps UP (CHECK VISUALLY)", "6 Flight Instruments CHECK", "1. Clearance/Transponder OBTAIN/SET", "2. Barometers (ATIS/AWOS) OBTAIN/SET", "3. Altitude Select SET", "4. Comms SET", "5. Navs SET", "6. GPS & Map Range SET", "Taxi Light ON", "Taxi Area CLEAR", "Parking Brake RELEASE", "Brakes CHECK", "TC, Ball & DG CHECK ON FIRST TURN"] },
-                    { id: "HalfAndHalf", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake SET", "Taxi Light OFF", "Throttle 1,000 RPM", "Controls FREE & CORRECT", "Fuel Selector BOTH", "Primer VERIFY LOCKED", "Circuit Breakers VERIFY IN", "Departure Frequency SET", "Transponder ALT", "Aux Fuel Pump ON (CHECK RISE), OFF", "Mixture FULL RICH", "Throttle 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) CHECK", "Engine Instruments CHECK", "Alternator CHECK", "Carburetor Heat ON, CHECK", "Throttle IDLE", "Carburetor Heat OFF", "Throttle 1,000 RPM", "Pitot Heat AS REQUIRED", "Mixture LEAN FOR TAXI", "Crew Briefing COMPLETE", "Parking Brake RELEASE", "Taxi Light ON"] }
+                    { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Before Taxi Check", desc: "Instrument setup flow executed before taxiing.", items: ["Flaps UP (CHECK VISUALLY)", "6 Flight Instruments CHECK", "1. Clearance/Transponder OBTAIN/SET", "2. Barometers (ATIS/AWOS) OBTAIN/SET", "3. Altitude Select SET", "4. Comms SET", "5. Navs SET", "6. GPS & Map Range SET", "Taxi Light ON", "Taxi Area CLEAR", "Parking Brake RELEASE", "Brakes CHECK", "TC, Ball & DG CHECK ON FIRST TURN"] },
+                    { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake SET", "Taxi Light OFF", "Throttle 1,000 RPM", "Controls FREE & CORRECT", "Fuel Selector BOTH", "Primer VERIFY LOCKED", "Circuit Breakers VERIFY IN", "Departure Frequency SET", "Transponder ALT", "Aux Fuel Pump ON (CHECK RISE), OFF", "Mixture FULL RICH", "Throttle 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) CHECK", "Engine Instruments CHECK", "Alternator CHECK", "Carburetor Heat ON, CHECK", "Throttle IDLE", "Carburetor Heat OFF", "Throttle 1,000 RPM", "Pitot Heat AS REQUIRED", "Mixture LEAN FOR TAXI", "Crew Briefing COMPLETE", "Parking Brake RELEASE", "Taxi Light ON"] }
                 ],
                 "Air": [
-                    { id: "DIMS", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump OFF", "Pitch Attitude OBTAIN", "Power CRUISE RPM", "D - Directional Gyro ADJUST", "I - Instruments (Engine) CHECK", "M - Mixture LEAN", "S - Switches (Landing Light) AS REQUIRED", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
-                    { id: "FourCs", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
-                    { id: "ABC", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A - ATIS/AWOS OBTAIN", "B - Brief (Approach/Arrival) PERFORM", "C - Checklist PERFORM"] },
-                    { id: "CGUMPS", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN and WELDED", "M - Mixture RICH <3000 D.A.", "Props & Pumps ON", "S - Seatbelts & Switches CHECK"] },
-                    { id: "GoAround", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle FULL FWD", "Carburetor Heat OFF", "Pitch UP TO 8-10 DEG", "Flaps UP INCREMENTALLY", "Navigate", "Communicate", "IFR: GPS UNSUSPEND"] }
+                    { id: "DIMS", type: "sequence", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump OFF", "Pitch Attitude OBTAIN", "Power CRUISE RPM", "D - Directional Gyro ADJUST", "I - Instruments (Engine) CHECK", "M - Mixture LEAN", "S - Switches (Landing Light) AS REQUIRED", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
+                    { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
+                    { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A - ATIS/AWOS OBTAIN", "B - Brief (Approach/Arrival) PERFORM", "C - Checklist PERFORM"] },
+                    { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN and WELDED", "M - Mixture RICH <3000 D.A.", "Props & Pumps ON", "S - Seatbelts & Switches CHECK"] },
+                    { id: "GoAround", type: "sequence", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle FULL FWD", "Carburetor Heat OFF", "Pitch UP TO 8-10 DEG", "Flaps UP INCREMENTALLY", "Navigate", "Communicate", "IFR: GPS UNSUSPEND"] }
                 ],
                 "Emergencies": [
-                    { id: "ABCD", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land FIND and TURN", "C - Checklist PERFORM", "D - Declare CURRENT FREQ/121.5 & SQK 7700"] }
+                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land FIND and TURN", "C - Checklist PERFORM", "D - Declare CURRENT FREQ/121.5 & SQK 7700"] }
                 ]
             },
             "Weather": {
                 "TAF / METAR": [
-                    { id: "WxPrecip", title: "Precipitation", text: "Codes", desc: "Standard aviation weather codes indicating actual precipitation falling.", items: ["RA - Rain", "SN - Snow", "DZ - Drizzle", "GR - Hail", "GS - Small Hail", "PL - Ice Pellets"] },
-                    { id: "WxObscure", title: "Obscurations", text: "Restrictions", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["FG - Fog", "BR - Mist", "HZ - Haze", "FU - Smoke", "DU - Dust", "SA - Sand", "VA - Volcanic Ash"] },
-                    { id: "WxDesc", title: "Descriptors", text: "Modifiers", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["TS - Thunderstorm", "SH - Showers", "FZ - Freezing", "BL - Blowing", "PR - Partial", "BC - Patches", "MI - Shallow"] }
+                    { id: "WxPrecip", type: "definition", title: "Precipitation", text: "Codes", desc: "Standard aviation weather codes indicating actual precipitation falling.", items: ["RA - Rain", "SN - Snow", "DZ - Drizzle", "GR - Hail", "GS - Small Hail", "PL - Ice Pellets"] },
+                    { id: "WxObscure", type: "definition", title: "Obscurations", text: "Restrictions", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["FG - Fog", "BR - Mist", "HZ - Haze", "FU - Smoke", "DU - Dust", "SA - Sand", "VA - Volcanic Ash"] },
+                    { id: "WxDesc", type: "definition", title: "Descriptors", text: "Modifiers", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["TS - Thunderstorm", "SH - Showers", "FZ - Freezing", "BL - Blowing", "PR - Partial", "BC - Patches", "MI - Shallow"] }
                 ]
             },
             "Acronyms": {
                 "Emergencies": [
-                    { id: "WOSSS", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W - Wind", "O - Obstructions", "S - Size", "S - Shape", "S - Surface"] },
-                    { id: "ABCDE", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A - Airspeed", "B - Best Field", "C - Checklist", "D - Declare", "E - Execute"] }
+                    { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W - Wind", "O - Obstructions", "S - Size", "S - Shape", "S - Surface"] },
+                    { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A - Airspeed", "B - Best Field", "C - Checklist", "D - Declare", "E - Execute"] }
                 ],
                 "Equipment & Rules": [
-                    { id: "ATOMATO", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A - Altimeter", "T - Tachometer", "O - Oil Pressure", "M - Manifold Pressure", "A - Airspeed", "T - Temperature Gauge", "O - Oil Temp", "F - Fuel Gauge", "L - Landing Gear Pos", "A - Anti-collision Lights", "M - Magnetic Compass", "E - ELT", "S - Seatbelts"] },
-                    { id: "FLAPS", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F - Fuses", "L - Landing Light", "A - Anti-collision", "P - Position lights", "S - Source of power"] },
-                    { id: "ARROW", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A - Airworthiness Certificate", "R - Registration", "R - Radio license", "O - Operating limitations", "W - Weight and balance"] }
+                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A - Altimeter", "T - Tachometer", "O - Oil Pressure", "M - Manifold Pressure", "A - Airspeed", "T - Temperature Gauge", "O - Oil Temp", "F - Fuel Gauge", "L - Landing Gear Pos", "A - Anti-collision Lights", "M - Magnetic Compass", "E - ELT", "S - Seatbelts"] },
+                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F - Fuses", "L - Landing Light", "A - Anti-collision", "P - Position lights", "S - Source of power"] },
+                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A - Airworthiness Certificate", "R - Registration", "R - Radio license", "O - Operating limitations", "W - Weight and balance"] }
                 ]
             }
         };
@@ -460,9 +466,9 @@
         let isAnswered = false;
 
         // SVGs
-        const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a8c7fa" stroke-width="2.5" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const arrowDownSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+        const sunIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const arrowDownSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 
         // Theme
         function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
@@ -513,8 +519,9 @@
             document.getElementById('studyBtn').style.display = (pageId === 'quizScreen') ? 'flex' : 'none';
             
             closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Only scroll the main app container
+            document.querySelector('.app-container').scrollTo({ top: 0, behavior: 'smooth' });
 
             if (pushToHistory) history.pushState(historyState, '');
         }
@@ -639,13 +646,18 @@
         function getRandomOtherItems(currentFlow, count) {
             let allItems = [];
             Object.values(appDatabase).forEach(c => Object.values(c).forEach(sc => sc.forEach(f => {
-                if (f.title !== currentFlow.title) allItems = allItems.concat(f.items);
+                if (f.title !== currentFlow.title && f.type === currentFlow.type) allItems = allItems.concat(f.items);
             })));
             let selected = [];
-            for(let i=0; i<count; i++) selected.push(allItems[Math.floor(Math.random() * allItems.length)]);
+            if (allItems.length > 0) {
+                for(let i=0; i<count; i++) selected.push(allItems[Math.floor(Math.random() * allItems.length)]);
+            } else {
+                for(let i=0; i<count; i++) selected.push("N/A"); // Fallback
+            }
             return selected;
         }
 
+        // Generator for SEQUENCE type (Flows/Checklists)
         function genWhatIsNext() {
             let flow = currentActiveFlow;
             if (flow.items.length < 2) return null;
@@ -674,7 +686,7 @@
             };
         }
 
-        function genNotIncluded() {
+        function genNotIncludedSequence() {
             let flow = currentActiveFlow;
             let wrongItem = getRandomOtherItems(flow, 1)[0] || "Declare Emergency";
             return {
@@ -684,6 +696,52 @@
                 explanation: `<strong>${wrongItem}</strong> is not in this procedure.`
             };
         }
+
+        // Generator for DEFINITION type (Weather/Acronyms)
+        function genDefinitionQuestion() {
+            let flow = currentActiveFlow;
+            if (flow.items.length < 1) return null;
+            
+            let idx = Math.floor(Math.random() * flow.items.length);
+            let correctItem = flow.items[idx];
+            let parts = correctItem.split(" - ");
+            if (parts.length !== 2) return null; // Safety check
+            
+            let code = parts[0];
+            let definition = parts[1];
+            
+            // Get wrong options
+            let wrongDefs = [];
+            while(wrongDefs.length < 2) {
+                let randomIdx = Math.floor(Math.random() * flow.items.length);
+                if (randomIdx !== idx) {
+                    let wrongPart = flow.items[randomIdx].split(" - ")[1];
+                    if (!wrongDefs.includes(wrongPart)) wrongDefs.push(wrongPart);
+                }
+            }
+
+            return {
+                question: `What does **${code}** stand for in ${flow.title}?`,
+                options: [definition, wrongDefs[0], wrongDefs[1]],
+                correctAnswer: 0,
+                explanation: `**${code}** stands for **${definition}**.`
+            };
+        }
+
+        function genNotIncludedDefinition() {
+            let flow = currentActiveFlow;
+            let wrongItem = getRandomOtherItems(flow, 1)[0] || "XYZ - Unknown";
+            let correct1 = flow.items[0];
+            let correct2 = flow.items[flow.items.length - 1] || flow.items[1];
+
+            return {
+                question: `Which of the following is **NOT** part of the ${flow.title} acronym/codes?`,
+                options: [wrongItem, correct1, correct2],
+                correctAnswer: 0,
+                explanation: `<strong>${wrongItem}</strong> is not part of this list.`
+            };
+        }
+
 
         function shuffleArray(array) {
             let shuffled = [...array];
@@ -700,15 +758,25 @@
             currentActiveFlow = quizObj;
             generatedQuestions = [];
             
+            let isSequence = (quizObj.type === "sequence");
+
             for (let i = 0; i < QUESTIONS_PER_DRILL; i++) {
                 let q = null, attempts = 0;
                 while (!q && attempts < 15) {
                     let rand = Math.random();
-                    if (rand < 0.33) q = genWhatIsNext();
-                    else if (rand < 0.66) q = genFirstAction();
-                    else q = genNotIncluded();
+                    
+                    if (isSequence) {
+                        if (rand < 0.33) q = genWhatIsNext();
+                        else if (rand < 0.66) q = genFirstAction();
+                        else q = genNotIncludedSequence();
+                    } else {
+                        // Weather / Acronyms logic
+                        if (rand < 0.75) q = genDefinitionQuestion();
+                        else q = genNotIncludedDefinition();
+                    }
                     attempts++;
                 }
+                
                 if (q) {
                     let optsWithIdx = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctAnswer }));
                     optsWithIdx = shuffleArray(optsWithIdx);
@@ -737,7 +805,7 @@
             document.getElementById('quizProgress').style.width = `${(currentQ / QUESTIONS_PER_DRILL) * 100}%`;
             
             let q = generatedQuestions[currentQ];
-            document.getElementById('qText').innerText = q.question;
+            document.getElementById('qText').innerHTML = q.question; // changed to innerHTML to allow bolding
             
             const optsContainer = document.getElementById('optionsContainer');
             optsContainer.innerHTML = '';
@@ -785,7 +853,7 @@
             currentQ++;
             if (currentQ < QUESTIONS_PER_DRILL) loadQuestion();
             else showScore();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.querySelector('.app-container').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function showScore() {
