@@ -68,8 +68,9 @@
             color: var(--text-main);
             margin: 0; padding: 0;
             height: 100vh;
+            height: 100dvh; /* Fix for mobile browser UI elements */
             display: flex; flex-direction: column;
-            overflow: hidden; /* Prevent body scroll, handle scroll in app-container */
+            overflow: hidden; /* Locks body, allows only the app-container to scroll */
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
             font-size: 16px; 
@@ -104,27 +105,29 @@
         #backBtn, #studyBtn { display: none; }
 
         /* =========================================================
-           LAYOUT & PERFECT CENTERING
+           LAYOUT, SCROLLING & SMART CENTERING
            ========================================================= */
         .app-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center; /* PERFECT VERTICAL CENTERING */
             width: 100%;
             height: 100%;
-            padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 76px); /* Space for fixed nav */
-            overflow-y: auto; /* Allow scrolling if content is taller than screen */
+            overflow-y: auto; /* Handles all the scrolling perfectly */
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
         }
 
         .main-wrapper {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; max-width: 800px; 
-            margin: auto; /* Ensure it stays in the middle */
+            flex: 1 0 auto; /* Allow to grow and center, but won't shrink below content */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 800px; 
+            margin: 0 auto; /* Center horizontally */
+            padding: 16px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 80px); /* Avoid top nav */
         }
 
-        /* Pages are now styled as Gemini Cards */
         .page { 
             display: none; 
             width: 100%; 
@@ -134,8 +137,7 @@
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-soft);
             transition: background-color 0.4s ease, border-color 0.4s ease;
-            max-height: 85vh; /* Keep card within screen */
-            overflow-y: auto; /* Scroll inside the card if needed */
+            margin: auto 0; /* Smart vertical centering! Centers only if there is space */
         }
         
         .page.active { 
@@ -215,13 +217,13 @@
         .study-desc:hover { box-shadow: var(--shadow-soft); }
 
         .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
-        .question-text { font-size: 1.3rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
+        .question-text { font-size: 1.45rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
         
         .options { display: flex; flex-direction: column; gap: 14px; }
         
         .option-btn { 
             background: var(--bg-color); border: 1.5px solid var(--border-color); color: var(--text-main); 
-            border-radius: 16px; padding: 20px 22px; font-size: 1.05rem; text-align: left; font-weight: 500; line-height: 1.4; 
+            border-radius: 16px; padding: 20px 22px; font-size: 1.1rem; text-align: left; font-weight: 500; line-height: 1.4; 
             font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
         }
         
@@ -309,12 +311,20 @@
         /* =========================================================
            FOOTER
            ========================================================= */
-        .footer { text-align: center; padding: 16px; color: var(--text-muted); font-size: 0.85rem; width: 100%; font-weight: 500; }
+        .footer { 
+            flex-shrink: 0; /* Prevents footer from collapsing */
+            text-align: center; 
+            padding: 24px; 
+            color: var(--text-muted); 
+            font-size: 0.85rem; 
+            width: 100%; 
+            font-weight: 500; 
+        }
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION (SVG ICONS) -->
+    <!-- TOP NAVIGATION -->
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
@@ -345,8 +355,8 @@
         <div id="rightPanelContent" style="padding: 16px;"></div>
     </div>
 
-    <!-- MAIN APP CONTAINER (Centers everything) -->
-    <div class="app-container">
+    <!-- SCROLLABLE APP CONTAINER -->
+    <div class="app-container" id="appScrollContainer">
         <div class="main-wrapper">
             
             <!-- HOME SCREEN -->
@@ -393,18 +403,18 @@
                 <div class="score-val" id="finalScore">0%</div>
                 <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
                 <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
-                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Dashboard</button>
+                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
             </div>
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.0.8 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.0.9 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
         const QUESTIONS_PER_DRILL = 15;
 
-        // FIXED DATABASE - Corrected to exactly match user's PDF & Requirements
+        // FIXED DATABASE
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
@@ -512,16 +522,19 @@
             });
             
             const newPage = document.getElementById(pageId);
-            void newPage.offsetWidth; // trigger reflow to restart CSS animation
+            void newPage.offsetWidth; // Trigger reflow for animation
             newPage.classList.add('active');
             
             document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
             document.getElementById('studyBtn').style.display = (pageId === 'quizScreen') ? 'flex' : 'none';
             
             closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
-
-            // Only scroll the main app container
-            document.querySelector('.app-container').scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // INSTANT AND RELIABLE SCROLL TO TOP OF APP
+            const appContainer = document.getElementById('appScrollContainer');
+            if (appContainer) {
+                appContainer.scrollTop = 0;
+            }
 
             if (pushToHistory) history.pushState(historyState, '');
         }
@@ -657,7 +670,6 @@
             return selected;
         }
 
-        // Generator for SEQUENCE type (Flows/Checklists)
         function genWhatIsNext() {
             let flow = currentActiveFlow;
             if (flow.items.length < 2) return null;
@@ -697,7 +709,6 @@
             };
         }
 
-        // Generator for DEFINITION type (Weather/Acronyms)
         function genDefinitionQuestion() {
             let flow = currentActiveFlow;
             if (flow.items.length < 1) return null;
@@ -705,12 +716,11 @@
             let idx = Math.floor(Math.random() * flow.items.length);
             let correctItem = flow.items[idx];
             let parts = correctItem.split(" - ");
-            if (parts.length !== 2) return null; // Safety check
+            if (parts.length !== 2) return null;
             
             let code = parts[0];
             let definition = parts[1];
             
-            // Get wrong options
             let wrongDefs = [];
             while(wrongDefs.length < 2) {
                 let randomIdx = Math.floor(Math.random() * flow.items.length);
@@ -742,7 +752,6 @@
             };
         }
 
-
         function shuffleArray(array) {
             let shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -770,7 +779,6 @@
                         else if (rand < 0.66) q = genFirstAction();
                         else q = genNotIncludedSequence();
                     } else {
-                        // Weather / Acronyms logic
                         if (rand < 0.75) q = genDefinitionQuestion();
                         else q = genNotIncludedDefinition();
                     }
@@ -805,7 +813,7 @@
             document.getElementById('quizProgress').style.width = `${(currentQ / QUESTIONS_PER_DRILL) * 100}%`;
             
             let q = generatedQuestions[currentQ];
-            document.getElementById('qText').innerHTML = q.question; // changed to innerHTML to allow bolding
+            document.getElementById('qText').innerHTML = q.question;
             
             const optsContainer = document.getElementById('optionsContainer');
             optsContainer.innerHTML = '';
@@ -853,7 +861,9 @@
             currentQ++;
             if (currentQ < QUESTIONS_PER_DRILL) loadQuestion();
             else showScore();
-            document.querySelector('.app-container').scrollTo({ top: 0, behavior: 'smooth' });
+            
+            const appContainer = document.getElementById('appScrollContainer');
+            if(appContainer) appContainer.scrollTop = 0;
         }
 
         function showScore() {
