@@ -4,55 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="C172 Master">
     <title>C-172 Knowledge Master</title>
     
-    <!-- Premium Font Import -->
+    <!-- Premium Google-like Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         /* =========================================================
-           PREMIUM LUXURY DESIGN SYSTEM
+           GEMINI / MATERIAL 3 DESIGN SYSTEM
            ========================================================= */
         :root {
-            /* Light Mode - Pearl & Azure */
-            --bg-color: #f8fafc;
+            /* Light Mode (Google Material Light) */
+            --bg-color: #f0f4f9;
             --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --primary-color: #0284c7; 
-            --primary-gradient: linear-gradient(135deg, #0284c7 0%, #3b82f6 100%);
-            --hover-color: #f1f5f9;
-            --correct-color: #10b981;
-            --correct-bg: #ecfdf5;
-            --wrong-color: #ef4444;
-            --wrong-bg: #fef2f2;
-            --border-color: rgba(226, 232, 240, 0.8);
-            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
-            --shadow-btn: 0 8px 20px -6px rgba(2, 132, 199, 0.4);
-            --nav-glass: rgba(255, 255, 255, 0.85);
+            --text-main: #1f1f1f;
+            --text-muted: #444746;
+            --primary-color: #0b57d0; 
+            --hover-color: #e1e3e1;
+            --card-hover: #f8fafd;
+            --correct-color: #146c2e;
+            --correct-bg: #e6f4ea;
+            --wrong-color: #b3261e;
+            --wrong-bg: #fce8e6;
+            --border-color: #e0e0e0;
+            --shadow-soft: 0 2px 6px rgba(0,0,0,0.05);
+            --nav-bg: rgba(240, 244, 249, 0.9);
         }
 
         body.dark-mode {
-            /* Dark Mode - Deep Midnight */
-            --bg-color: #020617;
-            --card-bg: #0f172a;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary-color: #38bdf8;
-            --primary-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
-            --hover-color: #1e293b;
-            --correct-color: #34d399;
-            --correct-bg: rgba(16, 185, 129, 0.15);
-            --wrong-color: #f87171;
-            --wrong-bg: rgba(239, 68, 68, 0.15);
-            --border-color: rgba(51, 65, 85, 0.6);
-            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.5);
-            --shadow-btn: 0 8px 20px -6px rgba(56, 189, 248, 0.3);
-            --nav-glass: rgba(2, 6, 23, 0.85);
+            /* Dark Mode (Google Material Dark) */
+            --bg-color: #131314;
+            --card-bg: #1e1f22;
+            --text-main: #e3e3e3;
+            --text-muted: #c4c7c5;
+            --primary-color: #a8c7fa;
+            --hover-color: #444746;
+            --card-hover: #282a2d;
+            --correct-color: #81c995;
+            --correct-bg: rgba(20, 108, 46, 0.2);
+            --wrong-color: #f28b82;
+            --wrong-bg: rgba(179, 38, 30, 0.2);
+            --border-color: #444746;
+            --shadow-soft: 0 4px 12px rgba(0,0,0,0.2);
+            --nav-bg: rgba(19, 19, 20, 0.9);
         }
 
         * { 
@@ -61,7 +59,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0; padding: 0;
@@ -69,32 +67,31 @@
             display: flex; flex-direction: column;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            touch-action: manipulation;
-            font-size: 15px; 
-            transition: background-color 0.4s ease, color 0.4s ease;
+            touch-action: manipulation; /* Blocks double-tap zoom */
+            font-size: 16px; 
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         /* =========================================================
-           TOP NAVIGATION (GLASS EFFECT)
+           TOP NAVIGATION
            ========================================================= */
         .top-nav {
             position: fixed; top: 0; left: 0; width: 100%;
             height: calc(env(safe-area-inset-top, 20px) + 60px);
-            background-color: var(--nav-glass);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             display: flex; align-items: flex-end; justify-content: space-between;
-            padding: 12px 20px; z-index: 100;
-            transition: background-color 0.4s ease, border-color 0.4s ease;
+            padding: 12px 16px; z-index: 100;
+            transition: background-color 0.3s ease;
         }
 
         .icon-btn {
             background: none; border: none; color: var(--primary-color);
             padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+            border-radius: 50%; transition: background-color 0.2s ease;
         }
-        .icon-btn:active { opacity: 0.6; transform: scale(0.92); }
-        .nav-group { display: flex; gap: 14px; }
+        .icon-btn:active { background-color: var(--hover-color); }
+        .nav-group { display: flex; gap: 8px; }
         #backBtn, #studyBtn { display: none; }
 
         /* =========================================================
@@ -102,117 +99,133 @@
            ========================================================= */
         .main-wrapper {
             flex: 1; display: flex; flex-direction: column; align-items: center;
-            width: 100%; padding: 20px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 85px);
-            padding-bottom: 50px;
+            width: 100%; padding: 16px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 80px);
+            padding-bottom: 40px;
         }
 
-        .page { display: none; width: 100%; max-width: 650px; }
+        .page { display: none; width: 100%; max-width: 700px; }
         .page.active { 
             display: block; 
-            animation: elegantFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            animation: materialFadeIn 0.4s cubic-bezier(0.2, 0, 0, 1) forwards; 
         }
 
-        @keyframes elegantFadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+        @keyframes materialFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Typography */
-        h1 { margin: 0 0 6px 0; font-size: 1.7rem; font-weight: 800; text-align: center; letter-spacing: -0.03em; color: var(--text-main); }
-        .subtitle { color: var(--primary-color); margin-bottom: 35px; font-size: 0.85rem; text-align: center; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+        h1 { margin: 0 0 6px 0; font-size: 1.8rem; font-weight: 600; text-align: center; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 0.95rem; text-align: center; font-weight: 400; letter-spacing: 0.5px; }
 
         /* =========================================================
-           PREMIUM CARDS & LISTS
+           MATERIAL CARDS & LISTS
            ========================================================= */
         .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
         
         .parent-card {
             background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: none;
             color: var(--text-main);
             border-radius: 20px;
-            padding: 30px 20px;
+            padding: 28px 16px;
             font-size: 1.15rem;
-            font-weight: 700;
+            font-weight: 500;
             text-align: center;
             box-shadow: var(--shadow-soft);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.2s, background-color 0.2s;
             cursor: pointer;
         }
-        .parent-card:active { transform: scale(0.96); border-color: var(--primary-color); }
+        .parent-card:active { transform: scale(0.97); background-color: var(--card-hover); }
 
-        .list-group { margin-bottom: 35px; }
-        .list-group-header { font-size: 0.8rem; color: var(--text-muted); margin-left: 8px; margin-bottom: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
-        .list-group-body { background: var(--card-bg); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); }
+        .category-section { margin-bottom: 35px; }
+        .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.2px; }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
         
-        .list-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 20px; border-bottom: 1px solid var(--border-color); cursor: pointer;
-            transition: background-color 0.2s;
+        .menu-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 16px;
+            padding: 18px 14px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            text-align: left;
+            min-height: 80px;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.2s, background-color 0.2s;
+            font-family: inherit;
         }
-        .list-row:last-child { border-bottom: none; }
-        .list-row:active { background-color: var(--hover-color); }
-        
-        .list-title { font-size: 1.05rem; font-weight: 600; color: var(--text-main); margin-bottom: 4px; letter-spacing: -0.01em; }
-        .list-subtitle { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .chevron { color: var(--text-muted); opacity: 0.5; }
-
-        /* Static rows for Study material */
-        .list-row-static { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-size: 1rem; line-height: 1.5; color: var(--text-main); font-weight: 500; }
-        .list-row-static:last-child { border-bottom: none; }
+        .menu-btn:active { transform: scale(0.98); background-color: var(--card-hover); }
+        .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; }
 
         /* =========================================================
-           QUIZ UI
+           STUDY & QUIZ SCREENS
            ========================================================= */
-        .progress-container { width: 100%; height: 6px; background: var(--hover-color); border-radius: 4px; margin-bottom: 25px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--primary-gradient); width: 0%; transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 4px; }
-
-        .question-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .question-text { font-size: 1.3rem; font-weight: 800; margin-bottom: 30px; line-height: 1.4; color: var(--text-main); letter-spacing: -0.02em; }
+        #studyScreen, #quizScreen, #scoreScreen { display: none; }
         
-        .options { display: flex; flex-direction: column; gap: 14px; }
+        .study-title { font-size: 1.8rem; margin: 0 0 8px 0; color: var(--text-main); font-weight: 600; }
+        .study-subtitle { font-size: 1.05rem; color: var(--primary-color); margin-bottom: 16px; font-weight: 500; }
+        .study-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; background: var(--card-bg); padding: 16px; border-radius: 16px; box-shadow: var(--shadow-soft); }
+
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+        .question-text { font-size: 1.35rem; font-weight: 500; margin-bottom: 32px; line-height: 1.4; color: var(--text-main); }
+        
+        .options { display: flex; flex-direction: column; gap: 12px; }
         .option-btn { 
             background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); 
-            border-radius: 16px; padding: 18px 20px; font-size: 1.05rem; text-align: left; font-weight: 600; line-height: 1.4; 
-            box-shadow: var(--shadow-soft); transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
+            border-radius: 16px; padding: 18px 20px; font-size: 1.05rem; text-align: left; font-weight: 400; line-height: 1.4; 
+            box-shadow: var(--shadow-soft); transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+            font-family: inherit;
         }
-        .option-btn:active:not(:disabled) { background: var(--hover-color); transform: scale(0.98); border-color: var(--primary-color); }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-hover); }
         .option-btn:disabled { cursor: default; box-shadow: none; }
-        .option-btn.correct { background: var(--correct-color) !important; color: #fff; border-color: var(--correct-color); }
-        .option-btn.wrong { background: var(--wrong-color) !important; color: #fff; border-color: var(--wrong-color); }
+        .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color); color: var(--correct-color); font-weight: 600; }
+        .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color); color: var(--wrong-color); font-weight: 600; }
 
-        .feedback { margin-top: 25px; padding: 20px; border-radius: 16px; font-size: 0.95rem; display: none; line-height: 1.5; font-weight: 600; }
-        .feedback.show { display: block; animation: elegantFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(16, 185, 129, 0.2); }
-        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .feedback { margin-top: 24px; padding: 20px; border-radius: 16px; font-size: 1rem; display: none; line-height: 1.5; font-weight: 500; }
+        .feedback.show { display: block; animation: materialFadeIn 0.3s ease forwards; }
+        .feedback.success { background: var(--correct-bg); color: var(--correct-color); }
+        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); }
+
+        .flow-box { background: var(--card-bg); padding: 20px; margin-top: 20px; border-radius: 16px; border: 1px solid var(--border-color); }
+        .flow-box h4 { margin: 0 0 12px 0; color: var(--primary-color); font-size: 0.95rem; font-weight: 600; }
+        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 400; font-size: 1.05rem; line-height: 1.6; }
+        .flow-box li { margin-bottom: 8px; }
 
         .primary-btn { 
-            background: var(--primary-gradient); color: #fff; border: none; padding: 18px; font-size: 1.05rem; 
-            border-radius: 16px; font-weight: 700; margin-top: 30px; width: 100%; display: none; text-transform: uppercase;
-            letter-spacing: 1px; box-shadow: var(--shadow-btn); transition: opacity 0.2s, transform 0.2s; cursor: pointer;
+            background: var(--primary-color); color: #fff; border: none; padding: 18px; font-size: 1.1rem; 
+            border-radius: 100px; /* Pill shape like Google */
+            font-weight: 500; margin-top: 32px; width: 100%; display: none;
+            transition: opacity 0.2s, transform 0.2s; cursor: pointer; font-family: inherit;
         }
-        .primary-btn:active { opacity: 0.9; transform: scale(0.97); }
-        .start-btn { display: block; margin-top: 30px; }
+        .primary-btn:active { opacity: 0.8; transform: scale(0.98); }
+        .start-btn { display: block; margin-top: 32px; }
+
+        /* Progress Bar */
+        .progress-container { width: 100%; height: 4px; background: var(--hover-color); border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.3s ease; }
 
         /* Score Screen */
-        .score-val { font-size: 4.5rem; font-weight: 800; color: transparent; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; margin: 15px 0; letter-spacing: -2px; text-align: center; }
-        .secondary-btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 15px; box-shadow: var(--shadow-soft); }
-        .secondary-btn:active { background: var(--hover-color); }
+        .score-val { font-size: 4rem; font-weight: 600; color: var(--primary-color); margin: 16px 0; text-align: center; }
+        .secondary-btn { background: transparent; color: var(--primary-color); border: 1px solid var(--primary-color); margin-top: 16px; }
+        .secondary-btn:active { background: var(--correct-bg); }
 
         /* =========================================================
            SIDE MENUS
            ========================================================= */
         #leftMenuOverlay, #rightMenuOverlay {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-            z-index: 998; opacity: 0; transition: opacity 0.4s ease;
+            background: rgba(0,0,0,0.4); z-index: 998; opacity: 0; transition: opacity 0.3s ease;
         }
         #leftMenuOverlay.open, #rightMenuOverlay.open { display: block; opacity: 1; }
 
         .side-menu {
             position: fixed; top: 0; height: 100vh; background: var(--bg-color);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1000; overflow-y: auto; 
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto; 
             padding-bottom: env(safe-area-inset-bottom, 20px);
         }
         #leftNavMenu { left: 0; width: 300px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
@@ -221,31 +234,29 @@
         #rightNavMenu { right: 0; width: 320px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
         #rightNavMenu.open { transform: translateX(0); }
 
-        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 25px) 20px 15px 20px; color: var(--primary-color); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .sidebar-item {
             display: flex; align-items: center; justify-content: space-between;
-            background: var(--card-bg); border-bottom: 1px solid var(--border-color);
+            background: transparent;
         }
-        .sidebar-item:first-of-type { border-top: 1px solid var(--border-color); }
         
-        .sidebar-text { flex: 1; padding: 18px 20px; font-size: 1.05rem; font-weight: 600; color: var(--text-main); cursor: pointer; }
+        .sidebar-text { flex: 1; padding: 16px 20px; font-size: 1.05rem; font-weight: 500; color: var(--text-main); cursor: pointer; transition: background 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
         .sidebar-text:active { background: var(--hover-color); }
         
-        .sidebar-icon { padding: 18px 20px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); border-left: 1px solid var(--border-color); }
-        .sidebar-icon:active { background: var(--hover-color); }
+        .sidebar-icon { padding: 16px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease; }
         
-        .sidebar-sub { max-height: 0; overflow: hidden; background: var(--bg-color); transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
         .sidebar-sub button {
-            width: 100%; text-align: left; padding: 15px 20px 15px 40px; background: none; border: none;
-            font-size: 0.95rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-weight: 500; font-family: 'Inter', sans-serif;
+            width: 100%; text-align: left; padding: 14px 20px 14px 40px; background: none; border: none;
+            font-size: 0.95rem; color: var(--text-muted); font-weight: 400; font-family: inherit;
         }
         .sidebar-sub button:active { background: var(--hover-color); color: var(--primary-color); }
 
         /* =========================================================
            FOOTER
            ========================================================= */
-        .footer { text-align: center; padding: 25px; color: var(--text-muted); font-size: 0.75rem; width: 100%; margin-top: auto; font-weight: 500; letter-spacing: 0.5px; }
+        .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.8rem; width: 100%; margin-top: auto; font-weight: 400; }
     </style>
 </head>
 <body>
@@ -254,15 +265,15 @@
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()"></button>
         </div>
@@ -278,16 +289,14 @@
     <div id="rightMenuOverlay" onclick="closeRightMenu()"></div>
     <div id="rightNavMenu" class="side-menu">
         <div class="menu-header">Study Material</div>
-        <div class="list-group">
-            <div class="list-group-body" id="rightPanelContent"></div>
-        </div>
+        <div id="rightPanelContent" style="padding: 16px;"></div>
     </div>
 
     <div class="main-wrapper">
         <!-- HOME SCREEN -->
         <div class="page active" id="homeScreen">
             <h1>C-172 Master</h1>
-            <div class="subtitle">Select Category</div>
+            <div class="subtitle">Select Training Category</div>
             <div id="homeCategories"></div>
         </div>
 
@@ -302,8 +311,9 @@
         <div class="page" id="studyScreen">
             <h1 id="studyTitle">Title</h1>
             <div class="subtitle" id="studySubtitle">Subtitle</div>
-            <div class="list-group">
-                <div class="list-group-body" id="studyListContent"></div>
+            <div class="study-desc" id="studyScreenDesc">Context description goes here.</div>
+            <div class="flow-box">
+                <div id="studyScreenContent"></div>
             </div>
             <button class="primary-btn start-btn" onclick="startQuizFromStudy()">Start Drill</button>
         </div>
@@ -323,68 +333,68 @@
 
         <!-- SCORE SCREEN -->
         <div class="page" id="scoreScreen">
-            <h1 style="text-transform: uppercase;">Drill Completed</h1>
+            <h1>Drill Completed</h1>
             <div class="score-val" id="finalScore">0%</div>
-            <div class="subtitle" id="finalStats" style="margin-bottom: 30px;"></div>
+            <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
             <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
-            <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Dashboard</button>
+            <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
         </div>
         
         <!-- FOOTER -->
-        <div class="footer">v1.4.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.5.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
         const QUESTIONS_PER_DRILL = 15;
 
-        // FIXED DATABASE - Precise Flows vs Checklists
+        // FIXED DATABASE - Added Context Descriptions based on user's documents
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
-                    { id: "EngineStart", title: "Engine Starting", text: "Normal Start", items: ["Passenger Briefing COMPLETE", "Doors and Seatbelts SECURED", "Parking Brake SET", "Fuel Selector BOTH", "Carburetor Heat COLD", "Mixture FULL RICH", "Primer 2-5 STROKES & LOCK", "Master Switch ON", "Lights AS REQUIRED", "Throttle OPEN 1/8 INCH", "Prop Area CLEAR", "Starter ENGAGE", "Throttle 1,000 RPM & ADJUST", "Oil Pressure GREEN", "Mixture LEAN FOR TAXI", "Radio Master ON"] },
-                    { id: "PreLineup", title: "Pre-Lineup", text: "Before Takeoff Roll", items: ["Trim/Flaps SET FOR TAKEOFF", "Lights AS REQUIRED", "Aux Fuel Pump ON", "Mixture RICH <3000 D.A.", "Carburetor Heat OFF", "Doors, Windows & Seatbelts SECURED", "Fuel Timer SET", "Traffic CLEAR", "Assigned RWY/HDG CONFIRMED"] },
-                    { id: "ClimbCheck", title: "Climb", text: "500' AGL", items: ["Flaps UP", "Taxi Light OFF", "Engine Instruments CHECK"] },
-                    { id: "CruiseCheck", title: "Cruise", text: "Cruise Checklist", items: ["Aux Fuel Pump OFF", "Pitch Attitude OBTAIN", "Power CRUISE RPM", "DIMS Flow PERFORM", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
-                    { id: "AfterLanding", title: "After Landing", text: "Runway Cleared", items: ["Flaps UP", "Mixture LEAN FOR TAXI", "Carburetor Heat OFF", "Trim RESET FOR TAKEOFF", "Pitot Heat OFF", "Taxi Light ON", "Landing Light OFF"] },
-                    { id: "ShutDown", title: "Shut Down", text: "Engine Shutdown", items: ["Parking Brake SET", "Radio Master OFF", "Exterior Lights OFF", "Cabin / Panel Lights OFF", "Throttle IDLE", "Mixture IDLE CUTOFF", "Ignition Switch OFF & KEY OUT", "Master Switch OFF"] },
-                    { id: "Securing", title: "Securing", text: "Airplane Securing", items: ["Lights ALL ON", "Tie Downs & Chocks APPLY", "Control Lock & Pitot Cover INSTALL", "Fuel Selector LEFT or RIGHT", "Cabin Air/Heat OFF", "Windows CLOSE", "Flight Plan CLOSE", "Binder & Fuel Load RECORD", "FSP & Squawks COMPLETE", "Garbage VERIFY CLEAN"] }
+                    { id: "EngineStart", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing COMPLETE", "Doors and Seatbelts SECURED", "Parking Brake SET", "Fuel Selector BOTH", "Carburetor Heat COLD", "Mixture FULL RICH", "Primer 2-5 STROKES & LOCK", "Master Switch ON", "Lights AS REQUIRED", "Throttle OPEN 1/8 INCH", "Prop Area CLEAR", "Starter ENGAGE", "Throttle 1,000 RPM & ADJUST", "Oil Pressure GREEN", "Mixture LEAN FOR TAXI", "Radio Master ON"] },
+                    { id: "PreLineup", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps SET FOR TAKEOFF", "Lights AS REQUIRED", "Aux Fuel Pump ON", "Mixture RICH <3000 D.A.", "Carburetor Heat OFF", "Doors, Windows & Seatbelts SECURED", "Fuel Timer SET", "Traffic CLEAR", "Assigned RWY/HDG CONFIRMED"] },
+                    { id: "ClimbCheck", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps UP", "Taxi Light OFF", "Engine Instruments CHECK"] },
+                    { id: "CruiseCheck", title: "Cruise", text: "Cruise Checklist", desc: "Tasks to stabilize the aircraft in level flight and prepare for the next phase.", items: ["Aux Fuel Pump OFF", "Pitch Attitude OBTAIN", "Power CRUISE RPM", "DIMS Flow PERFORM", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
+                    { id: "AfterLanding", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps UP", "Mixture LEAN FOR TAXI", "Carburetor Heat OFF", "Trim RESET FOR TAKEOFF", "Pitot Heat OFF", "Taxi Light ON", "Landing Light OFF"] },
+                    { id: "ShutDown", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake SET", "Radio Master OFF", "Exterior Lights OFF", "Cabin / Panel Lights OFF", "Throttle IDLE", "Mixture IDLE CUTOFF", "Ignition Switch OFF & KEY OUT", "Master Switch OFF"] },
+                    { id: "Securing", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ALL ON", "Tie Downs & Chocks APPLY", "Control Lock & Pitot Cover INSTALL", "Fuel Selector LEFT or RIGHT", "Cabin Air/Heat OFF", "Windows CLOSE", "Flight Plan CLOSE", "Binder & Fuel Load RECORD", "FSP & Squawks COMPLETE", "Garbage VERIFY CLEAN"] }
                 ],
                 "Emergency Procedures": [
-                    { id: "EngineFireStart", title: "Fire (Start)", text: "Engine Fire During Start", items: ["Cranking CONTINUE", "If Fails: Throttle FULL OPEN", "Mixture IDLE CUTOFF", "Cranking CONTINUE for 3 MINS", "Fire Extinguisher OBTAIN", "Master/Ignition/Fuel OFF"] },
-                    { id: "ElecFire", title: "Electrical Fire", text: "Smoke in Cabin", items: ["Master Switch OFF", "Cabin Air & Heat OFF", "Fire Extinguisher CONSIDER USING"] }
+                    { id: "EngineFireStart", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking CONTINUE", "If Fails: Throttle FULL OPEN", "Mixture IDLE CUTOFF", "Cranking CONTINUE for 3 MINS", "Fire Extinguisher OBTAIN", "Master/Ignition/Fuel OFF"] },
+                    { id: "ElecFire", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch OFF", "Cabin Air & Heat OFF", "Fire Extinguisher CONSIDER USING"] }
                 ]
             },
             "Flows": {
                 "Ground": [
-                    { id: "SixPlusSix", title: "6+6 Flow", text: "Before Taxi", items: ["Transponder Code / Clearance", "Barometers", "Altitude Pre-Select(s)", "Comms", "NAVS", "GPS (and MFD ranges)"] },
-                    { id: "HalfAndHalf", title: "1/2 & 1/2 Flow", text: "Before Takeoff", items: ["Controls FREE & CORRECT", "Circuit Breakers VERIFY IN", "Trims Reset for Takeoff", "Lights", "GPS #2", "Gauges", "Magnetos", "Carb Heat", "Idle Check"] }
+                    { id: "SixPlusSix", title: "6+6 Flow", text: "Before Taxi", desc: "Instrument setup flow executed before taxiing.", items: ["Transponder Code / Clearance", "Barometers", "Altitude Pre-Select(s)", "Comms", "NAVS", "GPS (and MFD ranges)"] },
+                    { id: "HalfAndHalf", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Controls FREE & CORRECT", "Circuit Breakers VERIFY IN", "Trims Reset for Takeoff", "Lights", "GPS #2", "Gauges", "Magnetos", "Carb Heat", "Idle Check"] }
                 ],
                 "Air": [
-                    { id: "DIMS", title: "DIMS", text: "Cruise Flow", items: ["D - Directional Gyro ADJUST", "I - Instruments CHECK", "M - Mixture LEAN", "S - Switches AS REQUIRED"] },
-                    { id: "FourCs", title: "4 C's", text: "Pre-Maneuver", items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
-                    { id: "ABC", title: "ABC", text: "Descent", items: ["A - ATIS/AWOS OBTAIN", "B - Brief PERFORM", "C - Checklist PERFORM"] },
-                    { id: "CGUMPS", title: "CGUMPS", text: "Final Check", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN", "M - Mixture RICH", "P - Pumps/Primer ON", "S - Seatbelts & Switches CHECK"] }
+                    { id: "DIMS", title: "DIMS", text: "Cruise Flow", desc: "Cruise mnemonic to set Directional gyro, Instruments, Mixture, and Switches.", items: ["D - Directional Gyro ADJUST", "I - Instruments CHECK", "M - Mixture LEAN", "S - Switches AS REQUIRED"] },
+                    { id: "FourCs", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
+                    { id: "ABC", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A - ATIS/AWOS OBTAIN", "B - Brief PERFORM", "C - Checklist PERFORM"] },
+                    { id: "CGUMPS", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN", "M - Mixture RICH", "P - Pumps/Primer ON", "S - Seatbelts & Switches CHECK"] }
                 ],
                 "Emergencies": [
-                    { id: "ABCD", title: "ABCD", text: "Engine Failure", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land", "C - Checklist", "D - Declare"] }
+                    { id: "ABCD", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight (Airspeed, Best place, Checklist, Declare).", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land", "C - Checklist", "D - Declare"] }
                 ]
             },
             "Weather": {
                 "TAF / METAR": [
-                    { id: "WxPrecip", title: "Precipitation", text: "Codes", items: ["RA - Rain", "SN - Snow", "DZ - Drizzle", "GR - Hail", "GS - Small Hail", "PL - Ice Pellets"] },
-                    { id: "WxObscure", title: "Obscurations", text: "Restrictions", items: ["FG - Fog", "BR - Mist", "HZ - Haze", "FU - Smoke", "DU - Dust", "SA - Sand", "VA - Volcanic Ash"] },
-                    { id: "WxDesc", title: "Descriptors", text: "Modifiers", items: ["TS - Thunderstorm", "SH - Showers", "FZ - Freezing", "BL - Blowing", "PR - Partial", "BC - Patches", "MI - Shallow"] }
+                    { id: "WxPrecip", title: "Precipitation", text: "Codes", desc: "Standard aviation weather codes indicating actual precipitation falling.", items: ["RA - Rain", "SN - Snow", "DZ - Drizzle", "GR - Hail", "GS - Small Hail", "PL - Ice Pellets"] },
+                    { id: "WxObscure", title: "Obscurations", text: "Restrictions", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["FG - Fog", "BR - Mist", "HZ - Haze", "FU - Smoke", "DU - Dust", "SA - Sand", "VA - Volcanic Ash"] },
+                    { id: "WxDesc", title: "Descriptors", text: "Modifiers", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["TS - Thunderstorm", "SH - Showers", "FZ - Freezing", "BL - Blowing", "PR - Partial", "BC - Patches", "MI - Shallow"] }
                 ]
             },
             "Acronyms": {
                 "Emergencies": [
-                    { id: "WOSSS", title: "WOSSS", text: "Forced Landing", items: ["W - Wind", "O - Obstructions", "S - Size", "S - Shape", "S - Surface"] },
-                    { id: "ABCDE", title: "ABCDE", text: "Emergency Landing", items: ["A - Airspeed", "B - Best Field", "C - Checklist", "D - Declare", "E - Execute"] }
+                    { id: "WOSSS", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W - Wind", "O - Obstructions", "S - Size", "S - Shape", "S - Surface"] },
+                    { id: "ABCDE", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A - Airspeed", "B - Best Field", "C - Checklist", "D - Declare", "E - Execute"] }
                 ],
                 "Equipment & Rules": [
-                    { id: "ATOMATO", title: "A TOMATO FLAMES", text: "VFR Day", items: ["A - Altimeter", "T - Tachometer", "O - Oil Pressure", "M - Manifold Pressure", "A - Airspeed", "T - Temperature Gauge", "O - Oil Temp", "F - Fuel Gauge", "L - Landing Gear Pos", "A - Anti-collision Lights", "M - Magnetic Compass", "E - ELT", "S - Seatbelts"] },
-                    { id: "FLAPS", title: "FLAPS", text: "VFR Night", items: ["F - Fuses", "L - Landing Light", "A - Anti-collision", "P - Position lights", "S - Source of power"] },
-                    { id: "ARROW", title: "ARROW", text: "Required Docs", items: ["A - Airworthiness Certificate", "R - Registration", "R - Radio license", "O - Operating limitations", "W - Weight and balance"] }
+                    { id: "ATOMATO", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A - Altimeter", "T - Tachometer", "O - Oil Pressure", "M - Manifold Pressure", "A - Airspeed", "T - Temperature Gauge", "O - Oil Temp", "F - Fuel Gauge", "L - Landing Gear Pos", "A - Anti-collision Lights", "M - Magnetic Compass", "E - ELT", "S - Seatbelts"] },
+                    { id: "FLAPS", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F - Fuses", "L - Landing Light", "A - Anti-collision", "P - Position lights", "S - Source of power"] },
+                    { id: "ARROW", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A - Airworthiness Certificate", "R - Registration", "R - Radio license", "O - Operating limitations", "W - Weight and balance"] }
                 ]
             }
         };
@@ -399,9 +409,8 @@
         let isAnswered = false;
 
         // SVGs
-        const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const chevronSvg = `<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`;
+        const sunIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
         const arrowDownSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 
         // Theme
@@ -444,7 +453,6 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             
-            // Manage Top Nav Buttons
             document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
             document.getElementById('studyBtn').style.display = (pageId === 'quizScreen') ? 'flex' : 'none';
             
@@ -453,13 +461,15 @@
         }
 
         // HTML Builders
-        function buildListRows(items) {
-            return items.map(item => `<div class="list-row-static">${item}</div>`).join('');
+        function buildFlowList(items) {
+            return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => `<li style='margin-bottom:8px;'>${item}</li>`).join('') + "</ul>";
         }
 
         function buildLeftMenu() {
             const menu = document.getElementById('leftNavMenuContent');
-            menu.innerHTML = `<div class="menu-header">Main Menu</div><div class="list-group"><div class="list-group-body"><div class="sidebar-item"><div class="sidebar-text" onclick="showPage('homeScreen', true)">Dashboard</div></div></div></div><div class="menu-header">Categories</div><div class="list-group" id="sidebarCats"></div>`;
+            menu.innerHTML = `<div class="menu-header">Main Menu</div>
+                <div class="sidebar-item"><div class="sidebar-text" onclick="showPage('homeScreen', true)">Dashboard</div></div>
+                <div class="menu-header">Categories</div><div id="sidebarCats"></div>`;
             
             const catContainer = document.getElementById('sidebarCats');
             
@@ -492,7 +502,6 @@
                         iconBtn.style.transform = "rotate(180deg)";
                     }
                 };
-                
                 catContainer.appendChild(itemDiv);
             });
         }
@@ -506,12 +515,19 @@
             const container = document.getElementById('homeCategories');
             container.innerHTML = '';
             
+            const grid = document.createElement('div');
+            grid.className = 'parent-grid';
+
             Object.keys(appDatabase).forEach(catName => {
-                const group = document.createElement('div');
-                group.className = 'list-group';
-                group.innerHTML = `<div class="list-group-body"><div class="list-row" onclick="renderCategory('${catName}')"><div class="list-title">${catName}</div>${chevronSvg}</div></div>`;
-                container.appendChild(group);
+                const btn = document.createElement('button');
+                btn.className = 'parent-card';
+                btn.innerText = catName;
+                btn.onclick = () => renderCategory(catName);
+                grid.appendChild(btn);
             });
+
+            container.appendChild(grid);
+            showPage('homeScreen', false);
         }
 
         function renderCategory(catName, pushToHistory = true) {
@@ -521,19 +537,23 @@
             container.innerHTML = '';
 
             Object.keys(appDatabase[catName]).forEach(subCatName => {
-                const group = document.createElement('div');
-                group.className = 'list-group';
-                group.innerHTML = `<div class="list-group-header">${subCatName}</div><div class="list-group-body"></div>`;
-                const body = group.querySelector('.list-group-body');
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                section.innerHTML = `<h3 class="category-title">${subCatName}</h3>`;
+
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
 
                 appDatabase[catName][subCatName].forEach(quizObj => {
-                    const row = document.createElement('div');
-                    row.className = 'list-row';
-                    row.innerHTML = `<div><div class="list-title">${quizObj.title}</div><div class="list-subtitle">${quizObj.text}</div></div>${chevronSvg}`;
-                    row.onclick = () => renderStudyScreen(quizObj);
-                    body.appendChild(row);
+                    const btn = document.createElement('button');
+                    btn.className = 'menu-btn';
+                    btn.innerHTML = `${quizObj.title} <small>${quizObj.text}</small>`;
+                    btn.onclick = () => renderStudyScreen(quizObj);
+                    grid.appendChild(btn);
                 });
-                container.appendChild(group);
+
+                section.appendChild(grid);
+                container.appendChild(section);
             });
             showPage('categoryScreen', pushToHistory, {page: 'category', cat: catName});
         }
@@ -542,9 +562,10 @@
             currentActiveFlow = quizObj;
             document.getElementById('studyTitle').innerText = quizObj.title;
             document.getElementById('studySubtitle').innerText = quizObj.text;
-            document.getElementById('studyListContent').innerHTML = buildListRows(quizObj.items);
+            document.getElementById('studyScreenDesc').innerText = quizObj.desc;
+            document.getElementById('studyScreenContent').innerHTML = buildFlowList(quizObj.items);
             
-            document.getElementById('rightPanelContent').innerHTML = buildListRows(quizObj.items);
+            document.getElementById('rightPanelContent').innerHTML = `<div class="flow-box">${buildFlowList(quizObj.items)}</div>`;
 
             showPage('studyScreen', pushToHistory, {page: 'study', quizId: quizObj.id});
         }
@@ -720,7 +741,8 @@
         document.addEventListener("DOMContentLoaded", () => {
             updateThemeButton(document.body.classList.contains('dark-mode'));
             buildLeftMenu();
-            renderHome();
+            renderHome(false);
+            history.replaceState({ page: 'home' }, '');
         });
     </script>
 </body>
