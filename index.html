@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-title" content="C172 Master">
     <title>C-172 Knowledge Master</title>
     
-    <!-- Premium Font -->
+    <!-- Premium Google-like Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,9 +32,9 @@
             --wrong-bg: #fce8e6;
             --border-color: #e0e0e0;
             --focus-ring: rgba(11, 87, 208, 0.4);
-            --shadow-soft: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-soft: 0 4px 12px rgba(0,0,0,0.05);
             --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
-            --nav-bg: rgba(240, 244, 249, 0.9);
+            --nav-bg: rgba(240, 244, 249, 0.85);
         }
 
         body.dark-mode {
@@ -47,14 +47,14 @@
             --hover-color: #444746;
             --card-hover: #282a2d;
             --correct-color: #81c995;
-            --correct-bg: rgba(20, 108, 46, 0.2);
+            --correct-bg: rgba(20, 108, 46, 0.15);
             --wrong-color: #f28b82;
-            --wrong-bg: rgba(179, 38, 30, 0.2);
+            --wrong-bg: rgba(179, 38, 30, 0.15);
             --border-color: #444746;
             --focus-ring: rgba(168, 199, 250, 0.4);
-            --shadow-soft: 0 4px 12px rgba(0,0,0,0.3);
+            --shadow-soft: 0 4px 16px rgba(0,0,0,0.3);
             --shadow-hover: 0 12px 28px rgba(0,0,0,0.5);
-            --nav-bg: rgba(19, 19, 20, 0.9);
+            --nav-bg: rgba(19, 19, 20, 0.85);
         }
 
         * { 
@@ -87,7 +87,7 @@
             display: flex; align-items: flex-end; justify-content: space-between;
             padding: 12px 16px; z-index: 100;
             transition: background-color 0.4s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .icon-btn {
@@ -96,16 +96,15 @@
             border-radius: 50%; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
         }
         
-        /* Hover & Focus for Nav Buttons */
         .icon-btn:hover { background-color: var(--card-hover); transform: translateY(-2px); }
-        .icon-btn:active { transform: scale(0.9); background-color: var(--hover-color); }
+        .icon-btn:active { transform: scale(0.9); background-color: var(--hover-color); transition: none; }
         .icon-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
         .nav-group { display: flex; gap: 8px; }
         #backBtn, #studyBtn { display: none; }
 
         /* =========================================================
-           LAYOUT & CENTERING (The Wrapper)
+           LAYOUT & CENTERING
            ========================================================= */
         .app-container {
             display: flex;
@@ -116,36 +115,46 @@
         }
 
         .main-wrapper {
-            flex: 1; display: flex; flex-direction: column; align-items: center;
-            width: 100%; max-width: 800px; /* Centered max width */
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; max-width: 800px; 
             padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 90px); /* Space for fixed nav */
+            padding-top: calc(env(safe-area-inset-top, 20px) + 90px);
             padding-bottom: 40px;
         }
 
-        /* Smooth Page Transitions */
-        .page { display: none; width: 100%; }
+        /* Pages are now styled as Gemini Cards */
+        .page { 
+            display: none; 
+            width: 100%; 
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+        
         .page.active { 
             display: block; 
-            animation: smoothSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            animation: fadeInPage 0.4s cubic-bezier(0.2, 0, 0, 1) forwards; 
         }
 
-        @keyframes smoothSlideUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInPage {
+            0% { opacity: 0; transform: translateY(15px) scale(0.99); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* Typography */
         h1 { margin: 0 0 8px 0; font-size: 1.85rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
-        .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
 
         /* =========================================================
            INTERACTIVE CARDS & LISTS
            ========================================================= */
-        .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+        .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
         
         .parent-card {
-            background-color: var(--card-bg);
+            background-color: var(--bg-color);
             border: 1.5px solid transparent;
             color: var(--text-main);
             border-radius: 20px;
@@ -153,24 +162,19 @@
             font-size: 1.2rem;
             font-weight: 600;
             text-align: center;
-            box-shadow: var(--shadow-soft);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            outline: none;
         }
         
-        /* Rich Hover/Focus states for Parent Cards */
-        .parent-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); }
-        .parent-card:active { transform: scale(0.96); background-color: var(--card-hover); }
-        .parent-card:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
-
         .category-section { margin-bottom: 40px; width: 100%; }
         .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.2px; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
         
         .menu-btn {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            border: 1.5px solid var(--border-color);
             color: var(--text-main);
             border-radius: 16px;
             padding: 20px 16px;
@@ -179,78 +183,71 @@
             text-align: left;
             min-height: 90px;
             display: flex; flex-direction: column; justify-content: center;
-            box-shadow: var(--shadow-soft);
             font-family: inherit;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            outline: none;
         }
-        
-        /* Rich Hover/Focus states for Menu Buttons */
-        .menu-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); }
-        .menu-btn:active { transform: scale(0.97); background-color: var(--card-hover); }
-        .menu-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
         
         .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; transition: color 0.3s; }
         .menu-btn:hover small { color: var(--primary-color); }
 
+        /* Rich Hover/Focus states for Cards & Buttons */
+        .parent-card:hover, .menu-btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); background-color: var(--card-bg); }
+        .parent-card:focus-visible, .menu-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
+        .parent-card:active, .menu-btn:active { transform: scale(0.96); background-color: var(--card-hover); transition: none; }
+
         /* =========================================================
            STUDY & QUIZ SCREENS
            ========================================================= */
-        #studyScreen, #quizScreen, #scoreScreen { display: none; }
-        
         .study-title { font-size: 1.8rem; margin: 0 0 8px 0; color: var(--text-main); font-weight: 700; }
         .study-subtitle { font-size: 1.05rem; color: var(--primary-color); margin-bottom: 20px; font-weight: 600; }
         
         .study-desc { 
-            font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; 
-            background: var(--card-bg); padding: 18px; border-radius: 16px; 
-            box-shadow: var(--shadow-soft); border: 1px solid var(--border-color);
-            transition: box-shadow 0.3s ease;
+            font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; 
+            background: var(--bg-color); padding: 18px 20px; border-radius: 16px; 
+            border: 1px solid var(--border-color); transition: box-shadow 0.3s ease;
         }
-        .study-desc:hover { box-shadow: var(--shadow-hover); }
+        .study-desc:hover { box-shadow: var(--shadow-soft); }
 
         .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
-        .question-text { font-size: 1.4rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
+        .question-text { font-size: 1.45rem; font-weight: 600; margin-bottom: 35px; line-height: 1.4; color: var(--text-main); }
         
         .options { display: flex; flex-direction: column; gap: 14px; }
         
         .option-btn { 
-            background: var(--card-bg); border: 1.5px solid var(--border-color); color: var(--text-main); 
-            border-radius: 16px; padding: 20px 22px; font-size: 1.05rem; text-align: left; font-weight: 500; line-height: 1.4; 
-            box-shadow: var(--shadow-soft); font-family: inherit; cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            background: var(--bg-color); border: 1.5px solid var(--border-color); color: var(--text-main); 
+            border-radius: 16px; padding: 20px 22px; font-size: 1.1rem; text-align: left; font-weight: 500; line-height: 1.4; 
+            font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
         }
         
-        /* Rich Hover/Focus for Options */
-        .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); background-color: var(--card-hover); }
-        .option-btn:active:not(:disabled) { transform: scale(0.98); }
-        .option-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: var(--primary-color); }
-        .option-btn:disabled { cursor: default; box-shadow: none; transform: none; }
+        .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-soft); border-color: var(--primary-color); background-color: var(--card-hover); }
+        .option-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-bg); transition: none; }
+        .option-btn:disabled { cursor: default; transform: none; box-shadow: none; }
         
         .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color) !important; color: var(--correct-color); font-weight: 700; transform: scale(1.02); }
         .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color) !important; color: var(--wrong-color); font-weight: 700; transform: scale(0.98); }
 
-        .feedback { margin-top: 28px; padding: 20px; border-radius: 16px; font-size: 1.05rem; display: none; line-height: 1.5; font-weight: 500; box-shadow: var(--shadow-soft); }
-        .feedback.show { display: block; animation: smoothSlideUp 0.35s ease forwards; }
+        .feedback { margin-top: 28px; padding: 20px 24px; border-radius: 16px; font-size: 1.05rem; display: none; line-height: 1.5; font-weight: 500; box-shadow: var(--shadow-soft); }
+        .feedback.show { display: block; animation: fadeInPage 0.35s ease forwards; }
         .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(20, 108, 46, 0.2); }
         .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(179, 38, 30, 0.2); }
 
-        .flow-box { background: var(--card-bg); padding: 22px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s; }
-        .flow-box:hover { box-shadow: var(--shadow-hover); }
-        .flow-box h4 { margin: 0 0 14px 0; color: var(--primary-color); font-size: 1rem; font-weight: 700; }
-        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 500; font-size: 1.05rem; line-height: 1.6; }
+        .flow-box { background: var(--bg-color); padding: 24px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); transition: box-shadow 0.3s; }
+        .flow-box:hover { box-shadow: var(--shadow-soft); }
+        .flow-box h4 { margin: 0 0 16px 0; color: var(--primary-color); font-size: 1.05rem; font-weight: 700; }
+        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 500; font-size: 1.1rem; line-height: 1.6; }
         .flow-box li { margin-bottom: 10px; }
 
         .primary-btn { 
-            background: var(--primary-color); color: #fff; border: none; padding: 18px; font-size: 1.1rem; 
+            background: var(--primary-color); color: #fff; border: none; padding: 20px; font-size: 1.15rem; 
             border-radius: 100px; font-weight: 600; margin-top: 35px; width: 100%; display: none;
-            cursor: pointer; font-family: inherit;
-            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
-            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
+            cursor: pointer; font-family: inherit; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
         }
-        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(11, 87, 208, 0.4); filter: brightness(1.1); }
-        .primary-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(11, 87, 208, 0.3); filter: brightness(0.9); }
-        .primary-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11, 87, 208, 0.3); filter: brightness(1.1); }
+        .primary-btn:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
+        .primary-btn:active { transform: scale(0.97); filter: brightness(0.9); transition: none; }
         
         .start-btn { display: block; margin-top: 35px; }
 
@@ -259,7 +256,7 @@
         .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); border-radius: 3px; }
 
         /* Score Screen */
-        .score-val { font-size: 4.5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
+        .score-val { font-size: 5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
         .secondary-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 16px; box-shadow: none; }
         .secondary-btn:hover { background: var(--hover-color); box-shadow: var(--shadow-soft); }
 
@@ -273,35 +270,35 @@
         #leftMenuOverlay.open, #rightMenuOverlay.open { display: block; opacity: 1; }
 
         .side-menu {
-            position: fixed; top: 0; height: 100vh; background: var(--bg-color);
+            position: fixed; top: 0; height: 100vh; background: var(--card-bg);
             transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto; 
             padding-bottom: env(safe-area-inset-bottom, 20px);
         }
         #leftNavMenu { left: 0; width: 300px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
         #leftNavMenu.open { transform: translateX(0); }
         
-        #rightNavMenu { right: 0; width: 320px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
+        #rightNavMenu { right: 0; width: 340px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
         #rightNavMenu.open { transform: translateX(0); }
 
-        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .sidebar-item { display: flex; align-items: center; justify-content: space-between; background: transparent; }
         
-        .sidebar-text { flex: 1; padding: 16px 20px; font-size: 1.05rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
-        .sidebar-text:hover { background: var(--card-hover); color: var(--primary-color); padding-left: 24px; }
-        .sidebar-text:active { background: var(--hover-color); }
+        .sidebar-text { flex: 1; padding: 18px 24px; font-size: 1.1rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
+        .sidebar-text:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 28px; }
+        .sidebar-text:active { background: var(--hover-color); transition: none; }
         
-        .sidebar-icon { padding: 16px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease, color 0.2s; }
+        .sidebar-icon { padding: 18px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease, color 0.2s; }
         .sidebar-icon:hover { color: var(--primary-color); }
         
         .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.2, 0, 0, 1); }
         .sidebar-sub button {
-            width: 100%; text-align: left; padding: 14px 20px 14px 40px; background: none; border: none;
-            font-size: 0.95rem; color: var(--text-muted); font-weight: 500; font-family: inherit;
+            width: 100%; text-align: left; padding: 16px 24px 16px 48px; background: none; border: none;
+            font-size: 1rem; color: var(--text-muted); font-weight: 500; font-family: inherit;
             transition: all 0.2s ease; cursor: pointer;
         }
-        .sidebar-sub button:hover { background: var(--card-hover); color: var(--primary-color); padding-left: 45px; }
-        .sidebar-sub button:active { background: var(--hover-color); }
+        .sidebar-sub button:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 54px; }
+        .sidebar-sub button:active { background: var(--hover-color); transition: none; }
 
         /* =========================================================
            FOOTER
@@ -311,19 +308,19 @@
 </head>
 <body>
 
-    <!-- TOP NAVIGATION -->
+    <!-- TOP NAVIGATION (SVG ICONS) -->
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
         </div>
@@ -395,23 +392,22 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.0.6 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.0.7 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
         const QUESTIONS_PER_DRILL = 15;
 
-        // FIXED DATABASE - Added Context Descriptions based on user's documents
+        // FIXED DATABASE - Corrected to exactly match user's PDF & Requirements
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
                     { id: "EngineStart", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing COMPLETE", "Doors and Seatbelts SECURED", "Parking Brake SET", "Fuel Selector BOTH", "Carburetor Heat COLD", "Mixture FULL RICH", "Primer 2-5 STROKES & LOCK", "Master Switch ON", "Lights AS REQUIRED", "Throttle OPEN 1/8 INCH", "Prop Area CLEAR", "Starter ENGAGE", "Throttle 1,000 RPM & ADJUST", "Oil Pressure GREEN", "Mixture LEAN FOR TAXI", "Radio Master ON"] },
                     { id: "PreLineup", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps SET FOR TAKEOFF", "Lights AS REQUIRED", "Aux Fuel Pump ON", "Mixture RICH <3000 D.A.", "Carburetor Heat OFF", "Doors, Windows & Seatbelts SECURED", "Fuel Timer SET", "Traffic CLEAR", "Assigned RWY/HDG CONFIRMED"] },
                     { id: "ClimbCheck", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps UP", "Taxi Light OFF", "Engine Instruments CHECK"] },
-                    { id: "CruiseCheck", title: "Cruise", text: "Cruise Checklist", desc: "Tasks to stabilize the aircraft in level flight and prepare for the next phase.", items: ["Aux Fuel Pump OFF", "Pitch Attitude OBTAIN", "Power CRUISE RPM", "DIMS Flow PERFORM", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
-                    { id: "AfterLanding", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps UP", "Mixture LEAN FOR TAXI", "Carburetor Heat OFF", "Trim RESET FOR TAKEOFF", "Pitot Heat OFF", "Taxi Light ON", "Landing Light OFF"] },
-                    { id: "ShutDown", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake SET", "Radio Master OFF", "Exterior Lights OFF", "Cabin / Panel Lights OFF", "Throttle IDLE", "Mixture IDLE CUTOFF", "Ignition Switch OFF & KEY OUT", "Master Switch OFF"] },
-                    { id: "Securing", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ALL ON", "Tie Downs & Chocks APPLY", "Control Lock & Pitot Cover INSTALL", "Fuel Selector LEFT or RIGHT", "Cabin Air/Heat OFF", "Windows CLOSE", "Flight Plan CLOSE", "Binder & Fuel Load RECORD", "FSP & Squawks COMPLETE", "Garbage VERIFY CLEAN"] }
+                    { id: "AfterLanding", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps UP", "Mixture LEAN FOR TAXI", "Carburetor Heat OFF", "Trim RESET FOR TAKEOFF", "Pitot Heat OFF", "Taxi Light ON", "Landing Light OFF", "Contact/Monitor Ground AS REQUIRED"] },
+                    { id: "ShutDown", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake SET", "Radio Master OFF", "Exterior Lights OFF", "Cabin / Panel Lights OFF", "Throttle IDLE", "Mixture IDLE CUTOFF", "Ignition Switch OFF & KEY OUT", "Master Switch OFF", "Parking Brake RELEASE"] },
+                    { id: "Securing", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ALL ON", "Tie Downs & Chocks APPLY", "Control Lock & Pitot Cover INSTALL", "Fuel Selector LEFT or RIGHT", "Engine Instruments CHECK", "Seatbelts FASTENED", "Cabin Air/Heat OFF", "Windows CLOSE", "Flight Plan CLOSE", "Binder & Fuel Load RECORD", "FSP & Squawks COMPLETE", "Garbage VERIFY CLEAN"] }
                 ],
                 "Emergency Procedures": [
                     { id: "EngineFireStart", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking CONTINUE", "If Fails: Throttle FULL OPEN", "Mixture IDLE CUTOFF", "Cranking CONTINUE for 3 MINS", "Fire Extinguisher OBTAIN", "Master/Ignition/Fuel OFF"] },
@@ -420,17 +416,18 @@
             },
             "Flows": {
                 "Ground": [
-                    { id: "SixPlusSix", title: "6+6 Flow", text: "Before Taxi", desc: "Instrument setup flow executed before taxiing.", items: ["Transponder Code / Clearance", "Barometers", "Altitude Pre-Select(s)", "Comms", "NAVS", "GPS (and MFD ranges)"] },
-                    { id: "HalfAndHalf", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Controls FREE & CORRECT", "Circuit Breakers VERIFY IN", "Trims Reset for Takeoff", "Lights", "GPS #2", "Gauges", "Magnetos", "Carb Heat", "Idle Check"] }
+                    { id: "SixPlusSix", title: "6+6 Flow", text: "Before Taxi Check", desc: "Instrument setup flow executed before taxiing.", items: ["Flaps UP (CHECK VISUALLY)", "6 Flight Instruments CHECK", "1. Clearance/Transponder OBTAIN/SET", "2. Barometers (ATIS/AWOS) OBTAIN/SET", "3. Altitude Select SET", "4. Comms SET", "5. Navs SET", "6. GPS & Map Range SET", "Taxi Light ON", "Taxi Area CLEAR", "Parking Brake RELEASE", "Brakes CHECK", "TC, Ball & DG CHECK ON FIRST TURN"] },
+                    { id: "HalfAndHalf", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake SET", "Taxi Light OFF", "Throttle 1,000 RPM", "Controls FREE & CORRECT", "Fuel Selector BOTH", "Primer VERIFY LOCKED", "Circuit Breakers VERIFY IN", "Departure Frequency SET", "Transponder ALT", "Aux Fuel Pump ON (CHECK RISE), OFF", "Mixture FULL RICH", "Throttle 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) CHECK", "Engine Instruments CHECK", "Alternator CHECK", "Carburetor Heat ON, CHECK", "Throttle IDLE", "Carburetor Heat OFF", "Throttle 1,000 RPM", "Pitot Heat AS REQUIRED", "Mixture LEAN FOR TAXI", "Crew Briefing COMPLETE", "Parking Brake RELEASE", "Taxi Light ON"] }
                 ],
                 "Air": [
-                    { id: "DIMS", title: "DIMS", text: "Cruise Flow", desc: "Cruise mnemonic to set Directional gyro, Instruments, Mixture, and Switches.", items: ["D - Directional Gyro ADJUST", "I - Instruments CHECK", "M - Mixture LEAN", "S - Switches AS REQUIRED"] },
+                    { id: "DIMS", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump OFF", "Pitch Attitude OBTAIN", "Power CRUISE RPM", "D - Directional Gyro ADJUST", "I - Instruments (Engine) CHECK", "M - Mixture LEAN", "S - Switches (Landing Light) AS REQUIRED", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
                     { id: "FourCs", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
-                    { id: "ABC", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A - ATIS/AWOS OBTAIN", "B - Brief PERFORM", "C - Checklist PERFORM"] },
-                    { id: "CGUMPS", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN", "M - Mixture RICH", "P - Pumps/Primer ON", "S - Seatbelts & Switches CHECK"] }
+                    { id: "ABC", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A - ATIS/AWOS OBTAIN", "B - Brief (Approach/Arrival) PERFORM", "C - Checklist PERFORM"] },
+                    { id: "CGUMPS", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN and WELDED", "M - Mixture RICH <3000 D.A.", "Props & Pumps ON", "S - Seatbelts & Switches CHECK"] },
+                    { id: "GoAround", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle FULL FWD", "Carburetor Heat OFF", "Pitch UP TO 8-10 DEG", "Flaps UP INCREMENTALLY", "Navigate", "Communicate", "IFR: GPS UNSUSPEND"] }
                 ],
                 "Emergencies": [
-                    { id: "ABCD", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight (Airspeed, Best place, Checklist, Declare).", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land", "C - Checklist", "D - Declare"] }
+                    { id: "ABCD", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land FIND and TURN", "C - Checklist PERFORM", "D - Declare CURRENT FREQ/121.5 & SQK 7700"] }
                 ]
             },
             "Weather": {
@@ -463,9 +460,9 @@
         let isAnswered = false;
 
         // SVGs
-        const sunIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const arrowDownSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+        const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a8c7fa" stroke-width="2.5" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const arrowDownSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 
         // Theme
         function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
@@ -480,14 +477,14 @@
         // History API
         window.addEventListener('popstate', (e) => {
             if (!e.state || e.state.page === 'home') showPage('homeScreen', false);
-            else if (e.state.page === 'category') { renderCategory(e.state.cat, false); showPage('categoryScreen', false); }
+            else if (e.state.page === 'category') { renderCategory(e.state.cat, false); }
             else if (e.state.page === 'study') {
                 let f = findQuizById(e.state.quizId);
-                if (f) { renderStudyScreen(f, false); showPage('studyScreen', false); }
+                if (f) { renderStudyScreen(f, false); }
                 else showPage('homeScreen', false);
             } else if (e.state.page === 'quiz') {
                 let f = findQuizById(e.state.quizId);
-                if (f) { startQuiz(f, false); showPage('quizScreen', false); }
+                if (f) { startQuiz(f, false); }
                 else showPage('homeScreen', false);
             }
         });
@@ -504,13 +501,12 @@
 
         // Page Router
         function showPage(pageId, pushToHistory = true, historyState = {page: 'home'}) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const newPage = document.getElementById(pageId);
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+            });
             
-            // Re-trigger animation
-            newPage.style.animation = 'none';
-            void newPage.offsetWidth; 
-            newPage.style.animation = null;
+            const newPage = document.getElementById(pageId);
+            void newPage.offsetWidth; // trigger reflow to restart CSS animation
             newPage.classList.add('active');
             
             document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
@@ -518,7 +514,6 @@
             
             closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (pushToHistory) history.pushState(historyState, '');
