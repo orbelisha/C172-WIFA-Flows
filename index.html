@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="C172 Training">
+    <meta name="apple-mobile-web-app-title" content="C172 Master">
     <title>C-172 Knowledge Master</title>
     <style>
         /* =========================================================
-           CLEAN, COMPACT & PROFESSIONAL DESIGN SYSTEM
+           PREMIUM & MINIMALIST DESIGN SYSTEM
            ========================================================= */
         :root {
             --bg-color: #f4f4f5;
@@ -33,9 +33,9 @@
             --primary-color: #38bdf8;
             --hover-color: #27272a;
             --correct-color: #4ade80;
-            --correct-bg: rgba(22, 163, 74, 0.2);
+            --correct-bg: rgba(22, 163, 74, 0.15);
             --wrong-color: #f87171;
-            --wrong-bg: rgba(220, 38, 38, 0.2);
+            --wrong-bg: rgba(220, 38, 38, 0.15);
             --border-color: #27272a;
         }
 
@@ -45,119 +45,140 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 60px); 
-            padding-bottom: env(safe-area-inset-bottom, 20px);
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
         
         /* =========================================================
-           TOP NAVIGATION
+           TOP NAVIGATION (SVG ICONS)
            ========================================================= */
         .top-nav {
             position: fixed;
             top: 0; left: 0; width: 100%;
             height: calc(env(safe-area-inset-top, 20px) + 55px);
-            background-color: var(--card-bg);
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
             padding: 10px 15px;
             z-index: 100;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body.dark-mode .top-nav {
+            background-color: rgba(24, 24, 27, 0.85);
         }
 
         .action-btn {
-            background-color: var(--bg-color);
+            background-color: transparent;
             color: var(--primary-color);
-            border: 1px solid var(--border-color);
-            padding: 6px 14px;
+            border: none;
+            padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: opacity 0.2s, transform 0.2s;
         }
 
-        /* Instant touch feedback for iOS */
         .action-btn:active { 
-            opacity: 0.6; 
-            transition: none !important; 
+            opacity: 0.5; 
+            transform: scale(0.95);
         }
         
-        .nav-buttons-left { display: flex; gap: 8px; }
+        .nav-buttons-left { display: flex; gap: 4px; }
         #backBtn { display: none; }
         
-        #themeToggleBtn { font-size: 1.1rem; }
-
         /* =========================================================
            CONTAINERS & LAYOUT
            ========================================================= */
-        .container-wrapper {
+        .main-content-wrapper {
+            flex: 1;
             display: flex;
             justify-content: center;
             width: 100%;
             padding: 15px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 75px); 
+            padding-bottom: 30px;
         }
 
         .container {
             background-color: var(--card-bg);
             width: 100%;
             max-width: 800px;
-            border-radius: 12px;
-            padding: 25px 20px;
+            border-radius: 16px;
+            padding: 30px 20px;
             border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        /* Smooth page transitions */
+        .fade-enter {
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Typography */
-        h1 { margin: 0 0 5px 0; text-align: center; font-size: 1.5rem; color: var(--text-main); }
-        .subtitle { color: var(--text-muted); margin-bottom: 25px; text-align: center; font-size: 0.9rem; font-weight: 500; }
+        h1 { margin: 0 0 5px 0; text-align: center; font-size: 1.6rem; color: var(--text-main); font-weight: 700; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 30px; text-align: center; font-size: 0.95rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Grids & Buttons */
+        /* Grids & Cards */
         .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
         
         .parent-card {
             background-color: var(--card-bg);
-            border: 1px solid var(--primary-color);
+            border: 1.5px solid var(--primary-color);
             color: var(--primary-color);
-            border-radius: 8px;
-            padding: 20px 15px;
+            border-radius: 12px;
+            padding: 24px 15px;
             font-size: 1.1rem;
             font-weight: 600;
             text-align: center;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: all 0.2s ease;
         }
         
-        .category-section { margin-bottom: 30px; }
-        .category-title { color: var(--text-muted); margin: 0 0 10px 0; font-size: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; text-transform: uppercase; }
+        .category-section { margin-bottom: 35px; }
+        .category-title { color: var(--text-muted); margin: 0 0 15px 0; font-size: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
         
         .menu-btn {
             background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: 1.5px solid var(--border-color);
             color: var(--text-main);
-            border-radius: 8px;
-            padding: 12px 10px;
+            border-radius: 12px;
+            padding: 16px 12px;
             font-size: 1rem;
             font-weight: 600;
             text-align: center;
-            min-height: 60px;
-            transition: transform 0.2s, border-color 0.2s;
+            min-height: 70px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
         }
-        .menu-btn small { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-weight: 400; }
+        .menu-btn small { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; font-weight: 500; }
 
         /* Instant touch feedback classes */
         .parent-card:active, .menu-btn:active, .option-btn:active:not(:disabled) { 
             background-color: var(--hover-color) !important; 
+            transform: scale(0.98);
             transition: none !important; 
         }
 
@@ -166,112 +187,138 @@
            ========================================================= */
         #studyScreen, #quizScreen, #scoreScreen { display: none; }
         
-        .study-title { font-size: 1.3rem; margin: 0 0 5px 0; color: var(--text-main); }
-        .study-subtitle { font-size: 0.95rem; color: var(--primary-color); margin-bottom: 15px; font-weight: 600; }
+        .study-title { font-size: 1.5rem; margin: 0 0 5px 0; color: var(--text-main); font-weight: 700; }
+        .study-subtitle { font-size: 1rem; color: var(--primary-color); margin-bottom: 20px; font-weight: 600; }
 
-        .question-header { display: flex; justify-content: space-between; margin-bottom: 15px; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
-        .question-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; color: var(--text-main); }
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
+        .question-text { font-size: 1.25rem; font-weight: 600; margin-bottom: 25px; line-height: 1.4; color: var(--text-main); }
         
-        .options { display: flex; flex-direction: column; gap: 10px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
         
         .option-btn { 
             background-color: var(--card-bg); 
-            border: 1px solid var(--border-color); 
+            border: 1.5px solid var(--border-color); 
             color: var(--text-main); 
-            border-radius: 8px; 
-            padding: 14px 15px; 
-            font-size: 1rem; 
+            border-radius: 12px; 
+            padding: 16px 18px; 
+            font-size: 1.05rem; 
             text-align: left; 
             font-weight: 500;
             line-height: 1.4; 
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
         }
         .option-btn:disabled { cursor: default; }
-        .option-btn.correct { background-color: var(--correct-bg) !important; border-color: var(--correct-color); color: var(--correct-color); font-weight: bold; }
-        .option-btn.wrong { background-color: var(--wrong-bg) !important; border-color: var(--wrong-color); color: var(--wrong-color); font-weight: bold; }
+        .option-btn.correct { background-color: var(--correct-bg) !important; border-color: var(--correct-color); color: var(--correct-color); font-weight: 600; }
+        .option-btn.wrong { background-color: var(--wrong-bg) !important; border-color: var(--wrong-color); color: var(--wrong-color); font-weight: 600; }
 
-        .feedback { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 0.95rem; display: none; line-height: 1.5; }
-        .feedback.show { display: block; }
-        .feedback.success { background-color: var(--correct-bg); color: var(--correct-color); border: 1px solid var(--correct-color); }
-        .feedback.error { background-color: var(--wrong-bg); color: var(--wrong-color); border: 1px solid var(--wrong-color); }
+        .feedback { margin-top: 25px; padding: 20px; border-radius: 12px; font-size: 0.95rem; display: none; line-height: 1.5; font-weight: 500; }
+        .feedback.show { display: block; animation: fadeIn 0.3s ease forwards; }
+        .feedback.success { background-color: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(22, 163, 74, 0.3); }
+        .feedback.error { background-color: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(220, 38, 38, 0.3); }
 
-        .flow-box { background-color: var(--bg-color); border-left: 4px solid var(--primary-color); padding: 15px; margin-top: 15px; border-radius: 0 6px 6px 0; }
-        .flow-box h4 { margin: 0 0 10px 0; color: var(--primary-color); font-size: 0.9rem; text-transform: uppercase; }
-        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 500; font-size: 0.95rem; }
-        .flow-box li { margin-bottom: 6px; }
+        .flow-box { background-color: var(--bg-color); border-left: 4px solid var(--primary-color); padding: 18px; margin-top: 20px; border-radius: 0 8px 8px 0; }
+        .flow-box h4 { margin: 0 0 12px 0; color: var(--primary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 500; font-size: 1rem; line-height: 1.5; }
+        .flow-box li { margin-bottom: 8px; }
 
         .next-btn { 
             background-color: var(--primary-color); 
             color: #ffffff; 
             border: none; 
-            padding: 16px; 
-            font-size: 1rem; 
-            border-radius: 8px; 
+            padding: 18px; 
+            font-size: 1.05rem; 
+            border-radius: 12px; 
             font-weight: 600; 
-            margin-top: 25px; 
+            margin-top: 30px; 
             width: 100%; 
             display: none; 
             text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.2s, opacity 0.2s;
         }
-        .next-btn:active { opacity: 0.8; transition: none !important; }
+        .next-btn:active { opacity: 0.8; transform: scale(0.98); transition: none !important; }
 
-        .score-val { font-size: 3rem; font-weight: bold; color: var(--primary-color); margin: 10px 0; }
-        .home-btn { background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 15px; }
+        .score-val { font-size: 3.5rem; font-weight: 800; color: var(--primary-color); margin: 15px 0; letter-spacing: -1px; }
+        .home-btn { background-color: transparent; color: var(--text-main); border: 1.5px solid var(--border-color); margin-top: 15px; }
+        .home-btn:active { background-color: var(--hover-color); }
 
         /* =========================================================
            SIDE MENUS
            ========================================================= */
         #leftMenuOverlay, #panelOverlay {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; transition: opacity 0.2s ease;
+            background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; transition: opacity 0.3s ease;
         }
         #leftMenuOverlay.open, #panelOverlay.open { display: block; opacity: 1; }
 
         #leftNavMenu, #flowSidePanel {
             position: fixed; top: 0; height: 100vh; background-color: var(--card-bg);
-            transition: 0.3s ease; z-index: 1000; overflow-y: auto; padding-bottom: env(safe-area-inset-bottom, 20px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; overflow-y: auto; 
+            padding-bottom: env(safe-area-inset-bottom, 20px);
         }
-        #leftNavMenu { left: -280px; width: 280px; border-right: 1px solid var(--border-color); }
-        #leftNavMenu.open { left: 0; }
         
-        #flowSidePanel { right: -300px; width: 300px; border-left: 1px solid var(--border-color); }
-        #flowSidePanel.open { right: 0; }
+        #leftNavMenu { left: 0; width: 280px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
+        #leftNavMenu.open { transform: translateX(0); }
+        
+        #flowSidePanel { right: 0; width: 300px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
+        #flowSidePanel.open { transform: translateX(0); }
 
         .panel-content { padding: calc(env(safe-area-inset-top, 20px) + 20px) 20px; }
-        .panel-content h3 { color: var(--primary-color); margin: 0 0 15px 0; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; text-transform: uppercase; }
+        .panel-content h3 { color: var(--primary-color); margin: 0 0 15px 0; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; text-transform: uppercase; font-weight: 700; }
 
         .accordion-btn {
-            background: none; border: none; width: 100%; text-align: left; padding: 15px 10px;
-            font-size: 0.95rem; color: var(--text-main); font-weight: 600; border-bottom: 1px solid var(--border-color); 
-            display: flex; justify-content: space-between; text-transform: uppercase; transition: color 0.2s;
+            background: none; border: none; width: 100%; text-align: left; padding: 18px 10px;
+            font-size: 1rem; color: var(--text-main); font-weight: 600; border-bottom: 1px solid var(--border-color); 
+            display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s;
         }
+        .accordion-btn svg { transition: transform 0.3s ease; }
+        .accordion-btn.active svg { transform: rotate(180deg); color: var(--primary-color); }
         .accordion-btn.active { color: var(--primary-color); }
+        
         .accordion-content { max-height: 0; overflow: hidden; background-color: var(--bg-color); transition: max-height 0.3s ease-out; }
         .accordion-content button {
-            width: 100%; text-align: left; padding: 12px 10px 12px 20px; background: none; border: none;
-            font-size: 0.95rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);
+            width: 100%; text-align: left; padding: 14px 10px 14px 20px; background: none; border: none;
+            font-size: 0.95rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-weight: 500;
         }
         .accordion-content button:active { background-color: var(--hover-color); transition: none !important; }
 
         #panelToggleBtn { 
             position: fixed; top: 50%; right: 0; transform: translateY(-50%); 
             background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);
-            border-right: none; padding: 20px 10px; border-radius: 8px 0 0 8px; z-index: 1001; 
+            border-right: none; padding: 20px 10px; border-radius: 12px 0 0 12px; z-index: 1001; 
             font-size: 0.8rem; font-weight: 600; display: none; writing-mode: vertical-rl; text-transform: uppercase; 
+            box-shadow: -2px 0 10px rgba(0,0,0,0.05); transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #panelToggleBtn.open { right: 300px; background-color: var(--primary-color); color: #fff; border-color: transparent; }
+
+        /* =========================================================
+           FOOTER (VERSION & COPYRIGHT)
+           ========================================================= */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+            width: 100%;
+        }
     </style>
 </head>
-<!-- ontouchstart enables instant :active states on iOS -->
 <body ontouchstart="">
 
     <!-- TOP NAVIGATION -->
     <div class="top-nav">
         <div class="nav-buttons-left">
-            <button class="action-btn" id="menuBtn" onclick="toggleLeftMenu()">&#9776;</button>
-            <button class="action-btn" id="backBtn" onclick="goBackLogic()">&#8592;</button>
+            <button class="action-btn" id="menuBtn" onclick="toggleLeftMenu()">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <button class="action-btn" id="backBtn" onclick="goBackLogic()">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
         </div>
-        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
+        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()">
+            <!-- SVG injected by JS -->
+        </button>
     </div>
 
     <!-- LEFT MENU -->
@@ -292,7 +339,8 @@
         </div>
     </div>
 
-    <div class="container-wrapper">
+    <!-- MAIN WRAPPER -->
+    <div class="main-content-wrapper">
         <!-- HOME / CATEGORIES -->
         <div class="container" id="dynamicContent"></div>
 
@@ -326,6 +374,11 @@
             <button class="next-btn" style="display: block;" onclick="restartSameQuiz()">Retry Drill</button>
             <button class="next-btn home-btn" style="display: block;" onclick="goBackLogic()">Back to Menu</button>
         </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        v1.1.0 | &copy; 2026 Or Belisha. All rights reserved.
     </div>
 
     <script>
@@ -392,19 +445,12 @@
         let isAnswered = false;
 
         // Theme Logic
+        const sunIcon = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
         function updateThemeButton(isDark) {
             const themeBtn = document.getElementById('themeToggleBtn');
-            if(isDark) {
-                themeBtn.innerHTML = '☀️';
-                themeBtn.style.color = '#fbbf24'; 
-                themeBtn.style.borderColor = '#fbbf24';
-                themeBtn.style.backgroundColor = 'rgba(251, 191, 36, 0.1)';
-            } else {
-                themeBtn.innerHTML = '🌙';
-                themeBtn.style.color = '#6366f1'; 
-                themeBtn.style.borderColor = '#6366f1';
-                themeBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
-            }
+            themeBtn.innerHTML = isDark ? sunIcon : moonIcon;
         }
 
         function toggleTheme() {
@@ -418,6 +464,14 @@
             document.body.classList.add('dark-mode');
         }
 
+        // Add fade animation class
+        function triggerFade(elementId) {
+            const el = document.getElementById(elementId);
+            el.classList.remove('fade-enter');
+            void el.offsetWidth; // trigger reflow
+            el.classList.add('fade-enter');
+        }
+
         // HTML Generator
         function renderFlowList(items) {
             let html = "<ul style='margin:0; padding-left:1.2rem;'>";
@@ -426,6 +480,13 @@
             }
             html += "</ul>";
             return html;
+        }
+
+        // Reset Left Accordion
+        function resetLeftMenuAccordions() {
+            document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+            document.querySelectorAll('.accordion-btn svg').forEach(s => s.style.transform = "rotate(0deg)");
+            document.querySelectorAll('.accordion-btn').forEach(b => b.classList.remove('active'));
         }
 
         // ================== HISTORY API (Swipe Back) ==================
@@ -460,12 +521,15 @@
 
         function buildLeftMenu() {
             const menuDiv = document.getElementById('leftNavMenuContent');
-            menuDiv.innerHTML = '<h3>Menu</h3><button class="action-btn" style="width:100%; border:none; border-bottom:1px solid var(--border-color); border-radius:0; justify-content:flex-start; padding:15px 10px; margin-bottom:10px; color:var(--text-main);" onclick="navigateTo(\'Home\')">Main Dashboard</button>';
+            const arrowSvg = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+            
+            menuDiv.innerHTML = `<h3>Menu</h3>
+            <button class="accordion-btn" style="border:none; margin-bottom:10px;" onclick="navigateTo('Home')">Main Dashboard</button>`;
 
             Object.keys(appDatabase).forEach(catName => {
                 const accBtn = document.createElement('button');
                 accBtn.className = 'accordion-btn';
-                accBtn.innerHTML = `${catName} <span>▼</span>`;
+                accBtn.innerHTML = `<span>${catName}</span> ${arrowSvg}`;
                 
                 const accContent = document.createElement('div');
                 accContent.className = 'accordion-content';
@@ -479,20 +543,14 @@
                     });
                 });
 
-                // Accordion logic: only one open at a time
                 accBtn.onclick = function() {
                     const isOpen = accContent.style.maxHeight;
+                    resetLeftMenuAccordions();
                     
-                    // Close all first
-                    document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
-                    document.querySelectorAll('.accordion-btn span').forEach(s => s.innerText = '▼');
-                    document.querySelectorAll('.accordion-btn').forEach(b => b.classList.remove('active'));
-                    
-                    // If it wasn't open, open it
                     if (!isOpen) {
                         accContent.style.maxHeight = accContent.scrollHeight + "px";
                         this.classList.add('active');
-                        this.querySelector('span').innerText = '▲';
+                        this.querySelector('svg').style.transform = "rotate(180deg)";
                     }
                 };
 
@@ -503,10 +561,11 @@
 
         function renderHome(pushToHistory = true) {
             currentParent = null;
+            resetLeftMenuAccordions();
             hideAllScreens();
-            document.getElementById('dynamicContent').style.display = 'block';
             
             const container = document.getElementById('dynamicContent');
+            container.style.display = 'block';
             container.innerHTML = '<h1>C-172 Master</h1><div class="subtitle">Select Category</div>';
             
             const grid = document.createElement('div');
@@ -521,16 +580,18 @@
             });
 
             container.appendChild(grid);
+            triggerFade('dynamicContent');
             if (pushToHistory) history.pushState({ page: 'home' }, '');
         }
 
         function renderCategory(catName, pushToHistory = true) {
             currentParent = catName;
+            resetLeftMenuAccordions();
             hideAllScreens();
-            document.getElementById('dynamicContent').style.display = 'block';
             document.getElementById('backBtn').style.display = 'flex';
             
             const container = document.getElementById('dynamicContent');
+            container.style.display = 'block';
             container.innerHTML = `<h1>${catName}</h1><div class="subtitle">Select Topic</div>`;
 
             const subCats = appDatabase[catName];
@@ -554,19 +615,23 @@
                 container.appendChild(section);
             });
 
+            triggerFade('dynamicContent');
             if (pushToHistory) history.pushState({ page: 'category', cat: catName }, '');
         }
 
         function renderStudyScreen(quizObj, pushToHistory = true) {
             currentActiveFlow = quizObj;
+            resetLeftMenuAccordions();
             hideAllScreens();
-            document.getElementById('studyScreen').style.display = 'block';
+            
             document.getElementById('backBtn').style.display = 'flex';
+            document.getElementById('studyScreen').style.display = 'block';
 
             document.getElementById('studyScreenTitle').innerText = quizObj.title;
             document.getElementById('studyScreenSubtitle').innerText = quizObj.text;
             document.getElementById('studyScreenContent').innerHTML = renderFlowList(quizObj.items);
 
+            triggerFade('studyScreen');
             if (pushToHistory) history.pushState({ page: 'study', quizId: quizObj.id }, '');
         }
 
@@ -708,6 +773,7 @@
             document.getElementById('panelToggleBtn').style.display = 'block';
 
             currentQ = 0; score = 0; errors = 0;
+            triggerFade('quizScreen');
             loadQuestion();
             if (pushToHistory) history.pushState({ page: 'quiz', quizId: quizObj.id }, '');
         }
@@ -781,6 +847,7 @@
             let percentage = Math.round((score / QUESTIONS_PER_DRILL) * 100);
             document.getElementById('finalScore').innerText = percentage + "%";
             document.getElementById('finalStats').innerHTML = `Correct: ${score} out of ${QUESTIONS_PER_DRILL}<br>Errors: ${errors}`;
+            triggerFade('scoreScreen');
         }
 
         function restartSameQuiz() { startQuiz(currentActiveFlow, false); }
