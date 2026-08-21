@@ -17,13 +17,12 @@
             --text-main: #18181b;
             --text-muted: #71717a;
             --primary-color: #0284c7; 
-            --hover-color: #f1f5f9;
+            --hover-color: #e4e4e7;
             --correct-color: #16a34a;
             --correct-bg: #dcfce7;
             --wrong-color: #dc2626;
             --wrong-bg: #fee2e2;
             --border-color: #e4e4e7;
-            --highlight-bg: #e0f2fe;
         }
 
         body.dark-mode {
@@ -38,7 +37,6 @@
             --wrong-color: #f87171;
             --wrong-bg: rgba(220, 38, 38, 0.2);
             --border-color: #27272a;
-            --highlight-bg: rgba(56, 189, 248, 0.1);
         }
 
         * { 
@@ -55,7 +53,6 @@
             min-height: 100vh;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            /* Spacer to prevent top nav overlap */
             padding-top: calc(env(safe-area-inset-top, 20px) + 60px); 
             padding-bottom: env(safe-area-inset-bottom, 20px);
         }
@@ -81,16 +78,25 @@
             color: var(--primary-color);
             border: 1px solid var(--border-color);
             padding: 6px 14px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .action-btn:active { background-color: var(--border-color); }
+        /* Instant touch feedback for iOS */
+        .action-btn:active { 
+            opacity: 0.6; 
+            transition: none !important; 
+        }
+        
         .nav-buttons-left { display: flex; gap: 8px; }
         #backBtn { display: none; }
+        
+        #themeToggleBtn { font-size: 1.1rem; }
 
         /* =========================================================
            CONTAINERS & LAYOUT
@@ -127,9 +133,9 @@
             font-size: 1.1rem;
             font-weight: 600;
             text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
         }
-        .parent-card:active { background-color: var(--highlight-bg); }
-
+        
         .category-section { margin-bottom: 30px; }
         .category-title { color: var(--text-muted); margin: 0 0 10px 0; font-size: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; text-transform: uppercase; }
 
@@ -145,10 +151,15 @@
             font-weight: 600;
             text-align: center;
             min-height: 60px;
+            transition: transform 0.2s, border-color 0.2s;
         }
-        .menu-btn.highlight-blue { background-color: var(--highlight-bg); border-color: var(--primary-color); color: var(--primary-color); }
-        .menu-btn:active { background-color: var(--hover-color); }
         .menu-btn small { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-weight: 400; }
+
+        /* Instant touch feedback classes */
+        .parent-card:active, .menu-btn:active, .option-btn:active:not(:disabled) { 
+            background-color: var(--hover-color) !important; 
+            transition: none !important; 
+        }
 
         /* =========================================================
            STUDY & QUIZ SCREENS
@@ -173,11 +184,11 @@
             text-align: left; 
             font-weight: 500;
             line-height: 1.4; 
+            transition: border-color 0.2s;
         }
-        .option-btn:active:not(:disabled) { background-color: var(--hover-color); }
         .option-btn:disabled { cursor: default; }
-        .option-btn.correct { background-color: var(--correct-bg); border-color: var(--correct-color); color: var(--correct-color); font-weight: bold; }
-        .option-btn.wrong { background-color: var(--wrong-bg); border-color: var(--wrong-color); color: var(--wrong-color); font-weight: bold; }
+        .option-btn.correct { background-color: var(--correct-bg) !important; border-color: var(--correct-color); color: var(--correct-color); font-weight: bold; }
+        .option-btn.wrong { background-color: var(--wrong-bg) !important; border-color: var(--wrong-color); color: var(--wrong-color); font-weight: bold; }
 
         .feedback { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 0.95rem; display: none; line-height: 1.5; }
         .feedback.show { display: block; }
@@ -202,7 +213,7 @@
             display: none; 
             text-transform: uppercase;
         }
-        .next-btn:active { opacity: 0.8; }
+        .next-btn:active { opacity: 0.8; transition: none !important; }
 
         .score-val { font-size: 3rem; font-weight: bold; color: var(--primary-color); margin: 10px 0; }
         .home-btn { background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); margin-top: 15px; }
@@ -232,13 +243,15 @@
         .accordion-btn {
             background: none; border: none; width: 100%; text-align: left; padding: 15px 10px;
             font-size: 0.95rem; color: var(--text-main); font-weight: 600; border-bottom: 1px solid var(--border-color); 
-            display: flex; justify-content: space-between; text-transform: uppercase;
+            display: flex; justify-content: space-between; text-transform: uppercase; transition: color 0.2s;
         }
-        .accordion-content { max-height: 0; overflow: hidden; background-color: var(--bg-color); }
+        .accordion-btn.active { color: var(--primary-color); }
+        .accordion-content { max-height: 0; overflow: hidden; background-color: var(--bg-color); transition: max-height 0.3s ease-out; }
         .accordion-content button {
             width: 100%; text-align: left; padding: 12px 10px 12px 20px; background: none; border: none;
             font-size: 0.95rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);
         }
+        .accordion-content button:active { background-color: var(--hover-color); transition: none !important; }
 
         #panelToggleBtn { 
             position: fixed; top: 50%; right: 0; transform: translateY(-50%); 
@@ -249,15 +262,16 @@
         #panelToggleBtn.open { right: 300px; background-color: var(--primary-color); color: #fff; border-color: transparent; }
     </style>
 </head>
-<body>
+<!-- ontouchstart enables instant :active states on iOS -->
+<body ontouchstart="">
 
     <!-- TOP NAVIGATION -->
     <div class="top-nav">
         <div class="nav-buttons-left">
-            <button class="action-btn" id="menuBtn" onclick="toggleLeftMenu()">Menu</button>
-            <button class="action-btn" id="backBtn" onclick="goBackLogic()">Back</button>
+            <button class="action-btn" id="menuBtn" onclick="toggleLeftMenu()">&#9776;</button>
+            <button class="action-btn" id="backBtn" onclick="goBackLogic()">&#8592;</button>
         </div>
-        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()">Dark</button>
+        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
     </div>
 
     <!-- LEFT MENU -->
@@ -334,36 +348,36 @@
             },
             "Flows": {
                 "Ground": [
-                    { id: "SixPlusSix", title: "6+6 Flow", text: "Before Taxi Check", isMemory: true, items: ["Transponder Code / Clearance", "Barometers", "Altitude Pre-Select(s)", "Comms", "NAVS", "GPS (and MFD ranges)"] },
-                    { id: "HalfAndHalf", title: "1/2 & 1/2 Flow", text: "Before Takeoff", isMemory: true, items: ["Controls FREE & CORRECT", "Circuit Breakers VERIFY IN", "Trims Reset for Takeoff", "Lights", "GPS #2", "Gauges", "Magnetos", "Carb Heat", "Idle Check"] }
+                    { id: "SixPlusSix", title: "6+6 Flow", text: "Before Taxi Check", items: ["Transponder Code / Clearance", "Barometers", "Altitude Pre-Select(s)", "Comms", "NAVS", "GPS (and MFD ranges)"] },
+                    { id: "HalfAndHalf", title: "1/2 & 1/2 Flow", text: "Before Takeoff", items: ["Controls FREE & CORRECT", "Circuit Breakers VERIFY IN", "Trims Reset for Takeoff", "Lights", "GPS #2", "Gauges", "Magnetos", "Carb Heat", "Idle Check"] }
                 ],
                 "Air": [
                     { id: "Climb", title: "Climb Flow", text: "500' AGL", items: ["Flaps UP", "Taxi Light OFF", "Engine Instruments CHECK"] },
-                    { id: "DIMS", title: "DIMS", text: "Cruise Checklist", isMemory: true, items: ["D - Directional Gyro ADJUST", "I - Instruments CHECK", "M - Mixture LEAN", "S - Switches AS REQUIRED", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
-                    { id: "FourCs", title: "4 C's", text: "Pre-Maneuver", isMemory: true, items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
-                    { id: "ABC", title: "ABC", text: "Descent", isMemory: true, items: ["A - ATIS/AWOS OBTAIN", "B - Brief PERFORM", "C - Checklist PERFORM"] },
-                    { id: "CGUMPS", title: "CGUMPS", text: "Final Check", isMemory: true, items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN", "M - Mixture RICH", "P - Pumps/Primer ON/LOCKED", "S - Seatbelts & Switches CHECK"] }
+                    { id: "DIMS", title: "DIMS", text: "Cruise Checklist", items: ["D - Directional Gyro ADJUST", "I - Instruments CHECK", "M - Mixture LEAN", "S - Switches AS REQUIRED", "Next Frequencies PREPARE", "Map Range AS APPROPRIATE", "TOD DETERMINE"] },
+                    { id: "FourCs", title: "4 C's", text: "Pre-Maneuver", items: ["Clearing Turns PERFORM", "Non Congested Area VERIFY", "Checklist PERFORM", "Declare PERFORM"] },
+                    { id: "ABC", title: "ABC", text: "Descent", items: ["A - ATIS/AWOS OBTAIN", "B - Brief PERFORM", "C - Checklist PERFORM"] },
+                    { id: "CGUMPS", title: "CGUMPS", text: "Final Check", items: ["C - Clearance & Carb Heat OBTAIN", "G - Gas BOTH", "U - Undercarriage DOWN", "M - Mixture RICH", "P - Pumps/Primer ON/LOCKED", "S - Seatbelts & Switches CHECK"] }
                 ],
                 "Emergencies": [
-                    { id: "ABCD", title: "ABCD", text: "Engine Failure in Flight", isMemory: true, items: ["A - Airspeed 68 KIAS", "B - Best Place to Land", "C - Checklist", "D - Declare"] }
+                    { id: "ABCD", title: "ABCD", text: "Engine Failure in Flight", items: ["A - Airspeed 68 KIAS", "B - Best Place to Land", "C - Checklist", "D - Declare"] }
                 ]
             },
             "Weather": {
                 "TAF / METAR": [
-                    { id: "WxPrecip", title: "Precipitation", text: "Weather Codes", isMemory: true, items: ["RA - Rain", "SN - Snow", "DZ - Drizzle", "GR - Hail", "GS - Small Hail", "PL - Ice Pellets"] },
-                    { id: "WxObscure", title: "Obscurations", text: "Visibility Restrictions", isMemory: true, items: ["FG - Fog", "BR - Mist", "HZ - Haze", "FU - Smoke", "DU - Dust", "SA - Sand", "VA - Volcanic Ash"] },
-                    { id: "WxDesc", title: "Descriptors", text: "Weather Modifiers", isMemory: true, items: ["TS - Thunderstorm", "SH - Showers", "FZ - Freezing", "BL - Blowing", "PR - Partial", "BC - Patches", "MI - Shallow"] }
+                    { id: "WxPrecip", title: "Precipitation", text: "Weather Codes", items: ["RA - Rain", "SN - Snow", "DZ - Drizzle", "GR - Hail", "GS - Small Hail", "PL - Ice Pellets"] },
+                    { id: "WxObscure", title: "Obscurations", text: "Visibility Restrictions", items: ["FG - Fog", "BR - Mist", "HZ - Haze", "FU - Smoke", "DU - Dust", "SA - Sand", "VA - Volcanic Ash"] },
+                    { id: "WxDesc", title: "Descriptors", text: "Weather Modifiers", items: ["TS - Thunderstorm", "SH - Showers", "FZ - Freezing", "BL - Blowing", "PR - Partial", "BC - Patches", "MI - Shallow"] }
                 ]
             },
             "Acronyms": {
                 "Emergencies": [
-                    { id: "WOSSS", title: "WOSSS", text: "Forced Landing Criteria", isMemory: true, items: ["W - Wind", "O - Obstructions", "S - Size", "S - Shape", "S - Surface"] },
-                    { id: "ABCDE", title: "ABCDE", text: "Emergency Landing", isMemory: true, items: ["A - Airspeed", "B - Best Field", "C - Checklist", "D - Declare", "E - Execute"] }
+                    { id: "WOSSS", title: "WOSSS", text: "Forced Landing Criteria", items: ["W - Wind", "O - Obstructions", "S - Size", "S - Shape", "S - Surface"] },
+                    { id: "ABCDE", title: "ABCDE", text: "Emergency Landing", items: ["A - Airspeed", "B - Best Field", "C - Checklist", "D - Declare", "E - Execute"] }
                 ],
                 "Equipment & Rules": [
-                    { id: "ATOMATO", title: "A TOMATO FLAMES", text: "VFR Day Equipment", isMemory: true, items: ["A - Altimeter", "T - Tachometer", "O - Oil Pressure", "M - Manifold Pressure", "A - Airspeed", "T - Temperature Gauge", "O - Oil Temp", "F - Fuel Gauge", "L - Landing Gear Pos", "A - Anti-collision Lights", "M - Magnetic Compass", "E - ELT", "S - Seatbelts"] },
-                    { id: "FLAPS", title: "FLAPS", text: "VFR Night Equipment", isMemory: true, items: ["F - Fuses", "L - Landing Light", "A - Anti-collision", "P - Position lights", "S - Source of power"] },
-                    { id: "ARROW", title: "ARROW", text: "Required Documents", isMemory: true, items: ["A - Airworthiness Certificate", "R - Registration", "R - Radio license", "O - Operating limitations", "W - Weight and balance"] }
+                    { id: "ATOMATO", title: "A TOMATO FLAMES", text: "VFR Day Equipment", items: ["A - Altimeter", "T - Tachometer", "O - Oil Pressure", "M - Manifold Pressure", "A - Airspeed", "T - Temperature Gauge", "O - Oil Temp", "F - Fuel Gauge", "L - Landing Gear Pos", "A - Anti-collision Lights", "M - Magnetic Compass", "E - ELT", "S - Seatbelts"] },
+                    { id: "FLAPS", title: "FLAPS", text: "VFR Night Equipment", items: ["F - Fuses", "L - Landing Light", "A - Anti-collision", "P - Position lights", "S - Source of power"] },
+                    { id: "ARROW", title: "ARROW", text: "Required Documents", items: ["A - Airworthiness Certificate", "R - Registration", "R - Radio license", "O - Operating limitations", "W - Weight and balance"] }
                 ]
             }
         };
@@ -377,19 +391,34 @@
         let errors = 0;
         let isAnswered = false;
 
-        // Theme
+        // Theme Logic
+        function updateThemeButton(isDark) {
+            const themeBtn = document.getElementById('themeToggleBtn');
+            if(isDark) {
+                themeBtn.innerHTML = '☀️';
+                themeBtn.style.color = '#fbbf24'; 
+                themeBtn.style.borderColor = '#fbbf24';
+                themeBtn.style.backgroundColor = 'rgba(251, 191, 36, 0.1)';
+            } else {
+                themeBtn.innerHTML = '🌙';
+                themeBtn.style.color = '#6366f1'; 
+                themeBtn.style.borderColor = '#6366f1';
+                themeBtn.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
+            }
+        }
+
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
-            document.getElementById('themeToggleBtn').innerText = isDark ? "Light" : "Dark";
+            updateThemeButton(isDark);
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
+
         if (localStorage.getItem('theme') === 'dark') {
             document.body.classList.add('dark-mode');
-            document.getElementById('themeToggleBtn').innerText = "Light";
         }
 
-        // HTML Generator to fix missing lists bug
+        // HTML Generator
         function renderFlowList(items) {
             let html = "<ul style='margin:0; padding-left:1.2rem;'>";
             for(let i=0; i<items.length; i++) {
@@ -431,7 +460,7 @@
 
         function buildLeftMenu() {
             const menuDiv = document.getElementById('leftNavMenuContent');
-            menuDiv.innerHTML = '<h3>Menu</h3><button class="left-menu-btn" style="margin-bottom:10px;" onclick="navigateTo(\'Home\')">Main Dashboard</button>';
+            menuDiv.innerHTML = '<h3>Menu</h3><button class="action-btn" style="width:100%; border:none; border-bottom:1px solid var(--border-color); border-radius:0; justify-content:flex-start; padding:15px 10px; margin-bottom:10px; color:var(--text-main);" onclick="navigateTo(\'Home\')">Main Dashboard</button>';
 
             Object.keys(appDatabase).forEach(catName => {
                 const accBtn = document.createElement('button');
@@ -450,10 +479,21 @@
                     });
                 });
 
+                // Accordion logic: only one open at a time
                 accBtn.onclick = function() {
                     const isOpen = accContent.style.maxHeight;
+                    
+                    // Close all first
                     document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
-                    if (!isOpen) accContent.style.maxHeight = accContent.scrollHeight + "px";
+                    document.querySelectorAll('.accordion-btn span').forEach(s => s.innerText = '▼');
+                    document.querySelectorAll('.accordion-btn').forEach(b => b.classList.remove('active'));
+                    
+                    // If it wasn't open, open it
+                    if (!isOpen) {
+                        accContent.style.maxHeight = accContent.scrollHeight + "px";
+                        this.classList.add('active');
+                        this.querySelector('span').innerText = '▲';
+                    }
                 };
 
                 menuDiv.appendChild(accBtn);
@@ -488,7 +528,7 @@
             currentParent = catName;
             hideAllScreens();
             document.getElementById('dynamicContent').style.display = 'block';
-            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'flex';
             
             const container = document.getElementById('dynamicContent');
             container.innerHTML = `<h1>${catName}</h1><div class="subtitle">Select Topic</div>`;
@@ -505,7 +545,6 @@
                 subCats[subCatName].forEach(quizObj => {
                     const btn = document.createElement('button');
                     btn.className = 'menu-btn';
-                    if (quizObj.isMemory) btn.classList.add('highlight-blue');
                     btn.innerHTML = `${quizObj.title} <small>${quizObj.text}</small>`;
                     btn.onclick = () => renderStudyScreen(quizObj, true);
                     grid.appendChild(btn);
@@ -522,7 +561,7 @@
             currentActiveFlow = quizObj;
             hideAllScreens();
             document.getElementById('studyScreen').style.display = 'block';
-            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'flex';
 
             document.getElementById('studyScreenTitle').innerText = quizObj.title;
             document.getElementById('studyScreenSubtitle').innerText = quizObj.text;
@@ -665,7 +704,7 @@
 
             hideAllScreens();
             document.getElementById('quizScreen').style.display = 'block';
-            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'flex';
             document.getElementById('panelToggleBtn').style.display = 'block';
 
             currentQ = 0; score = 0; errors = 0;
@@ -737,7 +776,7 @@
         function showScore() {
             hideAllScreens();
             document.getElementById('scoreScreen').style.display = 'block';
-            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'flex';
             
             let percentage = Math.round((score / QUESTIONS_PER_DRILL) * 100);
             document.getElementById('finalScore').innerText = percentage + "%";
@@ -747,6 +786,7 @@
         function restartSameQuiz() { startQuiz(currentActiveFlow, false); }
 
         document.addEventListener("DOMContentLoaded", () => {
+            updateThemeButton(document.body.classList.contains('dark-mode'));
             buildLeftMenu();
             history.replaceState({ page: 'home' }, '');
             renderHome(false);
