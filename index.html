@@ -312,15 +312,15 @@
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
         </div>
@@ -392,7 +392,7 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.1.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.1.1 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -506,7 +506,7 @@
             });
             
             const newPage = document.getElementById(pageId);
-            void newPage.offsetWidth; 
+            void newPage.offsetWidth; // trigger reflow
             newPage.classList.add('active');
             
             document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
@@ -520,14 +520,25 @@
             if (pushToHistory) history.pushState(historyState, '');
         }
 
-        // HTML Builders - Added Auto-Bolding for the Action Items
+        // HTML Builders - Smart List Rendering for 6+6 Visual Breaks
         function buildFlowList(items) {
             return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => {
+                let prefix = "";
+                
+                // Specific styling logic for the 6+6 Flow
+                if (item.includes("6 Flight Instruments ➔ CHECK")) {
+                    prefix = "<div style='margin-top:16px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 1: Six Flight Instruments</div>";
+                } else if (item.includes("(1) Clearance/Transponder ➔ OBTAIN/SET")) {
+                    prefix = "<div style='margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 2: Six Avionics Setups</div>";
+                } else if (item.includes("Taxi Light ➔ ON") && items.includes("Taxi Area ➔ CLEAR")) {
+                    prefix = "<div style='margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Ready To Move</div>";
+                }
+
                 if (item.includes('➔')) {
                     let parts = item.split('➔');
-                    return `<li style='margin-bottom:10px;'><strong>${parts[0].trim()}</strong> ➔ ${parts[1].trim()}</li>`;
+                    return `${prefix}<li style='margin-bottom:10px;'><strong>${parts[0].trim()}</strong> ➔ ${parts[1].trim()}</li>`;
                 }
-                return `<li style='margin-bottom:10px;'>${item}</li>`;
+                return `${prefix}<li style='margin-bottom:10px;'>${item}</li>`;
             }).join('') + "</ul>";
         }
 
@@ -652,7 +663,7 @@
             if (allItems.length > 0) {
                 for(let i=0; i<count; i++) selected.push(allItems[Math.floor(Math.random() * allItems.length)]);
             } else {
-                for(let i=0; i<count; i++) selected.push("N/A"); // Fallback
+                for(let i=0; i<count; i++) selected.push("N/A"); 
             }
             return selected;
         }
@@ -838,7 +849,7 @@
                 fb.classList.add('show', 'error');
             }
 
-            fb.innerHTML = `<strong>${isCorrect ? 'Correct' : 'Incorrect'}</strong><br><span>${q.explanation}</span>`;
+            fb.innerHTML = `<strong>${isCorrect ? 'Correct' : 'Incorrect'}</strong><br><span style="display:block; margin-top:8px;">${q.explanation}</span>`;
             document.getElementById('qScore').innerText = `Score: ${score}`;
             document.getElementById('quizProgress').style.width = `${((currentQ + 1) / QUESTIONS_PER_DRILL) * 100}%`;
             
