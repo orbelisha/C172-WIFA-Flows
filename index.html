@@ -68,9 +68,9 @@
             color: var(--text-main);
             margin: 0; padding: 0;
             height: 100vh;
-            height: 100dvh; 
+            height: 100dvh; /* Fix for mobile browser UI elements */
             display: flex; flex-direction: column;
-            overflow: hidden; 
+            overflow: hidden; /* Locks body, allows only the app-container to scroll */
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
             font-size: 16px; 
@@ -112,20 +112,20 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
+            overflow-y: auto; /* Handles all the scrolling perfectly */
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
         }
 
         .main-wrapper {
-            flex: 1 0 auto; 
+            flex: 1 0 auto; /* Allow to grow and center, but won't shrink below content */
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             width: 100%; 
             max-width: 800px; 
-            margin: 0 auto; 
+            margin: 0 auto; /* Center horizontally */
             padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 80px); 
+            padding-top: calc(env(safe-area-inset-top, 20px) + 80px); /* Avoid top nav */
         }
 
         .page { 
@@ -137,7 +137,7 @@
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-soft);
             transition: background-color 0.4s ease, border-color 0.4s ease;
-            margin: auto 0; 
+            margin: auto 0; /* Smart vertical centering! Centers only if there is space */
         }
         
         .page.active { 
@@ -150,6 +150,7 @@
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        /* Typography */
         h1 { margin: 0 0 8px 0; font-size: 1.85rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
         .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
 
@@ -197,6 +198,7 @@
         .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; transition: color 0.3s; }
         .menu-btn:hover small { color: var(--primary-color); }
 
+        /* Rich Hover/Focus states for Cards & Buttons */
         .parent-card:hover, .menu-btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); background-color: var(--card-bg); }
         .parent-card:focus-visible, .menu-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
         .parent-card:active, .menu-btn:active { transform: scale(0.96); background-color: var(--card-hover); transition: none; }
@@ -225,6 +227,7 @@
             font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
         }
         
+        /* Rich Hover/Focus for Options */
         .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-soft); border-color: var(--primary-color); background-color: var(--card-hover); }
         .option-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
         .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-bg); transition: none; }
@@ -256,9 +259,11 @@
         
         .start-btn { display: block; margin-top: 35px; }
 
+        /* Progress Bar */
         .progress-container { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-bottom: 28px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); border-radius: 3px; }
 
+        /* Score Screen */
         .score-val { font-size: 5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
         .secondary-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 16px; box-shadow: none; }
         .secondary-btn:hover { background: var(--hover-color); box-shadow: var(--shadow-soft); }
@@ -392,16 +397,17 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.1.1 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.0.10 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
         const QUESTIONS_PER_DRILL = 15;
 
-        // FIXED DATABASE - Added clear "Item ➔ Action" formatting
+        // FIXED DATABASE
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
+                    { id: "BeforeTaxi", type: "sequence", title: "Before Taxi Check", text: "Pre-Taxi configuration", desc: "Configuration setup prior to taxiing to the runup area.", items: ["Flaps ➔ UP (CHECK VISUALLY)", "Taxi Light ➔ ON", "Taxi Area ➔ CLEAR", "Parking Brake ➔ RELEASE", "Brakes ➔ CHECK", "TC, Ball & DG ➔ CHECK ON FIRST TURN"] },
                     { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing ➔ COMPLETE", "Doors and Seatbelts ➔ SECURED", "Parking Brake ➔ SET", "Fuel Selector ➔ BOTH", "Carburetor Heat ➔ COLD", "Mixture ➔ FULL RICH", "Primer ➔ 2-5 STROKES & LOCK", "Master Switch ➔ ON", "Lights ➔ AS REQUIRED", "Throttle ➔ OPEN 1/8 INCH", "Prop Area ➔ CLEAR", "Starter ➔ ENGAGE", "Throttle ➔ 1,000 RPM & ADJUST", "Oil Pressure ➔ GREEN", "Mixture ➔ LEAN FOR TAXI", "Radio Master ➔ ON"] },
                     { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps ➔ SET FOR TAKEOFF", "Lights ➔ AS REQUIRED", "Aux Fuel Pump ➔ ON", "Mixture ➔ RICH <3000 D.A.", "Carburetor Heat ➔ OFF", "Doors, Windows & Seatbelts ➔ SECURED", "Fuel Timer ➔ SET", "Traffic ➔ CLEAR", "Assigned RWY/HDG ➔ CONFIRMED"] },
                     { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
@@ -416,7 +422,7 @@
             },
             "Flows": {
                 "Ground": [
-                    { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Before Taxi Check", desc: "Instrument setup flow executed before taxiing. The '6+6' separates the 6 flight instruments from the 6 avionics setups.", items: ["Flaps ➔ UP (CHECK VISUALLY)", "6 Flight Instruments ➔ CHECK", "(1) Clearance/Transponder ➔ OBTAIN/SET", "(2) Barometers (ATIS/AWOS) ➔ OBTAIN/SET", "(3) Altitude Select ➔ SET", "(4) Comms ➔ SET", "(5) Navs ➔ SET", "(6) GPS & Map Range ➔ SET", "Taxi Light ➔ ON", "Taxi Area ➔ CLEAR", "Parking Brake ➔ RELEASE", "Brakes ➔ CHECK", "TC, Ball & DG ➔ CHECK ON FIRST TURN"] },
+                    { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Instrument Check", desc: "Setup execution checking the 6 flight instruments followed by the 6 avionics setups.", items: ["6 Flight Instruments ➔ CHECK", "1. Clearance/Transponder ➔ OBTAIN/SET", "2. Barometers (ATIS/AWOS) ➔ OBTAIN/SET", "3. Altitude Select ➔ SET", "4. Comms ➔ SET", "5. Navs ➔ SET", "6. GPS & Map Range ➔ SET"] },
                     { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake ➔ SET", "Taxi Light ➔ OFF", "Throttle ➔ 1,000 RPM", "Controls ➔ FREE & CORRECT", "Fuel Selector ➔ BOTH", "Primer ➔ VERIFY LOCKED", "Circuit Breakers ➔ VERIFY IN", "Departure Frequency ➔ SET", "Transponder ➔ ALT", "Aux Fuel Pump ➔ ON (CHECK RISE), OFF", "Mixture ➔ FULL RICH", "Throttle ➔ 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) ➔ CHECK", "Engine Instruments ➔ CHECK", "Alternator ➔ CHECK", "Carburetor Heat ➔ ON, CHECK", "Throttle ➔ IDLE", "Carburetor Heat ➔ OFF", "Throttle ➔ 1,000 RPM", "Pitot Heat ➔ AS REQUIRED", "Mixture ➔ LEAN FOR TAXI", "Crew Briefing ➔ COMPLETE", "Parking Brake ➔ RELEASE", "Taxi Light ➔ ON"] }
                 ],
                 "Air": [
@@ -506,7 +512,7 @@
             });
             
             const newPage = document.getElementById(pageId);
-            void newPage.offsetWidth; // trigger reflow
+            void newPage.offsetWidth; 
             newPage.classList.add('active');
             
             document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
@@ -520,18 +526,15 @@
             if (pushToHistory) history.pushState(historyState, '');
         }
 
-        // HTML Builders - Smart List Rendering for 6+6 Visual Breaks
+        // HTML Builders
         function buildFlowList(items) {
             return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => {
                 let prefix = "";
                 
-                // Specific styling logic for the 6+6 Flow
                 if (item.includes("6 Flight Instruments ➔ CHECK")) {
                     prefix = "<div style='margin-top:16px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 1: Six Flight Instruments</div>";
-                } else if (item.includes("(1) Clearance/Transponder ➔ OBTAIN/SET")) {
+                } else if (item.includes("1. Clearance/Transponder ➔ OBTAIN/SET")) {
                     prefix = "<div style='margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 2: Six Avionics Setups</div>";
-                } else if (item.includes("Taxi Light ➔ ON") && items.includes("Taxi Area ➔ CLEAR")) {
-                    prefix = "<div style='margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Ready To Move</div>";
                 }
 
                 if (item.includes('➔')) {
