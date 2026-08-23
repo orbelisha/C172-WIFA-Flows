@@ -316,6 +316,8 @@
         .sidebar-sub button:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 54px; }
         .sidebar-sub button:active { background: var(--hover-color); transition: none; }
 
+        .sidebar-icon svg { width: 18px; height: 18px; } /* Safety sizing for arrow */
+
         .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem; width: 100%; margin-top: auto; font-weight: 500; }
     </style>
 </head>
@@ -325,15 +327,15 @@
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
         </div>
@@ -400,18 +402,18 @@
                 <div class="score-val" id="finalScore">0%</div>
                 <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
                 <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
-                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
+                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Topic</button>
             </div>
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.0.17 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.0.19 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
         const QUESTIONS_PER_DRILL = 15;
 
-        // FIXED DATABASE 
+        // FIXED DATABASE
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
@@ -493,9 +495,9 @@
         let isAnswered = false;
 
         // SVGs
-        const sunIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const arrowDownSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+        const sunIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const arrowDownSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 
         // Theme
         function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
@@ -530,7 +532,30 @@
             return null;
         }
 
-        function goBackLogic() { history.back(); }
+        // ================== PURE HIERARCHICAL NAVIGATION ==================
+        function goBackLogic() {
+            const activePage = document.querySelector('.page.active').id;
+            
+            if (activePage === 'categoryScreen') {
+                renderHome(true);
+            } else if (activePage === 'studyScreen') {
+                if (currentParent) {
+                    renderCategory(currentParent, true);
+                } else {
+                    renderHome(true);
+                }
+            } else if (activePage === 'quizScreen' || activePage === 'scoreScreen') {
+                if (currentActiveFlow) {
+                    renderStudyScreen(currentActiveFlow, true);
+                } else if (currentParent) {
+                    renderCategory(currentParent, true);
+                } else {
+                    renderHome(true);
+                }
+            } else {
+                renderHome(true);
+            }
+        }
 
         // Page Router
         function showPage(pageId, pushToHistory = true, historyState = {page: 'home'}) {
@@ -618,7 +643,7 @@
             document.querySelectorAll('.sidebar-icon').forEach(s => s.style.transform = "rotate(0deg)");
         }
 
-        function renderHome() {
+        function renderHome(pushToHistory = true) {
             const container = document.getElementById('homeCategories');
             container.innerHTML = '';
             
@@ -634,7 +659,7 @@
             });
 
             container.appendChild(grid);
-            showPage('homeScreen', false);
+            showPage('homeScreen', pushToHistory, {page: 'home'});
         }
 
         function renderCategory(catName, pushToHistory = true) {
@@ -901,7 +926,7 @@
             let percentage = Math.round((score / QUESTIONS_PER_DRILL) * 100);
             document.getElementById('finalScore').innerText = percentage + "%";
             document.getElementById('finalStats').innerHTML = `Correct: ${score} out of ${QUESTIONS_PER_DRILL}<br>Errors: ${errors}`;
-            showPage('scoreScreen', true, {page: 'home'});
+            showPage('scoreScreen', true, {page: 'score', quizId: currentActiveFlow.id});
         }
 
         function restartSameQuiz() { startQuiz(currentActiveFlow, false); }
