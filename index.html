@@ -83,30 +83,37 @@
         }
         
         /* =========================================================
-           TOP NAVIGATION
+           TOP NAVIGATION (FIXED FOR MOBILE NOTCH/DYNAMIC ISLAND)
            ========================================================= */
         .top-nav {
-            position: absolute; top: 0; left: 0; width: 100%;
-            height: calc(env(safe-area-inset-top, 20px) + 60px);
+            position: fixed; /* Fixed to always stay on top */
+            top: 0; left: 0; width: 100%;
+            /* Use 'max' to ensure at least 20px padding, or more if the iPhone Safe Area requires it */
+            padding-top: calc(max(env(safe-area-inset-top), 20px) + 10px);
+            padding-bottom: 10px;
+            padding-left: 16px;
+            padding-right: 16px;
             background-color: var(--nav-bg);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            display: flex; align-items: flex-end; justify-content: space-between;
-            padding: 12px 16px; z-index: 100;
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
             transition: background-color 0.4s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .icon-btn {
-            background: none; border: none; color: var(--primary-color);
-            padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            background: transparent; border: none; color: var(--primary-color);
+            width: 48px; height: 48px; /* Larger touch target for mobile */
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: all 0.2s ease;
         }
         
+        .icon-btn svg { width: 26px; height: 26px; }
         .icon-btn:hover { background-color: var(--card-hover); transform: translateY(-2px); }
         .icon-btn:active { transform: scale(0.9); background-color: var(--hover-color); transition: none; }
         .icon-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
-        .nav-group { display: flex; gap: 8px; }
+        .nav-group { display: flex; gap: 4px; }
         #backBtn, #studyBtn { display: none; }
 
         /* =========================================================
@@ -130,7 +137,8 @@
             max-width: 800px; 
             margin: 0 auto; 
             padding: 16px;
-            padding-top: calc(env(safe-area-inset-top, 20px) + 80px); 
+            /* Extra padding top to ensure content isn't hidden under the fixed nav */
+            padding-top: calc(max(env(safe-area-inset-top), 20px) + 90px); 
         }
 
         .page { 
@@ -288,7 +296,7 @@
         #rightNavMenu { right: 0; width: 340px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
         #rightNavMenu.open { transform: translateX(0); }
 
-        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .menu-header { padding: calc(max(env(safe-area-inset-top), 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .sidebar-item { display: flex; align-items: center; justify-content: space-between; background: transparent; }
         
@@ -317,15 +325,15 @@
     <div class="top-nav">
         <div class="nav-group">
             <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
             <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
             <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
         </div>
@@ -397,7 +405,7 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.0.15 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.0.17 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -438,9 +446,12 @@
             },
             "Weather": {
                 "TAF / METAR": [
-                    { id: "WxPrecip", type: "definition", title: "Precipitation", text: "Codes", desc: "Standard aviation weather codes indicating actual precipitation falling. Many come from French!", items: ["RA ➔ Rain", "SN ➔ Snow", "DZ ➔ Drizzle (DriZzle)", "GR ➔ Hail (French: Grêle)", "GS ➔ Small Hail (French: Grésil)", "PL ➔ Ice Pellets"] },
-                    { id: "WxObscure", type: "definition", title: "Obscurations", text: "Restrictions", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["FG ➔ Fog", "BR ➔ Mist (French: Brumes / 'Baby Rain')", "HZ ➔ Haze (HaZe)", "FU ➔ Smoke (French: Fumée)", "DU ➔ Dust", "SA ➔ Sand", "VA ➔ Volcanic Ash"] },
-                    { id: "WxDesc", type: "definition", title: "Descriptors", text: "Modifiers", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["TS ➔ Thunderstorm", "SH ➔ Showers", "FZ ➔ Freezing", "BL ➔ Blowing", "PR ➔ Partial", "BC ➔ Patches (French: Bancs)", "MI ➔ Shallow (French: Mince)"] }
+                    { id: "WxIntensity", type: "definition", title: "Intensity / Proximity", text: "METAR Column 1", desc: "Signs used to describe the intensity or proximity of weather phenomena.", items: ["- ➔ Light", "(no sign) ➔ Moderate", "+ ➔ Heavy", "VC ➔ In the vicinity"] },
+                    { id: "WxDesc", type: "definition", title: "Descriptors", text: "METAR Column 2", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["MI ➔ Shallow (French: Mince)", "BC ➔ Patches (French: Bancs)", "DR ➔ Low drifting", "BL ➔ Blowing", "SH ➔ Showers", "TS ➔ Thunderstorms", "FZ ➔ Freezing", "PR ➔ Partial"] },
+                    { id: "WxPrecip", type: "definition", title: "Precipitation", text: "METAR Column 3", desc: "Standard aviation weather codes indicating precipitation falling.", items: ["DZ ➔ Drizzle", "RA ➔ Rain", "SN ➔ Snow", "SG ➔ Snow grains", "IC ➔ Ice crystals (diamond dust)", "PL ➔ Ice pellets", "GR ➔ Hail (French: Grêle)", "GS ➔ Small hail or snow pellets", "UP ➔ Unknown precipitation (Auto only)"] },
+                    { id: "WxObscure", type: "definition", title: "Obscuration", text: "METAR Column 4", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["BR ➔ Mist (French: Brumes / Baby Rain)", "FG ➔ Fog", "FU ➔ Smoke (French: Fumée)", "DU ➔ Dust", "SA ➔ Sand", "HZ ➔ Haze", "PY ➔ Spray", "VA ➔ Volcanic ash"] },
+                    { id: "WxOther", type: "definition", title: "Other Phenomena", text: "METAR Column 5", desc: "Severe or other specific weather phenomena.", items: ["PO ➔ Dust/sand whirls", "SQ ➔ Squalls", "FC ➔ Funnel cloud", "+FC ➔ Tornado or waterspout", "SS ➔ Sandstorm", "DS ➔ Dust storm"] },
+                    { id: "WxRemarks", type: "definition", title: "METAR Remarks", text: "RMK Section", desc: "Specific codes found at the end of a METAR report for meteorologists.", items: ["SLP ➔ Sea Level Pressure (hPa)", "T ➔ Hourly Temp/Dewpoint (Exact)", "5xxxx ➔ 3-Hour Pressure Tendency"] }
                 ]
             },
             "ATC Light Gun": {
@@ -482,9 +493,9 @@
         let isAnswered = false;
 
         // SVGs
-        const sunIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const arrowDownSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+        const sunIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const arrowDownSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
 
         // Theme
         function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
