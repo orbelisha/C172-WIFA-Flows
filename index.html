@@ -1,584 +1,902 @@
-function syncDailyWeatherToCalendar() {
-  var calendar = CalendarApp.getDefaultCalendar();
-  
-  var now = new Date();
-  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  
-  var maxDays = 14;
-  var defaultStartHourLocal = 8; 
-
-  var metarUrl = "https://aviationweather.gov/api/data/metar?ids=KGAI&format=raw";
-  var tafUrl = "https://aviationweather.gov/api/data/taf?ids=KIAD&format=raw";
-  var pirepUrl = "https://aviationweather.gov/api/data/pirep?bbox=38.5,-77.5,39.5,-76.5&format=json";
-  
-  var rawMetarData = "";
-  var rawTafData = "";
-  var pirepData = [];
-  
-  try {
-    rawMetarData = UrlFetchApp.fetch(metarUrl).getContentText().trim();
-    rawTafData = UrlFetchApp.fetch(tafUrl).getContentText().trim();
-  } catch(e) { 
-    Logger.log("Error fetching METAR/TAF: " + e); 
-  }
-  
-  try {
-    var pirepResp = UrlFetchApp.fetch(pirepUrl).getContentText().trim();
-    if (pirepResp && pirepResp.length > 0) {
-        pirepData = JSON.parse(pirepResp);
-    }
-  } catch(e) {
-    Logger.log("Error fetching PIREPs: " + e);
-  }
-  
-  var meteoUrl = "https://api.open-meteo.com/v1/forecast?latitude=39.1668&longitude=-77.1668&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,windgusts_10m_max&hourly=visibility,cloudcover_low,windspeed_10m,windgusts_10m&timezone=America%2FNew_York&forecast_days=16";
-  var forecast = null;
-  try {
-    forecast = JSON.parse(UrlFetchApp.fetch(meteoUrl).getContentText());
-  } catch(e) {
-    Logger.log("Error fetching Meteo: " + e);
-  }
-
-  // === 1. PURE FAA RULES ENGINE (DETERMINES EVENT COLOR AND TITLE) ===
-  function getCategoryByRules(vis, ceil) {
-    var rank = 1;
-    var name = "VFR";
-    var color = CalendarApp.EventColor.GREEN;
-    var emoji = "🟢";
-
-    if (vis <= 5 || ceil <= 3000) { rank = 2; name = "MVFR"; color = CalendarApp.EventColor.BLUE; emoji = "🔵"; } 
-    if (vis < 3 || ceil < 1000) { rank = 3; name = "IFR"; color = CalendarApp.EventColor.RED; emoji = "🔴"; } 
-    if (vis < 1 || ceil < 500) { rank = 4; name = "LIFR"; color = CalendarApp.EventColor.MAUVE; emoji = "🟣"; } 
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="C172 Master">
+    <title>C-172 Knowledge Master</title>
     
-    return { rank: rank, name: name, color: color, emoji: emoji };
-  }
+    <!-- Premium Google-like Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  // === 1.5 WIFA DETAILED STATUS ===
-  function getWifaDetailedStatus(vis, ceil, wind) {
-      var cStat = "", vStat = "", wStat = "";
-      var isNoGo = false, isDualOnly = false, soloRestriction = "";
+    <style>
+        /* =========================================================
+           GEMINI / MATERIAL 3 DESIGN SYSTEM
+           ========================================================= */
+        :root {
+            /* Light Mode */
+            --bg-color: #f0f4f9;
+            --card-bg: #ffffff;
+            --text-main: #1f1f1f;
+            --text-muted: #444746;
+            --primary-color: #0b57d0; 
+            --hover-color: #e1e3e1;
+            --card-hover: #f8fafd;
+            --correct-color: #146c2e;
+            --correct-bg: #e6f4ea;
+            --wrong-color: #b3261e;
+            --wrong-bg: #fce8e6;
+            --border-color: #e0e0e0;
+            --focus-ring: rgba(11, 87, 208, 0.4);
+            --shadow-soft: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+            --nav-bg: rgba(240, 244, 249, 0.85);
+        }
 
-      if (ceil < 2100) { cStat = "❌ Fails Dual Min 2100ft"; isNoGo = true; }
-      else if (ceil < 3000) { cStat = "⚠️ Fails Solo Min 3000ft"; isDualOnly = true; }
-      else if (ceil < 3500) { cStat = "🟡 Fails Solo Local Min 3500ft"; soloRestriction = "Traffic Pattern"; }
-      else if (ceil < 4500) { cStat = "🟡 Fails Solo XC Min 4500ft"; soloRestriction = "Traffic Pattern"; }
-      else if (ceil < 5000) { cStat = "🟡 Fails Solo XC Min 5000ft"; soloRestriction = "Local Flight"; }
-      else { cStat = "✅ Pass All"; }
+        body.dark-mode {
+            /* Dark Mode */
+            --bg-color: #131314;
+            --card-bg: #1e1f22;
+            --text-main: #e3e3e3;
+            --text-muted: #c4c7c5;
+            --primary-color: #a8c7fa;
+            --hover-color: #444746;
+            --card-hover: #282a2d;
+            --correct-color: #81c995;
+            --correct-bg: rgba(20, 108, 46, 0.15);
+            --wrong-color: #f28b82;
+            --wrong-bg: rgba(179, 38, 30, 0.15);
+            --border-color: #444746;
+            --focus-ring: rgba(168, 199, 250, 0.4);
+            --shadow-soft: 0 4px 16px rgba(0,0,0,0.3);
+            --shadow-hover: 0 12px 28px rgba(0,0,0,0.5);
+            --nav-bg: rgba(19, 19, 20, 0.85);
+        }
 
-      if (vis < 3) { vStat = "❌ Fails Dual Min 3SM"; isNoGo = true; }
-      else if (vis < 7) { vStat = "⚠️ Fails Solo Min 7SM"; isDualOnly = true; }
-      else if (vis < 10) { vStat = "🟡 Fails Solo Local/XC Min 10SM"; soloRestriction = "Traffic Pattern"; }
-      else { vStat = "✅ Pass All"; }
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            box-sizing: border-box; 
+        }
 
-      if (wind > 20) { wStat = "❌ Fails Dual Min 20kt"; isNoGo = true; }
-      else if (wind > 10) { wStat = "⚠️ Fails Solo Min 10kt"; isDualOnly = true; }
-      else if (wind > 8) { wStat = "🟡 Fails Solo Pattern Min 8kt"; if (soloRestriction === "") soloRestriction = "Local/XC"; }
-      else { wStat = "✅ Pass All"; }
-
-      var overall = "✅ ALL APPROVED";
-      if (isNoGo) overall = "🛑 NO VFR FLIGHT";
-      else if (isDualOnly) overall = "🟡 DUAL ONLY";
-      else if (soloRestriction !== "") overall = "🟢 DUAL: Approved | SOLO: Restricted to " + soloRestriction;
-
-      return overall + "\n   • Ceil: " + ceil + "ft AGL (" + cStat + ")\n   • Vis: " + vis.toFixed(1) + "SM (" + vStat + ")\n   • Wind: " + Math.round(wind) + "kt (" + wStat + ")";
-  }
-
-  function getWeatherDesc(code) {
-    if (code === undefined || code === null) return "Unknown";
-    if (code === 0) return "Clear skies ☀️";
-    if (code >= 1 && code <= 3) return "Partly cloudy / Overcast ⛅";
-    if (code === 45 || code === 48) return "Fog 🌫️";
-    if (code >= 51 && code <= 55) return "Drizzle 💧";
-    if (code >= 61 && code <= 65) return "Rain 🌧️";
-    if (code >= 71 && code <= 75) return "Snow ❄️";
-    if (code >= 80 && code <= 82) return "Heavy rain showers 🌧️";
-    if (code >= 95) return "Thunderstorms ⛈️";
-    return "Unstable / Unknown";
-  }
-
-  // === 2. TEXT PARSER ===
-  function extractVisCeilWind(text) {
-      var vis = 10, ceil = 10000, wind = 0;
-      if (!text || text.length < 5) return { vis: vis, ceil: ceil, wind: wind };
-      
-      var words = text.replace(/\\n/g, " ").replace(/=/g, "").split(/\s+/);
-      
-      for (var w = 0; w < words.length; w++) {
-          var word = words[w];
-          
-          if (word.indexOf("SM") > -1) {
-              var vStr = word.replace("SM", "").replace("P", "").replace("M", "");
-              var v = 10;
-              if (vStr.indexOf("/") > -1) {
-                  var parts = vStr.split("/");
-                  if (parts.length === 2) {
-                      var fraction = parseFloat(parts[0]) / parseFloat(parts[1]);
-                      if (w > 0 && /^\d+$/.test(words[w-1])) {
-                          v = parseInt(words[w-1]) + fraction;
-                      } else {
-                          v = fraction;
-                      }
-                  }
-              } else {
-                  v = parseFloat(vStr);
-              }
-              if (!isNaN(v) && v < vis) vis = v;
-          }
-          
-          var cMatch = word.match(/^(BKN|OVC|VV)(\d{3})/);
-          if (cMatch) {
-              var c = parseInt(cMatch[2]) * 100;
-              if (c < ceil) ceil = c;
-          }
-          
-          var windMatch = word.match(/^(?:\d{3}|VRB)(\d{2,3})(?:G(\d{2,3}))?KT$/);
-          if (windMatch) {
-              var wSpeed = parseInt(windMatch[1]);
-              var wGust = windMatch[2] ? parseInt(windMatch[2]) : 0;
-              var effectiveWind = Math.max(wSpeed, wGust);
-              if (effectiveWind > wind) wind = effectiveWind;
-          }
-      }
-      return { vis: vis, ceil: ceil, wind: wind };
-  }
-
-  var metarCond = extractVisCeilWind(rawMetarData);
-  var metarCatObj = getCategoryByRules(metarCond.vis, metarCond.ceil);
-
-  // === 3. UNIX EPOCH TAF ENGINE ===
-  function evaluateTafForWindowUnix(targetDate, startHourLocal, endHourLocal) {
-      if (!rawTafData || rawTafData.length <= 10) return { cat: null, text: [], vis: 10, ceil: 10000, wind: 0 };
-
-      var cleanTaf = rawTafData.replace(/\n/g, " ").replace(/\r/g, " ");
-      cleanTaf = cleanTaf.replace(/FM/g, "\nFM").replace(/TEMPO/g, "\nTEMPO").replace(/PROB/g, "\nPROB").replace(/BECMG/g, "\nBECMG");
-      
-      var lines = cleanTaf.split("\n");
-      var headerLine = lines[0]; 
-      
-      var periodMatch = headerLine.match(/(\d{2})(\d{2})\/(\d{2})(\d{2})/);
-      if (!periodMatch) return { cat: null, text: [], vis: 10, ceil: 10000, wind: 0 }; 
-      
-      var nowZulu = new Date();
-      var currentYear = nowZulu.getUTCFullYear();
-      var currentMonth = nowZulu.getUTCMonth();
-
-      function getUnixTime(day, hour) {
-          var m = currentMonth;
-          var y = currentYear;
-          if (day > 20 && nowZulu.getUTCDate() < 10) {
-              m -= 1; if (m < 0) { m = 11; y -= 1; }
-          } else if (day < 10 && nowZulu.getUTCDate() > 20) {
-              m += 1; if (m > 11) { m = 0; y += 1; }
-          }
-          if (hour === 24) { hour = 0; day += 1; }
-          return Date.UTC(y, m, day, hour, 0, 0); 
-      }
-
-      var tafStartMs = getUnixTime(parseInt(periodMatch[1]), parseInt(periodMatch[2]));
-      var tafEndMs = getUnixTime(parseInt(periodMatch[3]), parseInt(periodMatch[4]));
-      
-      var flightStartMs = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), startHourLocal, 0, 0).getTime();
-      var flightEndMs = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), endHourLocal, 0, 0).getTime();
-
-      var blocks = [];
-      var currentBaseStart = tafStartMs;
-      var currentBaseText = headerLine;
-
-      for (var l = 1; l < lines.length; l++) {
-          var line = lines[l].trim();
-          if (line === "") continue;
-
-          var fmMatch = line.match(/^FM(\d{2})(\d{2})\d{2}/);
-          var timeGroupMatch = line.match(/^(TEMPO|PROB\d{2}|BECMG)\s+(\d{2})(\d{2})\/(\d{2})(\d{2})/);
-
-          if (fmMatch) {
-              var fmStart = getUnixTime(parseInt(fmMatch[1]), parseInt(fmMatch[2]));
-              blocks.push({ start: currentBaseStart, end: fmStart, text: currentBaseText });
-              currentBaseStart = fmStart;
-              currentBaseText = line;
-          } else if (timeGroupMatch) {
-              var modStart = getUnixTime(parseInt(timeGroupMatch[2]), parseInt(timeGroupMatch[3]));
-              var modEnd = getUnixTime(parseInt(timeGroupMatch[4]), parseInt(timeGroupMatch[5]));
-              blocks.push({ start: modStart, end: modEnd, text: line });
-          } else {
-              currentBaseText += " " + line;
-          }
-      }
-      blocks.push({ start: currentBaseStart, end: tafEndMs, text: currentBaseText });
-
-      var worstVis = 10;
-      var worstCeil = 10000;
-      var worstWind = 0;
-      var hasOverlap = false;
-      var overlappingTexts = [];
-
-      for (var b = 0; b < blocks.length; b++) {
-          var block = blocks[b];
-          if (block.end > flightStartMs && block.start < flightEndMs) {
-              hasOverlap = true;
-              overlappingTexts.push(block.text);
-              var cond = extractVisCeilWind(block.text);
-              if (cond.vis < worstVis) worstVis = cond.vis;
-              if (cond.ceil < worstCeil) worstCeil = cond.ceil;
-              if (cond.wind > worstWind) worstWind = cond.wind;
-          }
-      }
-
-      if (hasOverlap) {
-          return { cat: getCategoryByRules(worstVis, worstCeil), text: overlappingTexts, vis: worstVis, ceil: worstCeil, wind: worstWind };
-      } else {
-          var lastCond = extractVisCeilWind(currentBaseText);
-          return { cat: getCategoryByRules(lastCond.vis, lastCond.ceil), text: [currentBaseText], vis: lastCond.vis, ceil: lastCond.ceil, wind: lastCond.wind };
-      }
-  }
-
-
-  // === 4. MAIN SCHEDULING LOOP ===
-  for (var i = 0; i <= maxDays; i++) {
-    var d = new Date(today.getTime());
-    d.setDate(d.getDate() + i);
-    
-    var currentDateStr = Utilities.formatDate(d, "America/New_York", "yyyy-MM-dd");
-    
-    var eventsForDay = calendar.getEventsForDay(d);
-    var existingEvent = null;
-    var hasScheduledFlight = false;
-    
-    var flightStartH = 24; 
-    var flightEndH = 0;    
-    
-    for (var e = 0; e < eventsForDay.length; e++) {
-      var evTitle = eventsForDay[e].getTitle();
-      
-      if (eventsForDay[e].isAllDayEvent() && evTitle.indexOf("KGAI WX") > -1) {
-        existingEvent = eventsForDay[e];
-      } 
-      else if (!eventsForDay[e].isAllDayEvent()) {
-        var tLow = evTitle.toLowerCase();
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            height: 100vh;
+            height: 100dvh; 
+            display: flex; flex-direction: column;
+            overflow: hidden; 
+            -webkit-font-smoothing: antialiased;
+            touch-action: manipulation;
+            font-size: 16px; 
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
         
-        var isBlacklisted = tLow.indexOf("הכנה") > -1 || tLow.indexOf("prep") > -1 || tLow.indexOf("briefing") > -1 || tLow.indexOf("נסיעה") > -1 || tLow.indexOf("drive") > -1;
+        /* =========================================================
+           TOP NAVIGATION
+           ========================================================= */
+        .top-nav {
+            position: absolute; top: 0; left: 0; width: 100%;
+            height: calc(env(safe-area-inset-top, 20px) + 60px);
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; align-items: flex-end; justify-content: space-between;
+            padding: 12px 16px; z-index: 100;
+            transition: background-color 0.4s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .icon-btn {
+            background: none; border: none; color: var(--primary-color);
+            padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+        }
         
-        if (!isBlacklisted) {
-            var hasTailNum = tLow.match(/\bn\d{2,5}[a-z]*\b/i);
-            var isFlightEvent = tLow.indexOf("wifa") > -1 || tLow.indexOf("flight") > -1 || tLow.indexOf("טיסה") > -1 || hasTailNum;
+        .icon-btn:hover { background-color: var(--card-hover); transform: translateY(-2px); }
+        .icon-btn:active { transform: scale(0.9); background-color: var(--hover-color); transition: none; }
+        .icon-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+        .nav-group { display: flex; gap: 8px; }
+        #backBtn, #studyBtn { display: none; }
+
+        /* =========================================================
+           LAYOUT, SCROLLING & SMART CENTERING
+           ========================================================= */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        .main-wrapper {
+            flex: 1 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 16px;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 80px); 
+        }
+
+        .page { 
+            display: none; 
+            width: 100%; 
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+            margin: auto 0; 
+        }
+        
+        .page.active { 
+            display: block; 
+            animation: fadeInPage 0.4s cubic-bezier(0.2, 0, 0, 1) forwards; 
+        }
+
+        @keyframes fadeInPage {
+            0% { opacity: 0; transform: translateY(15px) scale(0.99); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        h1 { margin: 0 0 8px 0; font-size: 1.85rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+
+        /* =========================================================
+           INTERACTIVE CARDS & LISTS
+           ========================================================= */
+        .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+        
+        .parent-card {
+            background-color: var(--bg-color);
+            border: 1.5px solid transparent;
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 30px 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            outline: none;
+        }
+        
+        .category-section { margin-bottom: 40px; width: 100%; }
+        .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.2px; }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+        
+        .menu-btn {
+            background-color: var(--bg-color);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 16px;
+            padding: 20px 16px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-align: left;
+            min-height: 90px;
+            display: flex; flex-direction: column; justify-content: center;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            outline: none;
+        }
+        
+        .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; transition: color 0.3s; }
+        .menu-btn:hover small { color: var(--primary-color); }
+
+        .parent-card:hover, .menu-btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); background-color: var(--card-bg); }
+        .parent-card:focus-visible, .menu-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
+        .parent-card:active, .menu-btn:active { transform: scale(0.96); background-color: var(--card-hover); transition: none; }
+
+        /* =========================================================
+           STUDY & QUIZ SCREENS
+           ========================================================= */
+        .study-title { font-size: 1.8rem; margin: 0 0 8px 0; color: var(--text-main); font-weight: 700; }
+        .study-subtitle { font-size: 1.05rem; color: var(--primary-color); margin-bottom: 20px; font-weight: 600; }
+        
+        .study-desc { 
+            font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; 
+            background: var(--bg-color); padding: 18px 20px; border-radius: 16px; 
+            border: 1px solid var(--border-color); transition: box-shadow 0.3s ease;
+        }
+        .study-desc:hover { box-shadow: var(--shadow-soft); }
+
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
+        .question-text { font-size: 1.45rem; font-weight: 500; margin-bottom: 35px; line-height: 1.5; color: var(--text-main); }
+        
+        .options { display: flex; flex-direction: column; gap: 14px; }
+        
+        .option-btn { 
+            background: var(--bg-color); border: 1.5px solid var(--border-color); color: var(--text-main); 
+            border-radius: 16px; padding: 20px 22px; font-size: 1.1rem; text-align: left; font-weight: 500; line-height: 1.4; 
+            font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
+        }
+        
+        .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-soft); border-color: var(--primary-color); background-color: var(--card-hover); }
+        .option-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-bg); transition: none; }
+        .option-btn:disabled { cursor: default; box-shadow: none; transform: none; }
+        
+        .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color) !important; color: var(--correct-color); font-weight: 700; transform: scale(1.02); }
+        .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color) !important; color: var(--wrong-color); font-weight: 700; transform: scale(0.98); }
+
+        .feedback { margin-top: 28px; padding: 20px 24px; border-radius: 16px; font-size: 1.05rem; display: none; line-height: 1.5; font-weight: 500; box-shadow: var(--shadow-soft); }
+        .feedback.show { display: block; animation: fadeInPage 0.35s ease forwards; }
+        .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(20, 108, 46, 0.2); }
+        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(179, 38, 30, 0.2); }
+
+        .flow-box { background: var(--bg-color); padding: 24px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s; }
+        .flow-box:hover { box-shadow: var(--shadow-hover); }
+        .flow-box h4 { margin: 0 0 16px 0; color: var(--primary-color); font-size: 1.05rem; font-weight: 700; }
+        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 400; font-size: 1.1rem; line-height: 1.6; }
+        .flow-box li { margin-bottom: 10px; }
+
+        .primary-btn { 
+            background: var(--primary-color); color: #fff; border: none; padding: 20px; font-size: 1.15rem; 
+            border-radius: 100px; font-weight: 600; margin-top: 35px; width: 100%; display: none;
+            cursor: pointer; font-family: inherit; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
+        }
+        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11, 87, 208, 0.4); filter: brightness(1.1); }
+        .primary-btn:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
+        .primary-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(11, 87, 208, 0.3); filter: brightness(0.9); transition: none; }
+        
+        .start-btn { display: block; margin-top: 35px; }
+
+        .progress-container { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-bottom: 28px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); border-radius: 3px; }
+
+        .score-val { font-size: 5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
+        .secondary-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 16px; box-shadow: none; }
+        .secondary-btn:hover { background: var(--hover-color); box-shadow: var(--shadow-soft); }
+
+        /* =========================================================
+           SIDE MENUS
+           ========================================================= */
+        #leftMenuOverlay, #rightMenuOverlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4); z-index: 998; opacity: 0; transition: opacity 0.3s ease;
+        }
+        #leftMenuOverlay.open, #rightMenuOverlay.open { display: block; opacity: 1; }
+
+        .side-menu {
+            position: fixed; top: 0; height: 100vh; background: var(--card-bg);
+            transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto; 
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        #leftNavMenu { left: 0; width: 300px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
+        #leftNavMenu.open { transform: translateX(0); }
+        
+        #rightNavMenu { right: 0; width: 340px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
+        #rightNavMenu.open { transform: translateX(0); }
+
+        .menu-header { padding: calc(env(safe-area-inset-top, 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .sidebar-item { display: flex; align-items: center; justify-content: space-between; background: transparent; }
+        
+        .sidebar-text { flex: 1; padding: 18px 24px; font-size: 1.1rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
+        .sidebar-text:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 28px; }
+        .sidebar-text:active { background: var(--hover-color); transition: none; }
+        
+        .sidebar-icon { padding: 18px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease, color 0.2s; }
+        .sidebar-icon:hover { color: var(--primary-color); }
+        
+        .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.2, 0, 0, 1); }
+        .sidebar-sub button {
+            width: 100%; text-align: left; padding: 16px 24px 16px 48px; background: none; border: none;
+            font-size: 1rem; color: var(--text-muted); font-weight: 500; font-family: inherit;
+            transition: all 0.2s ease; cursor: pointer;
+        }
+        .sidebar-sub button:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 54px; }
+        .sidebar-sub button:active { background: var(--hover-color); transition: none; }
+
+        .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem; width: 100%; margin-top: auto; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <div class="top-nav">
+        <div class="nav-group">
+            <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+        </div>
+        <div class="nav-group">
+            <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </button>
+            <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
+        </div>
+    </div>
+
+    <!-- LEFT MENU -->
+    <div id="leftMenuOverlay" onclick="closeLeftMenu()"></div>
+    <div id="leftNavMenu" class="side-menu">
+        <div id="leftNavMenuContent"></div>
+    </div>
+
+    <!-- RIGHT STUDY PANEL -->
+    <div id="rightMenuOverlay" onclick="closeRightMenu()"></div>
+    <div id="rightNavMenu" class="side-menu">
+        <div class="menu-header">Study Material</div>
+        <div id="rightPanelContent" style="padding: 16px;"></div>
+    </div>
+
+    <!-- SCROLLABLE APP CONTAINER -->
+    <div class="app-container" id="appScrollContainer">
+        <div class="main-wrapper">
             
-            if (isFlightEvent) {
-                var evStart = eventsForDay[e].getStartTime().getHours();
-                var evEnd = eventsForDay[e].getEndTime().getHours();
-                if (eventsForDay[e].getEndTime().getMinutes() > 0) evEnd += 1;
+            <!-- HOME SCREEN -->
+            <div class="page active" id="homeScreen">
+                <h1>C-172 Master</h1>
+                <div class="subtitle">Select Training Category</div>
+                <div id="homeCategories"></div>
+            </div>
+
+            <!-- CATEGORY SCREEN -->
+            <div class="page" id="categoryScreen">
+                <h1 id="catTitle">Title</h1>
+                <div class="subtitle">Select Topic</div>
+                <div id="catContent"></div>
+            </div>
+
+            <!-- STUDY SCREEN -->
+            <div class="page" id="studyScreen">
+                <h1 id="studyTitle">Title</h1>
+                <div class="subtitle" id="studySubtitle">Subtitle</div>
+                <div class="study-desc" id="studyScreenDesc">Context description goes here.</div>
+                <div class="flow-box">
+                    <div id="studyScreenContent"></div>
+                </div>
+                <button class="primary-btn start-btn" onclick="startQuizFromStudy()">Start Drill</button>
+            </div>
+
+            <!-- QUIZ SCREEN -->
+            <div class="page" id="quizScreen">
+                <div class="progress-container"><div class="progress-bar" id="quizProgress"></div></div>
+                <div class="question-header">
+                    <span id="qNumber">Q 1/15</span>
+                    <span id="qScore" style="color: var(--primary-color);">Score: 0</span>
+                </div>
+                <div class="question-text" id="qText">Question</div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="feedback" id="feedbackBox"></div>
+                <button class="primary-btn" id="nextBtn" onclick="nextQuestion()">Continue</button>
+            </div>
+
+            <!-- SCORE SCREEN -->
+            <div class="page" id="scoreScreen">
+                <h1>Drill Completed</h1>
+                <div class="score-val" id="finalScore">0%</div>
+                <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
+                <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
+                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Menu</button>
+            </div>
+            
+        </div>
+        <!-- FOOTER -->
+        <div class="footer">v1.0.13 | &copy; 2026 Or Belisha</div>
+    </div>
+
+    <script>
+        const QUESTIONS_PER_DRILL = 15;
+
+        // FIXED DATABASE 
+        const appDatabase = {
+            "Checklists": {
+                "Normal Procedures": [
+                    { id: "BeforeTaxi", type: "sequence", title: "Before Taxi Check", text: "Pre-Taxi configuration", desc: "Configuration setup prior to taxiing to the runup area.", items: ["Flaps ➔ UP (CHECK VISUALLY)", "Taxi Light ➔ ON", "Taxi Area ➔ CLEAR", "Parking Brake ➔ RELEASE", "Brakes ➔ CHECK", "TC, Ball & DG ➔ CHECK ON FIRST TURN"] },
+                    { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing ➔ COMPLETE", "Doors and Seatbelts ➔ SECURED", "Parking Brake ➔ SET", "Fuel Selector ➔ BOTH", "Carburetor Heat ➔ COLD", "Mixture ➔ FULL RICH", "Primer ➔ 2-5 STROKES & LOCK", "Master Switch ➔ ON", "Lights ➔ AS REQUIRED", "Throttle ➔ OPEN 1/8 INCH", "Prop Area ➔ CLEAR", "Starter ➔ ENGAGE", "Throttle ➔ 1,000 RPM & ADJUST", "Oil Pressure ➔ GREEN", "Mixture ➔ LEAN FOR TAXI", "Radio Master ➔ ON"] },
+                    { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps ➔ SET FOR TAKEOFF", "Lights ➔ AS REQUIRED", "Aux Fuel Pump ➔ ON", "Mixture ➔ RICH <3000 D.A.", "Carburetor Heat ➔ OFF", "Doors, Windows & Seatbelts ➔ SECURED", "Fuel Timer ➔ SET", "Traffic ➔ CLEAR", "Assigned RWY/HDG ➔ CONFIRMED"] },
+                    { id: "AfterLanding", type: "sequence", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps ➔ UP", "Mixture ➔ LEAN FOR TAXI", "Carburetor Heat ➔ OFF", "Trim ➔ RESET FOR TAKEOFF", "Pitot Heat ➔ OFF", "Taxi Light ➔ ON", "Landing Light ➔ OFF", "Contact/Monitor Ground ➔ AS REQUIRED"] },
+                    { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake ➔ SET", "Radio Master ➔ OFF", "Exterior Lights ➔ OFF", "Cabin / Panel Lights ➔ OFF", "Throttle ➔ IDLE", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF & KEY OUT", "Master Switch ➔ OFF", "Parking Brake ➔ RELEASE"] },
+                    { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ➔ ALL ON", "Tie Downs & Chocks ➔ APPLY", "Control Lock & Pitot Cover ➔ INSTALL", "Fuel Selector ➔ LEFT or RIGHT", "Engine Instruments ➔ CHECK", "Seatbelts ➔ FASTENED", "Cabin Air/Heat ➔ OFF", "Windows ➔ CLOSE", "Flight Plan ➔ CLOSE", "Binder & Fuel Load ➔ RECORD", "FSP & Squawks ➔ COMPLETE", "Garbage ➔ VERIFY CLEAN"] }
+                ],
+                "Emergency Procedures": [
+                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking ➔ CONTINUE", "If Fails: Throttle ➔ FULL OPEN", "Mixture ➔ IDLE CUTOFF", "Cranking ➔ CONTINUE for 3 MINS", "Fire Extinguisher ➔ OBTAIN", "Master/Ignition/Fuel ➔ OFF"] },
+                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch ➔ OFF", "Cabin Air & Heat ➔ OFF", "Fire Extinguisher ➔ CONSIDER USING"] }
+                ]
+            },
+            "Flows": {
+                "Ground": [
+                    { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Instrument Check", desc: "Setup execution checking the 6 flight instruments followed by the 6 avionics setups.", items: ["6 Flight Instruments ➔ CHECK", "1. Clearance/Transponder ➔ OBTAIN/SET", "2. Barometers (ATIS/AWOS) ➔ OBTAIN/SET", "3. Altitude Select ➔ SET", "4. Comms ➔ SET", "5. Navs ➔ SET", "6. GPS & Map Range ➔ SET"] },
+                    { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake ➔ SET", "Taxi Light ➔ OFF", "Throttle ➔ 1,000 RPM", "Controls ➔ FREE & CORRECT", "Fuel Selector ➔ BOTH", "Primer ➔ VERIFY LOCKED", "Circuit Breakers ➔ VERIFY IN", "Departure Frequency ➔ SET", "Transponder ➔ ALT", "Aux Fuel Pump ➔ ON (CHECK RISE), OFF", "Mixture ➔ FULL RICH", "Throttle ➔ 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) ➔ CHECK", "Engine Instruments ➔ CHECK", "Alternator ➔ CHECK", "Carburetor Heat ➔ ON, CHECK", "Throttle ➔ IDLE", "Carburetor Heat ➔ OFF", "Throttle ➔ 1,000 RPM", "Pitot Heat ➔ AS REQUIRED", "Mixture ➔ LEAN FOR TAXI", "Crew Briefing ➔ COMPLETE", "Parking Brake ➔ RELEASE", "Taxi Light ➔ ON"] }
+                ],
+                "Air": [
+                    { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
+                    { id: "DIMS", type: "sequence", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump ➔ OFF", "Pitch Attitude ➔ OBTAIN", "Power ➔ CRUISE RPM", "D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED", "Next Frequencies ➔ PREPARE", "Map Range ➔ AS APPROPRIATE", "TOD ➔ DETERMINE"] },
+                    { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns ➔ PERFORM", "Non Congested Area ➔ VERIFY", "Checklist ➔ PERFORM", "Declare ➔ PERFORM"] },
+                    { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A ➔ ATIS/AWOS OBTAIN", "B ➔ Brief (Approach/Arrival) PERFORM", "C ➔ Checklist PERFORM"] },
+                    { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C ➔ Clearance & Carb Heat OBTAIN", "G ➔ Gas BOTH", "U ➔ Undercarriage DOWN and WELDED", "M ➔ Mixture RICH <3000 D.A.", "P ➔ Props & Pumps ON", "S ➔ Seatbelts & Switches CHECK"] },
+                    { id: "GoAround", type: "sequence", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle ➔ FULL FWD", "Carburetor Heat ➔ OFF", "Pitch ➔ UP TO 8-10 DEG", "Flaps ➔ UP INCREMENTALLY", "Navigate ➔ FLY A/C", "Communicate ➔ TOWER", "IFR: GPS ➔ UNSUSPEND"] }
+                ],
+                "Emergencies": [
+                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700"] }
+                ]
+            },
+            "Weather": {
+                "TAF / METAR": [
+                    { id: "WxPrecip", type: "definition", title: "Precipitation", text: "Codes", desc: "Standard aviation weather codes indicating actual precipitation falling. Many come from French!", items: ["RA ➔ Rain", "SN ➔ Snow", "DZ ➔ Drizzle (DriZzle)", "GR ➔ Hail (French: Grêle)", "GS ➔ Small Hail (French: Grésil)", "PL ➔ Ice Pellets"] },
+                    { id: "WxObscure", type: "definition", title: "Obscurations", text: "Restrictions", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["FG ➔ Fog", "BR ➔ Mist (French: Brumes / 'Baby Rain')", "HZ ➔ Haze (HaZe)", "FU ➔ Smoke (French: Fumée)", "DU ➔ Dust", "SA ➔ Sand", "VA ➔ Volcanic Ash"] },
+                    { id: "WxDesc", type: "definition", title: "Descriptors", text: "Modifiers", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["TS ➔ Thunderstorm", "SH ➔ Showers", "FZ ➔ Freezing", "BL ➔ Blowing", "PR ➔ Partial", "BC ➔ Patches (French: Bancs)", "MI ➔ Shallow (French: Mince)"] }
+                ]
+            },
+            "ATC Light Gun": {
+                "On The Ground": [
+                    { id: "GroundSignals", type: "definition", title: "Ground Signals", text: "Surface Movement", desc: "ATC Light Gun Signals used when an aircraft is ON THE GROUND and has experienced a radio failure.", items: ["Steady Green ➔ Cleared for Takeoff", "Flashing Green ➔ Cleared to Taxi", "Steady Red ➔ STOP", "Flashing Red ➔ Taxi clear of the runway in use", "Flashing White ➔ Return to starting point on airport", "Alternating Red/Green ➔ Exercise Extreme Caution"] }
+                ],
+                "In Flight": [
+                    { id: "FlightSignals", type: "definition", title: "Flight Signals", text: "Airborne Operations", desc: "ATC Light Gun Signals used when an aircraft is IN FLIGHT and has experienced a radio failure.", items: ["Steady Green ➔ Cleared to Land", "Flashing Green ➔ Return for landing (to be followed by steady green)", "Steady Red ➔ Give way to other aircraft and continue circling", "Flashing Red ➔ Airport Unsafe - Do NOT land", "Alternating Red/Green ➔ Exercise Extreme Caution"] }
+                ]
+            },
+            "Acronyms": {
+                "Instruments & Navigation": [
+                    { id: "ANDS", type: "definition", title: "ANDS", text: "Compass Dip Errors", desc: "Magnetic compass errors when accelerating or decelerating on East/West headings.", items: ["A ➔ Accelerate", "N ➔ North", "D ➔ Decelerate", "S ➔ South"] },
+                    { id: "UNOS", type: "definition", title: "UNOS", text: "Compass Turn Errors", desc: "Magnetic compass errors when turning to North or South headings.", items: ["U ➔ Undershoot", "N ➔ North", "O ➔ Overshoot", "S ➔ South"] }
+                ],
+                "Flight Operations": [
+                    { id: "GUMP", type: "definition", title: "GUMP", text: "Pre-Landing Check", desc: "Standard pre-landing acronym (often expanded to CGUMPS).", items: ["G ➔ Gas (Proper tank)", "U ➔ Undercarriage (Gear down)", "M ➔ Mixture (Rich)", "P ➔ Propeller / Pumps"] },
+                    { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] }
+                ],
+                "Emergencies": [
+                    { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W ➔ Wind", "O ➔ Obstructions", "S ➔ Size", "S ➔ Shape", "S ➔ Surface"] },
+                    { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A ➔ Airspeed", "B ➔ Best Field", "C ➔ Checklist", "D ➔ Declare", "E ➔ Execute"] }
+                ],
+                "Equipment & Rules": [
+                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A ➔ Altimeter", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Airspeed", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
+                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
+                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
+                ]
+            }
+        };
+
+        // State
+        let currentParent = null;
+        let currentActiveFlow = null;
+        let generatedQuestions = [];
+        let currentQ = 0;
+        let score = 0;
+        let errors = 0;
+        let isAnswered = false;
+
+        // SVGs
+        const sunIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const arrowDownSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+
+        // Theme
+        function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            updateThemeButton(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+
+        // History API
+        window.addEventListener('popstate', (e) => {
+            if (!e.state || e.state.page === 'home') showPage('homeScreen', false);
+            else if (e.state.page === 'category') { renderCategory(e.state.cat, false); }
+            else if (e.state.page === 'study') {
+                let f = findQuizById(e.state.quizId);
+                if (f) { renderStudyScreen(f, false); }
+                else showPage('homeScreen', false);
+            } else if (e.state.page === 'quiz') {
+                let f = findQuizById(e.state.quizId);
+                if (f) { startQuiz(f, false); }
+                else showPage('homeScreen', false);
+            }
+        });
+
+        function findQuizById(id) {
+            for (const cat in appDatabase)
+                for (const subCat in appDatabase[cat])
+                    for (const quiz of appDatabase[cat][subCat])
+                        if (quiz.id === id) return quiz;
+            return null;
+        }
+
+        function goBackLogic() { history.back(); }
+
+        // Page Router
+        function showPage(pageId, pushToHistory = true, historyState = {page: 'home'}) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            const newPage = document.getElementById(pageId);
+            void newPage.offsetWidth; // trigger reflow
+            newPage.classList.add('active');
+            
+            document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
+            document.getElementById('studyBtn').style.display = (pageId === 'quizScreen') ? 'flex' : 'none';
+            
+            closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
+            
+            const appContainer = document.getElementById('appScrollContainer');
+            if (appContainer) { appContainer.scrollTop = 0; }
+
+            if (pushToHistory) history.pushState(historyState, '');
+        }
+
+        // HTML Builders
+        function buildFlowList(items) {
+            return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => {
+                let prefix = "";
                 
-                if (!hasScheduledFlight) {
-                    hasScheduledFlight = true;
-                    flightStartH = evStart;
-                    flightEndH = evEnd;
-                } else {
-                    if (evStart < flightStartH) flightStartH = evStart;
-                    if (evEnd > flightEndH) flightEndH = evEnd;
+                if (item.includes("6 Flight Instruments ➔ CHECK")) {
+                    prefix = "<div style='margin-top:16px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 1: Six Flight Instruments</div>";
+                } else if (item.includes("1. Clearance/Transponder ➔ OBTAIN/SET")) {
+                    prefix = "<div style='margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 2: Six Avionics Setups</div>";
+                }
+
+                if (item.includes('➔')) {
+                    let parts = item.split('➔');
+                    return `${prefix}<li style='margin-bottom:10px;'><strong>${parts[0].trim()}</strong> ➔ ${parts[1].trim()}</li>`;
+                }
+                return `${prefix}<li style='margin-bottom:10px;'>${item}</li>`;
+            }).join('') + "</ul>";
+        }
+
+        function buildLeftMenu() {
+            const menu = document.getElementById('leftNavMenuContent');
+            menu.innerHTML = `<div class="menu-header">Main Menu</div>
+                <div class="sidebar-item"><div class="sidebar-text" onclick="showPage('homeScreen', true)">Dashboard</div></div>
+                <div class="menu-header">Categories</div><div id="sidebarCats"></div>`;
+            
+            const catContainer = document.getElementById('sidebarCats');
+            
+            Object.keys(appDatabase).forEach(catName => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `
+                    <div class="sidebar-item">
+                        <div class="sidebar-text" onclick="renderCategory('${catName}')">${catName}</div>
+                        <div class="sidebar-icon">${arrowDownSvg}</div>
+                    </div>
+                    <div class="sidebar-sub"></div>`;
+                
+                const iconBtn = itemDiv.querySelector('.sidebar-icon');
+                const subContent = itemDiv.querySelector('.sidebar-sub');
+                
+                Object.keys(appDatabase[catName]).forEach(subCat => {
+                    appDatabase[catName][subCat].forEach(quizObj => {
+                        const btn = document.createElement('button');
+                        btn.innerText = quizObj.title;
+                        btn.onclick = () => renderStudyScreen(quizObj);
+                        subContent.appendChild(btn);
+                    });
+                });
+
+                iconBtn.onclick = () => {
+                    const isOpen = subContent.style.maxHeight;
+                    resetLeftMenuAccordions();
+                    if (!isOpen) {
+                        subContent.style.maxHeight = subContent.scrollHeight + "px";
+                        iconBtn.style.transform = "rotate(180deg)";
+                    }
+                };
+                catContainer.appendChild(itemDiv);
+            });
+        }
+
+        function resetLeftMenuAccordions() {
+            document.querySelectorAll('.sidebar-sub').forEach(c => c.style.maxHeight = null);
+            document.querySelectorAll('.sidebar-icon').forEach(s => s.style.transform = "rotate(0deg)");
+        }
+
+        function renderHome() {
+            const container = document.getElementById('homeCategories');
+            container.innerHTML = '';
+            
+            const grid = document.createElement('div');
+            grid.className = 'parent-grid';
+
+            Object.keys(appDatabase).forEach(catName => {
+                const btn = document.createElement('button');
+                btn.className = 'parent-card';
+                btn.innerText = catName;
+                btn.onclick = () => renderCategory(catName);
+                grid.appendChild(btn);
+            });
+
+            container.appendChild(grid);
+            showPage('homeScreen', false);
+        }
+
+        function renderCategory(catName, pushToHistory = true) {
+            currentParent = catName;
+            document.getElementById('catTitle').innerText = catName;
+            const container = document.getElementById('catContent');
+            container.innerHTML = '';
+
+            Object.keys(appDatabase[catName]).forEach(subCatName => {
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                section.innerHTML = `<h3 class="category-title">${subCatName}</h3>`;
+
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
+
+                appDatabase[catName][subCatName].forEach(quizObj => {
+                    const btn = document.createElement('button');
+                    btn.className = 'menu-btn';
+                    btn.innerHTML = `${quizObj.title} <small>${quizObj.text}</small>`;
+                    btn.onclick = () => renderStudyScreen(quizObj);
+                    grid.appendChild(btn);
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+            showPage('categoryScreen', pushToHistory, {page: 'category', cat: catName});
+        }
+
+        function renderStudyScreen(quizObj, pushToHistory = true) {
+            currentActiveFlow = quizObj;
+            document.getElementById('studyTitle').innerText = quizObj.title;
+            document.getElementById('studySubtitle').innerText = quizObj.text;
+            document.getElementById('studyScreenDesc').innerText = quizObj.desc;
+            document.getElementById('studyScreenContent').innerHTML = buildFlowList(quizObj.items);
+            
+            document.getElementById('rightPanelContent').innerHTML = `<div class="flow-box">${buildFlowList(quizObj.items)}</div>`;
+
+            showPage('studyScreen', pushToHistory, {page: 'study', quizId: quizObj.id});
+        }
+
+        // Side Menus
+        function toggleLeftMenu() { document.getElementById('leftNavMenu').classList.add('open'); document.getElementById('leftMenuOverlay').classList.add('open'); }
+        function closeLeftMenu() { document.getElementById('leftNavMenu').classList.remove('open'); document.getElementById('leftMenuOverlay').classList.remove('open'); }
+        function toggleRightMenu() { document.getElementById('rightNavMenu').classList.add('open'); document.getElementById('rightMenuOverlay').classList.add('open'); }
+        function closeRightMenu() { document.getElementById('rightNavMenu').classList.remove('open'); document.getElementById('rightMenuOverlay').classList.remove('open'); }
+
+        // ================== QUIZ ENGINE ==================
+        function getRandomOtherItems(currentFlow, count) {
+            let allItems = [];
+            Object.values(appDatabase).forEach(c => Object.values(c).forEach(sc => sc.forEach(f => {
+                if (f.title !== currentFlow.title && f.type === currentFlow.type) allItems = allItems.concat(f.items);
+            })));
+            let selected = [];
+            if (allItems.length > 0) {
+                for(let i=0; i<count; i++) selected.push(allItems[Math.floor(Math.random() * allItems.length)]);
+            } else {
+                for(let i=0; i<count; i++) selected.push("N/A"); 
+            }
+            return selected;
+        }
+
+        function genWhatIsNext() {
+            let flow = currentActiveFlow;
+            if (flow.items.length < 2) return null;
+            let idx = Math.floor(Math.random() * (flow.items.length - 1));
+            let currentItem = flow.items[idx];
+            let nextItem = flow.items[idx + 1];
+            let wrong1 = flow.items[(idx + 2) % flow.items.length];
+            let wrong2 = getRandomOtherItems(flow, 1)[0];
+            if(wrong1 === nextItem) wrong1 = "Master Switch ➔ OFF";
+
+            return {
+                question: `In "${flow.title}", what follows:<br><br><strong>${currentItem}</strong> ?`,
+                options: [nextItem, wrong1, wrong2],
+                correctAnswer: 0,
+                explanation: `Correct sequence: <strong>${nextItem}</strong>`
+            };
+        }
+
+        function genFirstAction() {
+            let flow = currentActiveFlow;
+            return {
+                question: `What is the **first** item in "${flow.title}"?`,
+                options: [flow.items[0], flow.items[1] || "Throttle ➔ IDLE", flow.items[flow.items.length - 1] || "Mixture ➔ CUTOFF"],
+                correctAnswer: 0,
+                explanation: `It starts with: <strong>${flow.items[0]}</strong>`
+            };
+        }
+
+        function genNotIncludedSequence() {
+            let flow = currentActiveFlow;
+            let wrongItem = getRandomOtherItems(flow, 1)[0] || "Declare ➔ Emergency";
+            return {
+                question: `Which is **NOT** part of "${flow.title}"?`,
+                options: [wrongItem, flow.items[0], flow.items[flow.items.length - 1] || flow.items[1]],
+                correctAnswer: 0,
+                explanation: `<strong>${wrongItem}</strong> is not in this procedure.`
+            };
+        }
+
+        function genDefinitionQuestion() {
+            let flow = currentActiveFlow;
+            if (flow.items.length < 1) return null;
+            
+            let idx = Math.floor(Math.random() * flow.items.length);
+            let correctItem = flow.items[idx];
+            let parts = correctItem.split(" ➔ ");
+            if (parts.length !== 2) return null;
+            
+            let code = parts[0];
+            let definition = parts[1];
+            
+            let wrongDefs = [];
+            while(wrongDefs.length < 2) {
+                let randomIdx = Math.floor(Math.random() * flow.items.length);
+                if (randomIdx !== idx) {
+                    let wParts = flow.items[randomIdx].split(" ➔ ");
+                    if (wParts.length === 2) {
+                        let wrongPart = wParts[1];
+                        if (!wrongDefs.includes(wrongPart)) wrongDefs.push(wrongPart);
+                    }
                 }
             }
+
+            return {
+                question: `What does <strong>${code}</strong> stand for in ${flow.title}?`,
+                options: [definition, wrongDefs[0], wrongDefs[1]],
+                correctAnswer: 0,
+                explanation: `<strong>${code}</strong> stands for <strong>${definition}</strong>.`
+            };
         }
-      }
-    }
-    
-    if (!hasScheduledFlight) {
-        flightStartH = defaultStartHourLocal;
-        flightEndH = 20;
-    }
-    
-    var worstMeteoVisSM = 10;
-    var worstMeteoCeiling = 10000;
-    var worstMeteoWind = 0;
-    var wCode = 0;
-    var rainProb = 0;
-    
-    var flightWorstMeteoVisSM = 10;
-    var flightWorstMeteoCeiling = 10000;
-    var flightWorstMeteoWind = 0;
-    var flightWCode = 0;
-    
-    if (forecast && forecast.daily && forecast.daily.time && forecast.hourly && forecast.hourly.time) {
-      var dIdx = forecast.daily.time.indexOf(currentDateStr);
-      if (dIdx > -1) { 
-         wCode = forecast.daily.weathercode[dIdx] || 0; 
-         if (forecast.daily.precipitation_probability_max && forecast.daily.precipitation_probability_max.length > dIdx) {
-             rainProb = forecast.daily.precipitation_probability_max[dIdx];
-         }
-      }
-      
-      var hourlyTimes = forecast.hourly.time;
-      for (var h = 0; h < hourlyTimes.length; h++) {
-        if (hourlyTimes[h].startsWith(currentDateStr)) {
-           var hourOfMeteo = parseInt(hourlyTimes[h].substring(11,13));
-           var currentHourlyWCode = (forecast.hourly.weathercode && forecast.hourly.weathercode.length > h) ? forecast.hourly.weathercode[h] : wCode;
-           
-           var rawVis = forecast.hourly.visibility[h];
-           var hVisSM = (rawVis !== undefined && rawVis !== null) ? rawVis / 1609.34 : 10;
-           if (hVisSM < 1.0 && currentHourlyWCode < 45) hVisSM = 10; 
-           
-           var hCloudLow = forecast.hourly.cloudcover_low[h] || 0;
-           var calcCeil = 10000;
-           if (hCloudLow > 85) calcCeil = 800;
-           else if (hCloudLow > 60) calcCeil = 2500;
-           
-           var mWindSpeed = forecast.hourly.windspeed_10m[h] ? (forecast.hourly.windspeed_10m[h] / 1.852) : 0;
-           var mWindGust = forecast.hourly.windgusts_10m[h] ? (forecast.hourly.windgusts_10m[h] / 1.852) : 0;
-           var mEffectiveWind = Math.max(mWindSpeed, mWindGust);
 
-           if (hourOfMeteo >= defaultStartHourLocal && hourOfMeteo <= 20) {
-               if (hVisSM < worstMeteoVisSM) worstMeteoVisSM = hVisSM;
-               if (calcCeil < worstMeteoCeiling) worstMeteoCeiling = calcCeil;
-               if (mEffectiveWind > worstMeteoWind) worstMeteoWind = mEffectiveWind;
-           }
-           
-           if (hasScheduledFlight && hourOfMeteo >= flightStartH && hourOfMeteo <= flightEndH) {
-               if (hVisSM < flightWorstMeteoVisSM) flightWorstMeteoVisSM = hVisSM;
-               if (calcCeil < flightWorstMeteoCeiling) flightWorstMeteoCeiling = calcCeil;
-               if (mEffectiveWind > flightWorstMeteoWind) flightWorstMeteoWind = mEffectiveWind;
-               if (currentHourlyWCode > flightWCode) flightWCode = currentHourlyWCode;
-           }
+        function genNotIncludedDefinition() {
+            let flow = currentActiveFlow;
+            let wrongItem = getRandomOtherItems(flow, 1)[0] || "XYZ ➔ Unknown";
+            let correct1 = flow.items[0];
+            let correct2 = flow.items[flow.items.length - 1] || flow.items[1];
+
+            return {
+                question: `Which of the following is **NOT** part of the ${flow.title} list?`,
+                options: [wrongItem, correct1, correct2],
+                correctAnswer: 0,
+                explanation: `<strong>${wrongItem}</strong> is not part of this list.`
+            };
         }
-      }
-    }
 
-    var meteoCat = getCategoryByRules(worstMeteoVisSM, worstMeteoCeiling);
-
-    // === DAILY OVERALL LOGIC ===
-    var overallCat;
-    var dailyActiveVis = worstMeteoVisSM;
-    var dailyActiveCeil = worstMeteoCeiling;
-    var dailyActiveWind = worstMeteoWind;
-    
-    var dailyTafResult = null;
-    if (i <= 1) {
-        dailyTafResult = evaluateTafForWindowUnix(d, defaultStartHourLocal, 20);
-    }
-    
-    if (i === 0) {
-        if (dailyTafResult && dailyTafResult.cat && dailyTafResult.cat.rank > metarCatObj.rank) {
-            overallCat = dailyTafResult.cat;
-            dailyActiveVis = dailyTafResult.vis;
-            dailyActiveCeil = dailyTafResult.ceil;
-            dailyActiveWind = dailyTafResult.wind;
-        } else {
-            overallCat = metarCatObj;
-            dailyActiveVis = metarCond.vis;
-            dailyActiveCeil = metarCond.ceil;
-            dailyActiveWind = metarCond.wind;
-        }
-    } else if (i === 1) {
-        if (dailyTafResult && dailyTafResult.cat) {
-            overallCat = dailyTafResult.cat;
-            dailyActiveVis = dailyTafResult.vis;
-            dailyActiveCeil = dailyTafResult.ceil;
-            dailyActiveWind = dailyTafResult.wind;
-        } else {
-            overallCat = meteoCat;
-        }
-    } else {
-        overallCat = meteoCat;
-    }
-
-    if (wCode >= 95) {
-         overallCat.rank = 3; overallCat.name = "IFR"; overallCat.color = CalendarApp.EventColor.RED; overallCat.emoji = "🔴";
-         dailyActiveCeil = Math.min(dailyActiveCeil, 800);
-         dailyActiveVis = Math.min(dailyActiveVis, 2);
-    } else if (wCode >= 61 && overallCat.rank === 1) {
-         overallCat.rank = 2; overallCat.name = "MVFR"; overallCat.color = CalendarApp.EventColor.BLUE; overallCat.emoji = "🔵";
-         dailyActiveCeil = Math.min(dailyActiveCeil, 2500);
-         dailyActiveVis = Math.min(dailyActiveVis, 4);
-    }
-
-
-    // === FLIGHT WINDOW LOGIC ===
-    var flightCat;
-    var flightTexts = [];
-    var flightSourceStr = "";
-    var activeFlightVis = flightWorstMeteoVisSM;
-    var activeFlightCeil = flightWorstMeteoCeiling;
-    var activeFlightWind = flightWorstMeteoWind;
-    
-    if (hasScheduledFlight) {
-        var fTafResult = null;
-        if (i <= 1) fTafResult = evaluateTafForWindowUnix(d, flightStartH, flightEndH);
-        
-        var fMeteoCat = getCategoryByRules(flightWorstMeteoVisSM, flightWorstMeteoCeiling);
-        var meteoDescStr = "Vis " + flightWorstMeteoVisSM.toFixed(1) + "SM | Ceil ~" + flightWorstMeteoCeiling + "ft AGL | Wind ~" + Math.round(flightWorstMeteoWind) + "kt | " + getWeatherDesc(flightWCode);
-        
-        if (i === 0) {
-            if (fTafResult && fTafResult.cat && fTafResult.cat.rank > metarCatObj.rank) {
-                flightCat = fTafResult.cat;
-                activeFlightVis = fTafResult.vis;
-                activeFlightCeil = fTafResult.ceil;
-                activeFlightWind = fTafResult.wind;
-            } else {
-                flightCat = metarCatObj;
-                activeFlightVis = metarCond.vis;
-                activeFlightCeil = metarCond.ceil;
-                activeFlightWind = metarCond.wind;
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
+            return shuffled;
+        }
+
+        function startQuizFromStudy() { startQuiz(currentActiveFlow, true); }
+
+        function startQuiz(quizObj, pushToHistory = true) {
+            currentActiveFlow = quizObj;
+            generatedQuestions = [];
             
-            if (fTafResult && fTafResult.text && fTafResult.text.length > 0) {
-                flightSourceStr = "TAF Coverage:";
-                flightTexts = fTafResult.text;
-            } else {
-                flightSourceStr = "Model Prediction:";
-                flightTexts = [meteoDescStr];
+            let isSequence = (quizObj.type === "sequence");
+
+            for (let i = 0; i < QUESTIONS_PER_DRILL; i++) {
+                let q = null, attempts = 0;
+                while (!q && attempts < 15) {
+                    let rand = Math.random();
+                    
+                    if (isSequence) {
+                        if (rand < 0.33) q = genWhatIsNext();
+                        else if (rand < 0.66) q = genFirstAction();
+                        else q = genNotIncludedSequence();
+                    } else {
+                        if (rand < 0.75) q = genDefinitionQuestion();
+                        else q = genNotIncludedDefinition();
+                    }
+                    attempts++;
+                }
+                
+                if (q) {
+                    let optsWithIdx = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctAnswer }));
+                    optsWithIdx = shuffleArray(optsWithIdx);
+                    generatedQuestions.push({
+                        question: q.question,
+                        options: optsWithIdx.map(o => o.text),
+                        correctAnswer: optsWithIdx.findIndex(o => o.isCorrect),
+                        explanation: q.explanation
+                    });
+                } else i--;
             }
+
+            currentQ = 0; score = 0; errors = 0;
+            loadQuestion();
+            showPage('quizScreen', pushToHistory, {page: 'quiz', quizId: quizObj.id});
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            let fb = document.getElementById('feedbackBox');
+            fb.className = 'feedback'; fb.innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
             
-            var currentHour = now.getHours();
-            if (currentHour >= flightStartH - 1 && currentHour <= flightEndH && metarCatObj.rank > flightCat.rank) {
-                flightCat = metarCatObj;
-                activeFlightVis = metarCond.vis;
-                activeFlightCeil = metarCond.ceil;
-                activeFlightWind = metarCond.wind;
-                flightSourceStr = "METAR (Live Override):";
-                flightTexts = [
-                    "Current conditions are worse than forecast.", 
-                    "Live Vis: " + metarCond.vis.toFixed(1) + "SM | Ceil: " + metarCond.ceil + "ft AGL | Wind: " + metarCond.wind + "kt"
-                ];
-            }
-        } else if (i === 1) {
-            if (fTafResult && fTafResult.cat) {
-                flightCat = fTafResult.cat;
-                activeFlightVis = fTafResult.vis;
-                activeFlightCeil = fTafResult.ceil;
-                activeFlightWind = fTafResult.wind;
-                flightSourceStr = "TAF Coverage:";
-                flightTexts = (fTafResult.text && fTafResult.text.length > 0) ? fTafResult.text : [meteoDescStr];
+            document.getElementById('qNumber').innerText = `Q ${currentQ + 1} / ${QUESTIONS_PER_DRILL}`;
+            document.getElementById('qScore').innerText = `Score: ${score}`;
+            document.getElementById('quizProgress').style.width = `${(currentQ / QUESTIONS_PER_DRILL) * 100}%`;
+            
+            let q = generatedQuestions[currentQ];
+            document.getElementById('qText').innerHTML = q.question;
+            
+            const optsContainer = document.getElementById('optionsContainer');
+            optsContainer.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = opt; 
+                btn.onclick = () => checkAnswer(index, btn);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            let q = generatedQuestions[currentQ];
+            let allBtns = document.getElementById('optionsContainer').querySelectorAll('.option-btn');
+            allBtns.forEach(btn => btn.disabled = true);
+
+            let isCorrect = (selectedIndex === q.correctAnswer);
+            let fb = document.getElementById('feedbackBox');
+
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                score++;
+                fb.classList.add('show', 'success');
             } else {
-                flightCat = fMeteoCat;
-                flightSourceStr = "Model Prediction:";
-                flightTexts = [meteoDescStr];
+                btnElement.classList.add('wrong');
+                errors++;
+                allBtns[q.correctAnswer].classList.add('correct');
+                fb.classList.add('show', 'error');
             }
-        } else {
-            flightCat = fMeteoCat;
-            flightSourceStr = "Model Prediction:";
-            flightTexts = [meteoDescStr];
+
+            fb.innerHTML = `<strong>${isCorrect ? 'Correct' : 'Incorrect'}</strong><br><span style="display:block; margin-top:8px;">${q.explanation}</span>`;
+            document.getElementById('qScore').innerText = `Score: ${score}`;
+            document.getElementById('quizProgress').style.width = `${((currentQ + 1) / QUESTIONS_PER_DRILL) * 100}%`;
+            
+            let nextBtn = document.getElementById('nextBtn');
+            nextBtn.innerText = (currentQ === QUESTIONS_PER_DRILL - 1) ? "Finish Drill" : "Continue";
+            nextBtn.style.display = 'block';
         }
-        
-        var activeCode = (i <= 1) ? wCode : flightWCode;
-        if ((flightCat.rank === 1 || flightCat.rank === 2) && activeCode >= 61) {
-            if (activeCode >= 95) {
-                flightCat.rank = 3; flightCat.name = "IFR"; flightCat.color = CalendarApp.EventColor.RED; flightCat.emoji = "🔴";
-                activeFlightCeil = Math.min(activeFlightCeil, 800);
-                activeFlightVis = Math.min(activeFlightVis, 2);
-                flightTexts.push("[!] Risk of Thunderstorms - Downgraded to IFR");
-            } else if (flightCat.rank === 1) {
-                flightCat.rank = 2; flightCat.name = "MVFR"; flightCat.color = CalendarApp.EventColor.BLUE; flightCat.emoji = "🔵";
-                activeFlightCeil = Math.min(activeFlightCeil, 2500);
-                activeFlightVis = Math.min(activeFlightVis, 4);
-                flightTexts.push("[!] Risk of Rain - Downgraded to MVFR");
-            }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < QUESTIONS_PER_DRILL) loadQuestion();
+            else showScore();
+            
+            const appContainer = document.getElementById('appScrollContainer');
+            if(appContainer) appContainer.scrollTop = 0;
         }
-    }
 
-    var catName = overallCat.name;
-    var catColor = overallCat.color;
-
-    var extremeFeature = "VFR Conditions 🟢";
-    if (wCode >= 95) extremeFeature = "Risk of Thunderstorms 🔴";
-    else if (wCode >= 71 && wCode <= 75) extremeFeature = "Snow / Freezing Conditions 🔴";
-    else if (overallCat.rank === 4) extremeFeature = "LIFR Expected 🟣";
-    else if (overallCat.rank === 3) extremeFeature = "IFR Conditions Expected 🔴";
-    else if (overallCat.rank === 2) extremeFeature = "MVFR Expected 🔵";
-    else if (wCode >= 61 && wCode <= 65) extremeFeature = "Significant Rain expected 🔵";
-    else if (wCode >= 45 && wCode <= 48) extremeFeature = "Risk of Fog or Mist 🔴";
-
-    // Build Final Description
-    var description = "";
-    
-    if (hasScheduledFlight) {
-        var flightAlertStr = "";
-        var startHStr = (flightStartH < 10 ? "0" : "") + flightStartH + ":00";
-        var endHStr = (flightEndH < 10 ? "0" : "") + flightEndH + ":00";
-
-        flightAlertStr = "✈️ FLIGHT WINDOW ("+startHStr+"-"+endHStr+"): " + flightCat.name + " " + flightCat.emoji + "\n";
-        
-        var flightWifaStatus = getWifaDetailedStatus(activeFlightVis, activeFlightCeil, activeFlightWind);
-        flightAlertStr += "📘 WIFA Rules (Flight Window):\n" + flightWifaStatus + "\n\n";
-        
-        if (flightTexts.length > 0) {
-            flightAlertStr += "> " + flightSourceStr + "\n";
-            for (var t = 0; t < flightTexts.length; t++) {
-                flightAlertStr += "> " + flightTexts[t] + "\n";
-            }
+        function showScore() {
+            let percentage = Math.round((score / QUESTIONS_PER_DRILL) * 100);
+            document.getElementById('finalScore').innerText = percentage + "%";
+            document.getElementById('finalStats').innerHTML = `Correct: ${score} out of ${QUESTIONS_PER_DRILL}<br>Errors: ${errors}`;
+            showPage('scoreScreen', true, {page: 'home'});
         }
-        
-        description += flightAlertStr + "\n";
-    }
 
-    var dailyWifaStatus = getWifaDetailedStatus(dailyActiveVis, dailyActiveCeil, dailyActiveWind);
+        function restartSameQuiz() { startQuiz(currentActiveFlow, false); }
 
-    description += "📅 Daily Feature (08:00-20:00): " + extremeFeature + "\n";
-    description += "📘 WIFA Rules (Daily Worst):\n" + dailyWifaStatus + "\n---------------------------------------\n";
-
-    var liveHazardsText = "";
-    if (i === 0) {
-        if (pirepData && pirepData.length > 0) {
-            liveHazardsText += "\n📡 Live Pilot Reports (PIREPs in DC Area):\n";
-            for (var p = 0; p < Math.min(pirepData.length, 3); p++) {
-                var ob = pirepData[p].rawOb || "";
-                if (ob !== "") liveHazardsText += "- " + ob + "\n";
-            }
-        }
-        if (liveHazardsText !== "") {
-            liveHazardsText = "\n" + liveHazardsText + "---------------------------------------\n";
-        }
-    }
-
-    var generalDesc = "--- General Forecast ---\n" +
-                      "Condition: " + getWeatherDesc(wCode) + "\n" +
-                      "Rain Prob: " + rainProb + "%";
-
-    var displayMetar = rawMetarData ? rawMetarData.replace(/\n/g, " ").replace(/\r/g, "") : "Not Available";
-    var displayTaf = rawTafData ? rawTafData.replace(/\n/g, " ").replace(/\r/g, "") : "Not Available";
-    displayTaf = displayTaf.replace(/FM(\d{6})/g, "\nFM$1").replace(/TEMPO/g, "\nTEMPO").replace(/PROB/g, "\nPROB").replace(/BECMG/g, "\nBECMG");
-
-    if (i === 0) {
-      description += "Source: Aviation Weather (Unix Epoch Engine)\n\n" +
-                     "METAR (KGAI):\n" + displayMetar + "\n\n" +
-                     "TAF (KIAD):\n" + displayTaf + "\n" + 
-                     liveHazardsText + "\n" + generalDesc;
-    } else if (i === 1) { 
-      description += "Source: Aviation Weather (Unix Epoch Engine)\n\n" +
-                     "TAF (KIAD):\n" + displayTaf + "\n\n" + generalDesc;
-    } else { 
-      description += "Source: Long-range Model (08:00-20:00)\n" +
-                     "Expected lowest: Ceil ~" + worstMeteoCeiling + "ft AGL | Vis " + worstMeteoVisSM.toFixed(1) + "SM | Wind ~" + Math.round(worstMeteoWind) + "kt\n\n" +
-                     "(Aviation METAR/TAF will populate 24-30h prior)\n\n" + generalDesc;
-    }
-
-    // --- ATC Light Gun Signals & Passenger Briefing Cheat Sheet ---
-    var cheatSheet = "\n\n--- 🔦 ATC Light Gun Signals ---\n" +
-                     "Signal               | On Ground             | In Flight\n" +
-                     "-----------------------------------------------------------------\n" +
-                     "🟢 Steady Green    | Cleared for takeoff   | Cleared to land\n" +
-                     "🟢 Flashing Green  | Cleared to taxi       | Return for landing\n" +
-                     "🔴 Steady Red      | Stop                  | Give way & circle\n" +
-                     "🔴 Flashing Red    | Taxi clear of runway  | Airport unsafe, do not land\n" +
-                     "⚪ Flashing White  | Return to start point | N/A\n" +
-                     "🔴🟢 Alternating   | Extreme caution       | Extreme caution\n\n" +
-                     "--- 🗣️ Passenger Briefing (SAFETY) ---\n" +
-                     "S - Seatbelts (how to fasten/release)\n" +
-                     "A - Air vents (location and operation)\n" +
-                     "F - Fire extinguisher (location and operation)\n" +
-                     "E - Exits & Emergencies (door operation, evacuation)\n" +
-                     "T - Traffic & Talking (sterile cockpit, spotting traffic)\n" +
-                     "Y - Your questions?";
-    
-    description += cheatSheet;
-
-    var title = "KGAI WX: " + catName;
-    
-    if (existingEvent) {
-      if (existingEvent.getDescription() !== description || existingEvent.getTitle() !== title || existingEvent.getColor() !== catColor) {
-        existingEvent.setTitle(title);
-        existingEvent.setDescription(description);
-        existingEvent.setColor(catColor);
-      }
-    } else {
-      var newEv = calendar.createAllDayEvent(title, d, {description: description});
-      newEv.setColor(catColor);
-    }
-  }
-}
+        // Initialize App
+        document.addEventListener("DOMContentLoaded", () => {
+            updateThemeButton(document.body.classList.contains('dark-mode'));
+            buildLeftMenu();
+            renderHome(false);
+            history.replaceState({ page: 'home' }, '');
+        });
+    </script>
+</body>
+</html>
