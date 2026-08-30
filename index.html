@@ -1,173 +1,954 @@
-function updateFAAPersonalFocusQuestions() {
-  const sheetName = "FAA_Personal_Focus";
-  let spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = spreadsheet.getSheetByName(sheetName);
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="C172 PPL Memory">
+    
+    <!-- Tab Title -->
+    <title>C172 PPL Memory Items</title>
+    
+    <!-- Light Aircraft Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230b57d0'><path d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z'/></svg>">
+    
+    <!-- Premium Google-like Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  // If the sheet doesn't exist, create it and set up headers
-  if (!sheet) {
-    sheet = spreadsheet.insertSheet(sheetName);
-    const headers = [
-      "Topic", 
-      "Question", 
-      "Option A", 
-      "Option B", 
-      "Option C", 
-      "Correct Answer", 
-      "Explanation"
-    ];
-    sheet.appendRow(headers);
-    sheet.getRange("A1:G1").setFontWeight("bold").setBackground("#c9daf8");
-    sheet.setFrozenRows(1);
-  }
+    <style>
+        /* =========================================================
+           GEMINI / MATERIAL 3 DESIGN SYSTEM
+           ========================================================= */
+        :root {
+            /* Light Mode */
+            --bg-color: #f0f4f9;
+            --card-bg: #ffffff;
+            --text-main: #1f1f1f;
+            --text-muted: #444746;
+            --primary-color: #0b57d0; 
+            --hover-color: #e1e3e1;
+            --card-hover: #f8fafd;
+            --correct-color: #146c2e;
+            --correct-bg: #e6f4ea;
+            --wrong-color: #b3261e;
+            --wrong-bg: #fce8e6;
+            --border-color: #e0e0e0;
+            --focus-ring: rgba(11, 87, 208, 0.4);
+            --shadow-soft: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+            --nav-bg: rgba(240, 244, 249, 0.85);
+        }
 
-  // 15 Diverse questions focusing on your specific weak spots
-  const practiceData = [
-    // --- Weather & Altimetry ---
-    [
-      "Altimetry", 
-      "If a flight is made from an area of high pressure into an area of lower pressure without the altimeter setting being adjusted, the altimeter will indicate:", 
-      "lower than the true altitude.", 
-      "higher than the true altitude.", 
-      "the actual altitude above sea level.", 
-      "higher than the true altitude.", 
-      "Rule of thumb: 'From High to Low, look out below'. In lower pressure, the aircraft is physically lower than what the altimeter displays, creating a risk of flying into terrain."
-    ],
-    [
-      "Air Masses", 
-      "What are characteristics of a moist, unstable air mass?", 
-      "Cumuliform clouds and showery precipitation.", 
-      "Stratiform clouds and continuous precipitation.", 
-      "Poor visibility and smooth air.", 
-      "Cumuliform clouds and showery precipitation.", 
-      "Unstable air encourages vertical development (cumuliform clouds) and causes showery, turbulent weather with overall good visibility outside of showers."
-    ],
-    [
-      "Weather Hazards", 
-      "Where does wind shear occur in relation to a low-level temperature inversion?", 
-      "Above the inversion layer.", 
-      "Just below the inversion layer.", 
-      "At the top of the inversion when windspeed at 2,000-4,000 ft is 25+ knots.", 
-      "At the top of the inversion when windspeed at 2,000-4,000 ft is 25+ knots.", 
-      "A strong temperature inversion near the surface traps calm air below, but if the wind aloft is 25 knots or more, severe wind shear can occur right at the boundary of the inversion."
-    ],
-    [
-      "Weather Advisories", 
-      "To determine the freezing level and areas of probable icing aloft, the pilot should refer to:", 
-      "Winds and temperatures aloft.", 
-      "Inflight Aviation Weather Advisories (AIRMET Zulu).", 
-      "Area Forecasts (FA).", 
-      "Inflight Aviation Weather Advisories (AIRMET Zulu).", 
-      "AIRMET Zulu is specifically issued for moderate icing and provides freezing level heights. Winds aloft only give dry temperature data."
-    ],
-    // --- Regulations & Night Ops ---
-    [
-      "FAR Part 91 - Night", 
-      "When must an aircraft's position (navigation) lights be displayed?", 
-      "From 30 minutes after sunset to 30 minutes before sunrise.", 
-      "From sunset to sunrise.", 
-      "During civil twilight.", 
-      "From sunset to sunrise.", 
-      "Position lights must be ON from sunset to sunrise. This is different from the definition of night for logging night time (civil twilight) or carrying passengers (1 hour after/before)."
-    ],
-    [
-      "Airspace Rules", 
-      "No person may operate an airplane within Class D airspace at night under special VFR unless the:", 
-      "flight can be conducted 500 feet below the clouds.", 
-      "airplane is equipped for instrument flight.", 
-      "flight visibility is at least 3 miles.", 
-      "airplane is equipped for instrument flight.", 
-      "Night SVFR for airplanes strictly requires both the aircraft to be IFR equipped and the pilot to be Instrument Rated."
-    ],
-    [
-      "Safe Altitudes", 
-      "Except when necessary for takeoff or landing, what is the minimum safe altitude required for a pilot to operate an aircraft over other than a congested area?", 
-      "500 feet AGL, except over open water or a sparsely populated area, which requires 500 feet from any person, vessel, vehicle, or structure.", 
-      "1,000 feet above the highest obstacle within a horizontal radius of 2,000 feet.", 
-      "500 feet above the highest obstacle within a horizontal radius of 1,000 feet.", 
-      "500 feet AGL, except over open water or a sparsely populated area, which requires 500 feet from any person, vessel, vehicle, or structure.", 
-      "Over non-congested areas, the minimum is 500 AGL. Over sparse areas or water, you can fly lower but must stay 500 feet away from any person or object."
-    ],
-    // --- NTSB Reporting ---
-    [
-      "NTSB 830", 
-      "Within how many days must an operator file an NTSB report if an aircraft is missing (overdue and believed to be in an accident)?", 
-      "7 days.", 
-      "10 days.", 
-      "Immediately.", 
-      "7 days.", 
-      "A written report for an accident is due in 10 days, but a report for a missing/overdue aircraft is due in 7 days."
-    ],
-    [
-      "NTSB 830", 
-      "Which incident requires immediate notification to the NTSB?", 
-      "An in-flight generator failure.", 
-      "Flight control system malfunction or failure.", 
-      "Damage to property, other than the aircraft, estimated to exceed $10,000.", 
-      "Flight control system malfunction or failure.", 
-      "Flight control issues, in-flight fires, and mid-air collisions are considered serious incidents requiring immediate notification to the NTSB (Property damage threshold is actually $25,000)."
-    ],
-    // --- Aircraft Systems & Aero ---
-    [
-      "Engine Operations", 
-      "If a pilot suspects that the engine (with a fixed-pitch propeller) is detonating during climb-out after takeoff, the initial corrective action to take would be to:", 
-      "lean the mixture.", 
-      "lower the nose slightly to increase airspeed.", 
-      "apply carburetor heat.", 
-      "lower the nose slightly to increase airspeed.", 
-      "Detonation is caused by excessive engine heat. Lowering the nose increases ram air flow over the cylinders, rapidly cooling the engine."
-    ],
-    [
-      "Aerodynamics", 
-      "What does V_NO mean?", 
-      "Maximum operating maneuvering speed.", 
-      "Maximum structural cruising speed.", 
-      "Never-exceed speed.", 
-      "Maximum structural cruising speed.", 
-      "V_NO is the Maximum Structural Cruising Speed (top of the green arc). You should only exceed this speed in smooth air, and then only with caution."
-    ],
-    [
-      "Wake Turbulence", 
-      "How does the wake turbulence vortex circulate around each wingtip?", 
-      "Inward, upward, and around each tip.", 
-      "Outward, upward, and around each tip.", 
-      "Outward, downward, and around each tip.", 
-      "Outward, upward, and around each tip.", 
-      "High pressure from below the wing spills outward and rolls upward into the low pressure area above the wing, causing outward/upward circulation."
-    ],
-    [
-      "Unusual Attitudes", 
-      "Which is the correct sequence for recovery from a spiraling, nose-low, increasing airspeed, unusual flight attitude?", 
-      "Reduce power, correct the bank attitude, and raise the nose to a level attitude.", 
-      "Add power, lower the nose, and level the wings.", 
-      "Reduce power, raise the nose to level flight, and correct the bank attitude.", 
-      "Reduce power, correct the bank attitude, and raise the nose to a level attitude.", 
-      "Power reduction stops acceleration (Vne), leveling wings prevents high G-loads, and raising the pitch recovers the altitude."
-    ],
-    // --- Airport Operations ---
-    [
-      "Airport Lighting", 
-      "To set the high intensity runway lights on medium intensity, the pilot should click the microphone seven times, and then click it:", 
-      "three times within three seconds.", 
-      "five times within five seconds.", 
-      "one time within four seconds.", 
-      "five times within five seconds.", 
-      "Pilot Controlled Lighting (PCL): 7 clicks for High, 5 clicks for Medium, 3 clicks for Low. Each sequence must be completed within a 5-second window."
-    ],
-    [
-      "Runway Markings", 
-      "What is the purpose of a displaced threshold?", 
-      "It marks an area where taxiing and takeoff are permitted, but landing is not.", 
-      "It marks an area restricted to emergency overruns only.", 
-      "It marks a non-movement area.", 
-      "It marks an area where taxiing and takeoff are permitted, but landing is not.", 
-      "A displaced threshold (marked by arrows) reduces the available landing distance to clear an obstacle on approach, but the pavement behind it can still be used for takeoff and taxi."
-    ]
-  ];
+        body.dark-mode {
+            /* Dark Mode */
+            --bg-color: #131314;
+            --card-bg: #1e1f22;
+            --text-main: #e3e3e3;
+            --text-muted: #c4c7c5;
+            --primary-color: #a8c7fa;
+            --hover-color: #444746;
+            --card-hover: #282a2d;
+            --correct-color: #81c995;
+            --correct-bg: rgba(20, 108, 46, 0.15);
+            --wrong-color: #f28b82;
+            --wrong-bg: rgba(179, 38, 30, 0.15);
+            --border-color: #444746;
+            --focus-ring: rgba(168, 199, 250, 0.4);
+            --shadow-soft: 0 4px 16px rgba(0,0,0,0.3);
+            --shadow-hover: 0 12px 28px rgba(0,0,0,0.5);
+            --nav-bg: rgba(19, 19, 20, 0.85);
+        }
 
-  // Append the data to the sheet
-  const startRow = sheet.getLastRow() + 1;
-  sheet.getRange(startRow, 1, practiceData.length, practiceData[0].length).setValues(practiceData);
-  
-  // Auto-resize columns for better readability
-  sheet.autoResizeColumns(1, 7);
-}
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            height: 100vh;
+            height: 100dvh; 
+            display: flex; flex-direction: column;
+            overflow: hidden; 
+            -webkit-font-smoothing: antialiased;
+            touch-action: manipulation;
+            font-size: 16px; 
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+        
+        /* =========================================================
+           TOP NAVIGATION (FIXED FOR MOBILE NOTCH/DYNAMIC ISLAND)
+           ========================================================= */
+        .top-nav {
+            position: fixed; 
+            top: 0; left: 0; width: 100%;
+            padding-top: calc(max(env(safe-area-inset-top), 20px) + 10px);
+            padding-bottom: 10px;
+            padding-left: 16px;
+            padding-right: 16px;
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            transition: background-color 0.4s ease;
+        }
+
+        .icon-btn {
+            background: transparent; border: none; color: var(--primary-color);
+            width: 48px; height: 48px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: all 0.2s ease;
+        }
+        
+        .icon-btn svg { width: 26px; height: 26px; }
+        .icon-btn:hover { background-color: var(--card-hover); transform: translateY(-2px); }
+        .icon-btn:active { transform: scale(0.9); background-color: var(--hover-color); transition: none; }
+        .icon-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+        .nav-group { display: flex; gap: 4px; }
+        #backBtn, #studyBtn { display: none; }
+
+        /* =========================================================
+           LAYOUT, SCROLLING & SMART CENTERING
+           ========================================================= */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        .main-wrapper {
+            flex: 1 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 16px;
+            padding-top: calc(max(env(safe-area-inset-top), 20px) + 90px); 
+        }
+
+        .page { 
+            display: none; 
+            width: 100%; 
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+            margin: auto 0; 
+        }
+        
+        .page.active { 
+            display: block; 
+            animation: fadeInPage 0.4s cubic-bezier(0.2, 0, 0, 1) forwards; 
+        }
+
+        @keyframes fadeInPage {
+            0% { opacity: 0; transform: translateY(15px) scale(0.99); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        h1 { margin: 0 0 8px 0; font-size: 1.85rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+
+        /* =========================================================
+           INTERACTIVE CARDS & LISTS
+           ========================================================= */
+        .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+        
+        .parent-card {
+            background-color: var(--bg-color);
+            border: 1.5px solid transparent;
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 30px 16px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            outline: none;
+        }
+        
+        .category-section { margin-bottom: 40px; width: 100%; }
+        .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.2px; }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+        
+        .menu-btn {
+            background-color: var(--bg-color);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 16px;
+            padding: 20px 16px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-align: left;
+            min-height: 90px;
+            display: flex; flex-direction: column; justify-content: center;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            outline: none;
+        }
+        
+        .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; transition: color 0.3s; }
+        .menu-btn:hover small { color: var(--primary-color); }
+
+        .parent-card:hover, .menu-btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); background-color: var(--card-bg); }
+        .parent-card:focus-visible, .menu-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
+        .parent-card:active, .menu-btn:active { transform: scale(0.96); background-color: var(--card-hover); transition: none; }
+
+        /* =========================================================
+           STUDY & QUIZ SCREENS
+           ========================================================= */
+        .study-title { font-size: 1.8rem; margin: 0 0 8px 0; color: var(--text-main); font-weight: 700; }
+        .study-subtitle { font-size: 1.05rem; color: var(--primary-color); margin-bottom: 20px; font-weight: 600; }
+        
+        .study-desc { 
+            font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; 
+            background: var(--bg-color); padding: 18px 20px; border-radius: 16px; 
+            border: 1px solid var(--border-color); transition: box-shadow 0.3s ease;
+        }
+        .study-desc:hover { box-shadow: var(--shadow-soft); }
+
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
+        .question-text { font-size: 1.45rem; font-weight: 500; margin-bottom: 35px; line-height: 1.5; color: var(--text-main); }
+        
+        .options { display: flex; flex-direction: column; gap: 14px; }
+        
+        .option-btn { 
+            background: var(--bg-color); border: 1.5px solid var(--border-color); color: var(--text-main); 
+            border-radius: 16px; padding: 20px 22px; font-size: 1.1rem; text-align: left; font-weight: 500; line-height: 1.4; 
+            font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
+        }
+        
+        .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-soft); border-color: var(--primary-color); background-color: var(--card-hover); }
+        .option-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-bg); transition: none; }
+        .option-btn:disabled { cursor: default; box-shadow: none; transform: none; }
+        
+        .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color) !important; color: var(--correct-color); font-weight: 700; transform: scale(1.02); }
+        .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color) !important; color: var(--wrong-color); font-weight: 700; transform: scale(0.98); }
+
+        .feedback { margin-top: 28px; padding: 20px 24px; border-radius: 16px; font-size: 1.05rem; display: none; line-height: 1.5; font-weight: 500; box-shadow: var(--shadow-soft); }
+        .feedback.show { display: block; animation: fadeInPage 0.35s ease forwards; }
+        .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(20, 108, 46, 0.2); }
+        .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(179, 38, 30, 0.2); }
+
+        .flow-box { background: var(--bg-color); padding: 24px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s; }
+        .flow-box:hover { box-shadow: var(--shadow-hover); }
+        .flow-box h4 { margin: 0 0 16px 0; color: var(--primary-color); font-size: 1.05rem; font-weight: 700; }
+        .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 400; font-size: 1.1rem; line-height: 1.6; }
+        .flow-box li { margin-bottom: 10px; }
+
+        .primary-btn { 
+            background: var(--primary-color); color: #fff; border: none; padding: 20px; font-size: 1.15rem; 
+            border-radius: 100px; font-weight: 600; margin-top: 35px; width: 100%; display: none;
+            cursor: pointer; font-family: inherit; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
+        }
+        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11, 87, 208, 0.4); filter: brightness(1.1); }
+        .primary-btn:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
+        .primary-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(11, 87, 208, 0.3); filter: brightness(0.9); transition: none; }
+        
+        .start-btn { display: block; margin-top: 35px; }
+
+        .progress-container { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-bottom: 28px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); border-radius: 3px; }
+
+        .score-val { font-size: 5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
+        .secondary-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 16px; box-shadow: none; }
+        .secondary-btn:hover { background: var(--hover-color); box-shadow: var(--shadow-soft); }
+
+        /* =========================================================
+           SIDE MENUS
+           ========================================================= */
+        #leftMenuOverlay, #rightMenuOverlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4); z-index: 998; opacity: 0; transition: opacity 0.3s ease;
+        }
+        #leftMenuOverlay.open, #rightMenuOverlay.open { display: block; opacity: 1; }
+
+        .side-menu {
+            position: fixed; top: 0; height: 100vh; background: var(--card-bg);
+            transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto; 
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        #leftNavMenu { left: 0; width: 300px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
+        #leftNavMenu.open { transform: translateX(0); }
+        
+        #rightNavMenu { right: 0; width: 340px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
+        #rightNavMenu.open { transform: translateX(0); }
+
+        .menu-header { padding: calc(max(env(safe-area-inset-top), 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .sidebar-item { display: flex; align-items: center; justify-content: space-between; background: transparent; }
+        
+        .sidebar-text { flex: 1; padding: 18px 24px; font-size: 1.1rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
+        .sidebar-text:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 28px; }
+        .sidebar-text:active { background: var(--hover-color); transition: none; }
+        
+        .sidebar-icon { padding: 18px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease, color 0.2s; }
+        .sidebar-icon:hover { color: var(--primary-color); }
+        
+        .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.2, 0, 0, 1); }
+        .sidebar-sub button {
+            width: 100%; text-align: left; padding: 16px 24px 16px 48px; background: none; border: none;
+            font-size: 1rem; color: var(--text-muted); font-weight: 500; font-family: inherit;
+            transition: all 0.2s ease; cursor: pointer;
+        }
+        .sidebar-sub button:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 54px; }
+        .sidebar-sub button:active { background: var(--hover-color); transition: none; }
+
+        .sidebar-icon svg { width: 18px; height: 18px; } 
+
+        .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem; width: 100%; margin-top: auto; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <div class="top-nav">
+        <div class="nav-group">
+            <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+        </div>
+        <div class="nav-group">
+            <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </button>
+            <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
+        </div>
+    </div>
+
+    <!-- LEFT MENU -->
+    <div id="leftMenuOverlay" onclick="closeLeftMenu()"></div>
+    <div id="leftNavMenu" class="side-menu">
+        <div id="leftNavMenuContent"></div>
+    </div>
+
+    <!-- RIGHT STUDY PANEL -->
+    <div id="rightMenuOverlay" onclick="closeRightMenu()"></div>
+    <div id="rightNavMenu" class="side-menu">
+        <div class="menu-header">Study Material</div>
+        <div id="rightPanelContent" style="padding: 16px;"></div>
+    </div>
+
+    <!-- SCROLLABLE APP CONTAINER -->
+    <div class="app-container" id="appScrollContainer">
+        <div class="main-wrapper">
+            
+            <!-- HOME SCREEN -->
+            <div class="page active" id="homeScreen">
+                <h1>C172 PPL Memory Items</h1>
+                <div class="subtitle">Master Your Flows & Acronyms</div>
+                <div id="homeCategories"></div>
+            </div>
+
+            <!-- CATEGORY SCREEN -->
+            <div class="page" id="categoryScreen">
+                <h1 id="catTitle">Title</h1>
+                <div class="subtitle">Select Topic</div>
+                <div id="catContent"></div>
+            </div>
+
+            <!-- STUDY SCREEN -->
+            <div class="page" id="studyScreen">
+                <h1 id="studyTitle">Title</h1>
+                <div class="subtitle" id="studySubtitle">Subtitle</div>
+                <div class="study-desc" id="studyScreenDesc">Context description goes here.</div>
+                <div class="flow-box">
+                    <div id="studyScreenContent"></div>
+                </div>
+                <button class="primary-btn start-btn" onclick="startQuizFromStudy()">Start Drill</button>
+            </div>
+
+            <!-- QUIZ SCREEN -->
+            <div class="page" id="quizScreen">
+                <div class="progress-container"><div class="progress-bar" id="quizProgress"></div></div>
+                <div class="question-header">
+                    <span id="qNumber">Q 1/15</span>
+                    <span id="qScore" style="color: var(--primary-color);">Score: 0</span>
+                </div>
+                <div class="question-text" id="qText">Question</div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="feedback" id="feedbackBox"></div>
+                <button class="primary-btn" id="nextBtn" onclick="nextQuestion()">Continue</button>
+            </div>
+
+            <!-- SCORE SCREEN -->
+            <div class="page" id="scoreScreen">
+                <h1>Drill Completed</h1>
+                <div class="score-val" id="finalScore">0%</div>
+                <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
+                <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
+                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Topic</button>
+            </div>
+            
+        </div>
+        <!-- FOOTER -->
+        <div class="footer">v1.0.20 | &copy; 2026 Or Belisha</div>
+    </div>
+
+    <script>
+        const QUESTIONS_PER_DRILL = 15;
+
+        // FIXED DATABASE 
+        const appDatabase = {
+            "Checklists": {
+                "Normal Procedures": [
+                    { id: "BeforeTaxi", type: "sequence", title: "Before Taxi Check", text: "Pre-Taxi configuration", desc: "Configuration setup prior to taxiing to the runup area.", items: ["Flaps ➔ UP (CHECK VISUALLY)", "Taxi Light ➔ ON", "Taxi Area ➔ CLEAR", "Parking Brake ➔ RELEASE", "Brakes ➔ CHECK", "TC, Ball & DG ➔ CHECK ON FIRST TURN"] },
+                    { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing ➔ COMPLETE", "Doors and Seatbelts ➔ SECURED", "Parking Brake ➔ SET", "Fuel Selector ➔ BOTH", "Carburetor Heat ➔ COLD", "Mixture ➔ FULL RICH", "Primer ➔ 2-5 STROKES & LOCK", "Master Switch ➔ ON", "Lights ➔ AS REQUIRED", "Throttle ➔ OPEN 1/8 INCH", "Prop Area ➔ CLEAR", "Starter ➔ ENGAGE", "Throttle ➔ 1,000 RPM & ADJUST", "Oil Pressure ➔ GREEN", "Mixture ➔ LEAN FOR TAXI", "Radio Master ➔ ON"] },
+                    { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps ➔ SET FOR TAKEOFF", "Lights ➔ AS REQUIRED", "Aux Fuel Pump ➔ ON", "Mixture ➔ RICH <3000 D.A.", "Carburetor Heat ➔ OFF", "Doors, Windows & Seatbelts ➔ SECURED", "Fuel Timer ➔ SET", "Traffic ➔ CLEAR", "Assigned RWY/HDG ➔ CONFIRMED"] },
+                    { id: "AfterLanding", type: "sequence", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps ➔ UP", "Mixture ➔ LEAN FOR TAXI", "Carburetor Heat ➔ OFF", "Trim ➔ RESET FOR TAKEOFF", "Pitot Heat ➔ OFF", "Taxi Light ➔ ON", "Landing Light ➔ OFF", "Contact/Monitor Ground ➔ AS REQUIRED"] },
+                    { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake ➔ SET", "Radio Master ➔ OFF", "Exterior Lights ➔ OFF", "Cabin / Panel Lights ➔ OFF", "Throttle ➔ IDLE", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF & KEY OUT", "Master Switch ➔ OFF", "Parking Brake ➔ RELEASE"] },
+                    { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ➔ ALL ON", "Tie Downs & Chocks ➔ APPLY", "Control Lock & Pitot Cover ➔ INSTALL", "Fuel Selector ➔ LEFT or RIGHT", "Engine Instruments ➔ CHECK", "Seatbelts ➔ FASTENED", "Cabin Air/Heat ➔ OFF", "Windows ➔ CLOSE", "Flight Plan ➔ CLOSE", "Binder & Fuel Load ➔ RECORD", "FSP & Squawks ➔ COMPLETE", "Garbage ➔ VERIFY CLEAN"] }
+                ],
+                "Emergency Procedures": [
+                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking ➔ CONTINUE", "If Fails: Throttle ➔ FULL OPEN", "Mixture ➔ IDLE CUTOFF", "Cranking ➔ CONTINUE for 3 MINS", "Fire Extinguisher ➔ OBTAIN", "Master/Ignition/Fuel ➔ OFF"] },
+                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch ➔ OFF", "Cabin Air & Heat ➔ OFF", "Fire Extinguisher ➔ CONSIDER USING"] }
+                ]
+            },
+            "Flows": {
+                "Ground": [
+                    { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Instrument Check", desc: "Setup execution checking the 6 flight instruments followed by the 6 avionics setups.", items: ["6 Flight Instruments ➔ CHECK", "1. Clearance/Transponder ➔ OBTAIN/SET", "2. Barometers (ATIS/AWOS) ➔ OBTAIN/SET", "3. Altitude Select ➔ SET", "4. Comms ➔ SET", "5. Navs ➔ SET", "6. GPS & Map Range ➔ SET"] },
+                    { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake ➔ SET", "Taxi Light ➔ OFF", "Throttle ➔ 1,000 RPM", "Controls ➔ FREE & CORRECT", "Fuel Selector ➔ BOTH", "Primer ➔ VERIFY LOCKED", "Circuit Breakers ➔ VERIFY IN", "Departure Frequency ➔ SET", "Transponder ➔ ALT", "Aux Fuel Pump ➔ ON (CHECK RISE), OFF", "Mixture ➔ FULL RICH", "Throttle ➔ 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) ➔ CHECK", "Engine Instruments ➔ CHECK", "Alternator ➔ CHECK", "Carburetor Heat ➔ ON, CHECK", "Throttle ➔ IDLE", "Carburetor Heat ➔ OFF", "Throttle ➔ 1,000 RPM", "Pitot Heat ➔ AS REQUIRED", "Mixture ➔ LEAN FOR TAXI", "Crew Briefing ➔ COMPLETE", "Parking Brake ➔ RELEASE", "Taxi Light ➔ ON"] }
+                ],
+                "Air": [
+                    { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
+                    { id: "DIMS", type: "sequence", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump ➔ OFF", "Pitch Attitude ➔ OBTAIN", "Power ➔ CRUISE RPM", "D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED", "Next Frequencies ➔ PREPARE", "Map Range ➔ AS APPROPRIATE", "TOD ➔ DETERMINE"] },
+                    { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns ➔ PERFORM", "Non Congested Area ➔ VERIFY", "Checklist ➔ PERFORM", "Declare ➔ PERFORM"] },
+                    { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A ➔ ATIS/AWOS OBTAIN", "B ➔ Brief (Approach/Arrival) PERFORM", "C ➔ Checklist PERFORM"] },
+                    { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C ➔ Clearance & Carb Heat OBTAIN", "G ➔ Gas BOTH", "U ➔ Undercarriage DOWN and WELDED", "M ➔ Mixture RICH <3000 D.A.", "P ➔ Props & Pumps ON", "S ➔ Seatbelts & Switches CHECK"] },
+                    { id: "GoAround", type: "sequence", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle ➔ FULL FWD", "Carburetor Heat ➔ OFF", "Pitch ➔ UP TO 8-10 DEG", "Flaps ➔ UP INCREMENTALLY", "Navigate ➔ FLY A/C", "Communicate ➔ TOWER", "IFR: GPS ➔ UNSUSPEND"] }
+                ],
+                "Emergencies": [
+                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700"] }
+                ]
+            },
+            "Weather": {
+                "TAF / METAR": [
+                    { id: "WxIntensity", type: "definition", title: "Intensity / Proximity", text: "METAR Column 1", desc: "Signs used to describe the intensity or proximity of weather phenomena.", items: ["- ➔ Light", "(no sign) ➔ Moderate", "+ ➔ Heavy", "VC ➔ In the vicinity"] },
+                    { id: "WxDesc", type: "definition", title: "Descriptors", text: "METAR Column 2", desc: "Modifiers that describe the characteristics of the weather phenomena.", items: ["MI ➔ Shallow (French: Mince)", "BC ➔ Patches (French: Bancs)", "DR ➔ Low drifting", "BL ➔ Blowing", "SH ➔ Showers", "TS ➔ Thunderstorms", "FZ ➔ Freezing", "PR ➔ Partial"] },
+                    { id: "WxPrecip", type: "definition", title: "Precipitation", text: "METAR Column 3", desc: "Standard aviation weather codes indicating precipitation falling.", items: ["DZ ➔ Drizzle", "RA ➔ Rain", "SN ➔ Snow", "SG ➔ Snow grains", "IC ➔ Ice crystals (diamond dust)", "PL ➔ Ice pellets", "GR ➔ Hail (French: Grêle)", "GS ➔ Small hail or snow pellets", "UP ➔ Unknown precipitation (Auto only)"] },
+                    { id: "WxObscure", type: "definition", title: "Obscuration", text: "METAR Column 4", desc: "Codes for phenomena that restrict visibility but are not precipitation.", items: ["BR ➔ Mist (French: Brumes / Baby Rain)", "FG ➔ Fog", "FU ➔ Smoke (French: Fumée)", "DU ➔ Dust", "SA ➔ Sand", "HZ ➔ Haze", "PY ➔ Spray", "VA ➔ Volcanic ash"] },
+                    { id: "WxOther", type: "definition", title: "Other Phenomena", text: "METAR Column 5", desc: "Severe or other specific weather phenomena.", items: ["PO ➔ Dust/sand whirls", "SQ ➔ Squalls", "FC ➔ Funnel cloud", "+FC ➔ Tornado or waterspout", "SS ➔ Sandstorm", "DS ➔ Dust storm"] },
+                    { id: "WxRemarks", type: "definition", title: "METAR Remarks", text: "RMK Section", desc: "Specific codes found at the end of a METAR report for meteorologists.", items: ["SLP ➔ Sea Level Pressure (hPa)", "T ➔ Hourly Temp/Dewpoint (Exact)", "5xxxx ➔ 3-Hour Pressure Tendency"] }
+                ]
+            },
+            "ATC Light Gun": {
+                "On The Ground": [
+                    { id: "GroundSignals", type: "definition", title: "Ground Signals", text: "Surface Movement", desc: "ATC Light Gun Signals used when an aircraft is ON THE GROUND and has experienced a radio failure.", items: ["Steady Green ➔ Cleared for Takeoff", "Flashing Green ➔ Cleared to Taxi", "Steady Red ➔ STOP", "Flashing Red ➔ Taxi clear of the runway in use", "Flashing White ➔ Return to starting point on airport", "Alternating Red/Green ➔ Exercise Extreme Caution"] }
+                ],
+                "In Flight": [
+                    { id: "FlightSignals", type: "definition", title: "Flight Signals", text: "Airborne Operations", desc: "ATC Light Gun Signals used when an aircraft is IN FLIGHT and has experienced a radio failure.", items: ["Steady Green ➔ Cleared to Land", "Flashing Green ➔ Return for landing (to be followed by steady green)", "Steady Red ➔ Give way to other aircraft and continue circling", "Flashing Red ➔ Airport Unsafe - Do NOT land", "Alternating Red/Green ➔ Exercise Extreme Caution"] }
+                ]
+            },
+            "Acronyms": {
+                "Instruments & Navigation": [
+                    { id: "ANDS", type: "definition", title: "ANDS", text: "Compass Dip Errors", desc: "Magnetic compass errors when accelerating or decelerating on East/West headings.", items: ["A ➔ Accelerate", "N ➔ North", "D ➔ Decelerate", "S ➔ South"] },
+                    { id: "UNOS", type: "definition", title: "UNOS", text: "Compass Turn Errors", desc: "Magnetic compass errors when turning to North or South headings.", items: ["U ➔ Undershoot", "N ➔ North", "O ➔ Overshoot", "S ➔ South"] }
+                ],
+                "Flight Operations": [
+                    { id: "GUMP", type: "definition", title: "GUMP", text: "Pre-Landing Check", desc: "Standard pre-landing acronym (often expanded to CGUMPS).", items: ["G ➔ Gas (Proper tank)", "U ➔ Undercarriage (Gear down)", "M ➔ Mixture (Rich)", "P ➔ Propeller / Pumps"] },
+                    { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] }
+                ],
+                "Emergencies": [
+                    { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W ➔ Wind", "O ➔ Obstructions", "S ➔ Size", "S ➔ Shape", "S ➔ Surface"] },
+                    { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A ➔ Airspeed", "B ➔ Best Field", "C ➔ Checklist", "D ➔ Declare", "E ➔ Execute"] }
+                ],
+                "Equipment & Rules": [
+                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A ➔ Altimeter", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Airspeed", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
+                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
+                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
+                ]
+            }
+        };
+
+        // Attach parent mapping to database elements for accurate hierarchical navigation
+        Object.keys(appDatabase).forEach(catName => {
+            Object.keys(appDatabase[catName]).forEach(subCatName => {
+                appDatabase[catName][subCatName].forEach(quizObj => {
+                    quizObj.parentCat = catName;
+                });
+            });
+        });
+
+        // State
+        let currentParent = null;
+        let currentActiveFlow = null;
+        let generatedQuestions = [];
+        let currentQ = 0;
+        let score = 0;
+        let errors = 0;
+        let isAnswered = false;
+
+        // SVGs
+        const sunIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const arrowDownSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+
+        // Theme
+        function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            updateThemeButton(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+
+        // History API
+        window.addEventListener('popstate', (e) => {
+            if (!e.state || e.state.page === 'home') showPage('homeScreen', false);
+            else if (e.state.page === 'category') { renderCategory(e.state.cat, false); }
+            else if (e.state.page === 'study') {
+                let f = findQuizById(e.state.quizId);
+                if (f) { renderStudyScreen(f, false); }
+                else showPage('homeScreen', false);
+            } else if (e.state.page === 'quiz') {
+                let f = findQuizById(e.state.quizId);
+                if (f) { startQuiz(f, false); }
+                else showPage('homeScreen', false);
+            }
+        });
+
+        function findQuizById(id) {
+            for (const cat in appDatabase)
+                for (const subCat in appDatabase[cat])
+                    for (const quiz of appDatabase[cat][subCat])
+                        if (quiz.id === id) return quiz;
+            return null;
+        }
+
+        // ================== PURE HIERARCHICAL NAVIGATION ==================
+        function goBackLogic() {
+            const activePage = document.querySelector('.page.active').id;
+            
+            if (activePage === 'categoryScreen') {
+                renderHome(true);
+            } else if (activePage === 'studyScreen') {
+                if (currentActiveFlow && currentActiveFlow.parentCat) {
+                    renderCategory(currentActiveFlow.parentCat, true);
+                } else if (currentParent) {
+                    renderCategory(currentParent, true);
+                } else {
+                    renderHome(true);
+                }
+            } else if (activePage === 'quizScreen' || activePage === 'scoreScreen') {
+                if (currentActiveFlow) {
+                    renderStudyScreen(currentActiveFlow, true);
+                } else {
+                    renderHome(true);
+                }
+            } else {
+                renderHome(true);
+            }
+        }
+
+        // Page Router
+        function showPage(pageId, pushToHistory = true, historyState = {page: 'home'}) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            const newPage = document.getElementById(pageId);
+            void newPage.offsetWidth; // trigger reflow
+            newPage.classList.add('active');
+            
+            document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
+            document.getElementById('studyBtn').style.display = (pageId === 'quizScreen') ? 'flex' : 'none';
+            
+            closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
+            
+            const appContainer = document.getElementById('appScrollContainer');
+            if (appContainer) { appContainer.scrollTop = 0; }
+
+            if (pushToHistory) history.pushState(historyState, '');
+        }
+
+        // HTML Builders
+        function buildFlowList(items) {
+            return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => {
+                let prefix = "";
+                
+                if (item.includes("6 Flight Instruments ➔ CHECK")) {
+                    prefix = "<div style='margin-top:16px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 1: Six Flight Instruments</div>";
+                } else if (item.includes("1. Clearance/Transponder ➔ OBTAIN/SET")) {
+                    prefix = "<div style='margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 2: Six Avionics Setups</div>";
+                }
+
+                if (item.includes('➔')) {
+                    let parts = item.split('➔');
+                    return `${prefix}<li style='margin-bottom:10px;'><strong>${parts[0].trim()}</strong> ➔ ${parts[1].trim()}</li>`;
+                }
+                return `${prefix}<li style='margin-bottom:10px;'>${item}</li>`;
+            }).join('') + "</ul>";
+        }
+
+        function buildLeftMenu() {
+            const menu = document.getElementById('leftNavMenuContent');
+            menu.innerHTML = `<div class="menu-header">Main Menu</div>
+                <div class="sidebar-item"><div class="sidebar-text" onclick="showPage('homeScreen', true)">Dashboard</div></div>
+                <div class="menu-header">Categories</div><div id="sidebarCats"></div>`;
+            
+            const catContainer = document.getElementById('sidebarCats');
+            
+            Object.keys(appDatabase).forEach(catName => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `
+                    <div class="sidebar-item">
+                        <div class="sidebar-text" onclick="renderCategory('${catName}')">${catName}</div>
+                        <div class="sidebar-icon">${arrowDownSvg}</div>
+                    </div>
+                    <div class="sidebar-sub"></div>`;
+                
+                const iconBtn = itemDiv.querySelector('.sidebar-icon');
+                const subContent = itemDiv.querySelector('.sidebar-sub');
+                
+                Object.keys(appDatabase[catName]).forEach(subCat => {
+                    appDatabase[catName][subCat].forEach(quizObj => {
+                        const btn = document.createElement('button');
+                        btn.innerText = quizObj.title;
+                        btn.onclick = () => renderStudyScreen(quizObj);
+                        subContent.appendChild(btn);
+                    });
+                });
+
+                iconBtn.onclick = () => {
+                    const isOpen = subContent.style.maxHeight;
+                    resetLeftMenuAccordions();
+                    if (!isOpen) {
+                        subContent.style.maxHeight = subContent.scrollHeight + "px";
+                        iconBtn.style.transform = "rotate(180deg)";
+                    }
+                };
+                catContainer.appendChild(itemDiv);
+            });
+        }
+
+        function resetLeftMenuAccordions() {
+            document.querySelectorAll('.sidebar-sub').forEach(c => c.style.maxHeight = null);
+            document.querySelectorAll('.sidebar-icon').forEach(s => s.style.transform = "rotate(0deg)");
+        }
+
+        function renderHome(pushToHistory = true) {
+            const container = document.getElementById('homeCategories');
+            container.innerHTML = '';
+            
+            const grid = document.createElement('div');
+            grid.className = 'parent-grid';
+
+            Object.keys(appDatabase).forEach(catName => {
+                const btn = document.createElement('button');
+                btn.className = 'parent-card';
+                btn.innerText = catName;
+                btn.onclick = () => renderCategory(catName);
+                grid.appendChild(btn);
+            });
+
+            container.appendChild(grid);
+            showPage('homeScreen', pushToHistory, {page: 'home'});
+        }
+
+        function renderCategory(catName, pushToHistory = true) {
+            currentParent = catName;
+            document.getElementById('catTitle').innerText = catName;
+            const container = document.getElementById('catContent');
+            container.innerHTML = '';
+
+            Object.keys(appDatabase[catName]).forEach(subCatName => {
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                section.innerHTML = `<h3 class="category-title">${subCatName}</h3>`;
+
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
+
+                appDatabase[catName][subCatName].forEach(quizObj => {
+                    const btn = document.createElement('button');
+                    btn.className = 'menu-btn';
+                    btn.innerHTML = `${quizObj.title} <small>${quizObj.text}</small>`;
+                    btn.onclick = () => renderStudyScreen(quizObj);
+                    grid.appendChild(btn);
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+            showPage('categoryScreen', pushToHistory, {page: 'category', cat: catName});
+        }
+
+        function renderStudyScreen(quizObj, pushToHistory = true) {
+            currentActiveFlow = quizObj;
+            if (quizObj.parentCat) {
+                currentParent = quizObj.parentCat; // Ensure parent is tracked correctly!
+            }
+            
+            document.getElementById('studyTitle').innerText = quizObj.title;
+            document.getElementById('studySubtitle').innerText = quizObj.text;
+            document.getElementById('studyScreenDesc').innerText = quizObj.desc;
+            document.getElementById('studyScreenContent').innerHTML = buildFlowList(quizObj.items);
+            
+            document.getElementById('rightPanelContent').innerHTML = `<div class="flow-box">${buildFlowList(quizObj.items)}</div>`;
+
+            showPage('studyScreen', pushToHistory, {page: 'study', quizId: quizObj.id});
+        }
+
+        // Side Menus
+        function toggleLeftMenu() { document.getElementById('leftNavMenu').classList.add('open'); document.getElementById('leftMenuOverlay').classList.add('open'); }
+        function closeLeftMenu() { document.getElementById('leftNavMenu').classList.remove('open'); document.getElementById('leftMenuOverlay').classList.remove('open'); }
+        function toggleRightMenu() { document.getElementById('rightNavMenu').classList.add('open'); document.getElementById('rightMenuOverlay').classList.add('open'); }
+        function closeRightMenu() { document.getElementById('rightNavMenu').classList.remove('open'); document.getElementById('rightMenuOverlay').classList.remove('open'); }
+
+        // ================== QUIZ ENGINE ==================
+        function getRandomOtherItems(currentFlow, count) {
+            let allItems = [];
+            Object.values(appDatabase).forEach(c => Object.values(c).forEach(sc => sc.forEach(f => {
+                if (f.title !== currentFlow.title && f.type === currentFlow.type) allItems = allItems.concat(f.items);
+            })));
+            let selected = [];
+            if (allItems.length > 0) {
+                for(let i=0; i<count; i++) selected.push(allItems[Math.floor(Math.random() * allItems.length)]);
+            } else {
+                for(let i=0; i<count; i++) selected.push("N/A"); 
+            }
+            return selected;
+        }
+
+        function genWhatIsNext() {
+            let flow = currentActiveFlow;
+            if (flow.items.length < 2) return null;
+            let idx = Math.floor(Math.random() * (flow.items.length - 1));
+            let currentItem = flow.items[idx];
+            let nextItem = flow.items[idx + 1];
+            let wrong1 = flow.items[(idx + 2) % flow.items.length];
+            let wrong2 = getRandomOtherItems(flow, 1)[0];
+            if(wrong1 === nextItem) wrong1 = "Master Switch ➔ OFF";
+
+            return {
+                question: `In "${flow.title}", what follows:<br><br><strong>${currentItem}</strong> ?`,
+                options: [nextItem, wrong1, wrong2],
+                correctAnswer: 0,
+                explanation: `Correct sequence: <strong>${nextItem}</strong>`
+            };
+        }
+
+        function genFirstAction() {
+            let flow = currentActiveFlow;
+            return {
+                question: `What is the **first** item in "${flow.title}"?`,
+                options: [flow.items[0], flow.items[1] || "Throttle ➔ IDLE", flow.items[flow.items.length - 1] || "Mixture ➔ CUTOFF"],
+                correctAnswer: 0,
+                explanation: `It starts with: <strong>${flow.items[0]}</strong>`
+            };
+        }
+
+        function genNotIncludedSequence() {
+            let flow = currentActiveFlow;
+            let wrongItem = getRandomOtherItems(flow, 1)[0] || "Declare ➔ Emergency";
+            return {
+                question: `Which is **NOT** part of "${flow.title}"?`,
+                options: [wrongItem, flow.items[0], flow.items[flow.items.length - 1] || flow.items[1]],
+                correctAnswer: 0,
+                explanation: `<strong>${wrongItem}</strong> is not in this procedure.`
+            };
+        }
+
+        function genDefinitionQuestion() {
+            let flow = currentActiveFlow;
+            if (flow.items.length < 1) return null;
+            
+            let idx = Math.floor(Math.random() * flow.items.length);
+            let correctItem = flow.items[idx];
+            let parts = correctItem.split(" ➔ ");
+            if (parts.length !== 2) return null;
+            
+            let code = parts[0];
+            let definition = parts[1];
+            
+            let wrongDefs = [];
+            while(wrongDefs.length < 2) {
+                let randomIdx = Math.floor(Math.random() * flow.items.length);
+                if (randomIdx !== idx) {
+                    let wParts = flow.items[randomIdx].split(" ➔ ");
+                    if (wParts.length === 2) {
+                        let wrongPart = wParts[1];
+                        if (!wrongDefs.includes(wrongPart)) wrongDefs.push(wrongPart);
+                    }
+                }
+            }
+
+            return {
+                question: `What does <strong>${code}</strong> stand for in ${flow.title}?`,
+                options: [definition, wrongDefs[0], wrongDefs[1]],
+                correctAnswer: 0,
+                explanation: `<strong>${code}</strong> stands for <strong>${definition}</strong>.`
+            };
+        }
+
+        function genNotIncludedDefinition() {
+            let flow = currentActiveFlow;
+            let wrongItem = getRandomOtherItems(flow, 1)[0] || "XYZ ➔ Unknown";
+            let correct1 = flow.items[0];
+            let correct2 = flow.items[flow.items.length - 1] || flow.items[1];
+
+            return {
+                question: `Which of the following is **NOT** part of the ${flow.title} list?`,
+                options: [wrongItem, correct1, correct2],
+                correctAnswer: 0,
+                explanation: `<strong>${wrongItem}</strong> is not part of this list.`
+            };
+        }
+
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startQuizFromStudy() { startQuiz(currentActiveFlow, true); }
+
+        function startQuiz(quizObj, pushToHistory = true) {
+            currentActiveFlow = quizObj;
+            generatedQuestions = [];
+            
+            let isSequence = (quizObj.type === "sequence");
+
+            for (let i = 0; i < QUESTIONS_PER_DRILL; i++) {
+                let q = null, attempts = 0;
+                while (!q && attempts < 15) {
+                    let rand = Math.random();
+                    
+                    if (isSequence) {
+                        if (rand < 0.33) q = genWhatIsNext();
+                        else if (rand < 0.66) q = genFirstAction();
+                        else q = genNotIncludedSequence();
+                    } else {
+                        if (rand < 0.75) q = genDefinitionQuestion();
+                        else q = genNotIncludedDefinition();
+                    }
+                    attempts++;
+                }
+                
+                if (q) {
+                    let optsWithIdx = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctAnswer }));
+                    optsWithIdx = shuffleArray(optsWithIdx);
+                    generatedQuestions.push({
+                        question: q.question,
+                        options: optsWithIdx.map(o => o.text),
+                        correctAnswer: optsWithIdx.findIndex(o => o.isCorrect),
+                        explanation: q.explanation
+                    });
+                } else i--;
+            }
+
+            currentQ = 0; score = 0; errors = 0;
+            loadQuestion();
+            showPage('quizScreen', pushToHistory, {page: 'quiz', quizId: quizObj.id});
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            let fb = document.getElementById('feedbackBox');
+            fb.className = 'feedback'; fb.innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            document.getElementById('qNumber').innerText = `Q ${currentQ + 1} / ${QUESTIONS_PER_DRILL}`;
+            document.getElementById('qScore').innerText = `Score: ${score}`;
+            document.getElementById('quizProgress').style.width = `${(currentQ / QUESTIONS_PER_DRILL) * 100}%`;
+            
+            let q = generatedQuestions[currentQ];
+            document.getElementById('qText').innerHTML = q.question;
+            
+            const optsContainer = document.getElementById('optionsContainer');
+            optsContainer.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = opt; 
+                btn.onclick = () => checkAnswer(index, btn);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            let q = generatedQuestions[currentQ];
+            let allBtns = document.getElementById('optionsContainer').querySelectorAll('.option-btn');
+            allBtns.forEach(btn => btn.disabled = true);
+
+            let isCorrect = (selectedIndex === q.correctAnswer);
+            let fb = document.getElementById('feedbackBox');
+
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                score++;
+                fb.classList.add('show', 'success');
+            } else {
+                btnElement.classList.add('wrong');
+                errors++;
+                allBtns[q.correctAnswer].classList.add('correct');
+                fb.classList.add('show', 'error');
+            }
+
+            fb.innerHTML = `<strong>${isCorrect ? 'Correct' : 'Incorrect'}</strong><br><span style="display:block; margin-top:8px;">${q.explanation}</span>`;
+            document.getElementById('qScore').innerText = `Score: ${score}`;
+            document.getElementById('quizProgress').style.width = `${((currentQ + 1) / QUESTIONS_PER_DRILL) * 100}%`;
+            
+            let nextBtn = document.getElementById('nextBtn');
+            nextBtn.innerText = (currentQ === QUESTIONS_PER_DRILL - 1) ? "Finish Drill" : "Continue";
+            nextBtn.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < QUESTIONS_PER_DRILL) loadQuestion();
+            else showScore();
+            
+            const appContainer = document.getElementById('appScrollContainer');
+            if(appContainer) appContainer.scrollTop = 0;
+        }
+
+        function showScore() {
+            let percentage = Math.round((score / QUESTIONS_PER_DRILL) * 100);
+            document.getElementById('finalScore').innerText = percentage + "%";
+            document.getElementById('finalStats').innerHTML = `Correct: ${score} out of ${QUESTIONS_PER_DRILL}<br>Errors: ${errors}`;
+            showPage('scoreScreen', true, {page: 'score', quizId: currentActiveFlow.id});
+        }
+
+        function restartSameQuiz() { startQuiz(currentActiveFlow, false); }
+
+        // Initialize App
+        document.addEventListener("DOMContentLoaded", () => {
+            updateThemeButton(document.body.classList.contains('dark-mode'));
+            buildLeftMenu();
+            renderHome(false);
+            history.replaceState({ page: 'home' }, '');
+        });
+    </script>
+</body>
+</html>
