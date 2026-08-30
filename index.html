@@ -378,7 +378,7 @@
                 <div class="flow-box">
                     <div id="studyScreenContent"></div>
                 </div>
-                <button class="primary-btn start-btn" onclick="startQuizFromStudy()">Start Drill</button>
+                <button class="primary-btn start-btn" id="mainStartBtn" onclick="startQuizFromStudy()">Start Drill</button>
             </div>
 
             <!-- QUIZ SCREEN -->
@@ -405,7 +405,7 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.2.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.2.1 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -446,20 +446,10 @@
             },
             "V-Speeds": {
                 "Airspeed Indicator": [
-                    { id: "VSO", type: "definition", title: "Vso", text: "Stall (Landing)", desc: "Stalling speed or minimum steady flight speed in the landing configuration.", items: ["Vso ➔ Stall speed in landing configuration (bottom of white arc)"] },
-                    { id: "VS1", type: "definition", title: "Vs1", text: "Stall (Clean)", desc: "Stalling speed or minimum steady flight speed in a specified configuration.", items: ["Vs1 ➔ Stall speed in clean configuration (bottom of green arc)"] },
-                    { id: "VFE", type: "definition", title: "Vfe", text: "Flaps Extended", desc: "Maximum flap extended speed.", items: ["Vfe ➔ Maximum flap extended speed (top of white arc)"] },
-                    { id: "VNO", type: "definition", title: "Vno", text: "Structural Cruise", desc: "Maximum structural cruising speed.", items: ["Vno ➔ Maximum structural cruising speed (top of green arc)"] },
-                    { id: "VNE", type: "definition", title: "Vne", text: "Never Exceed", desc: "Never-exceed speed.", items: ["Vne ➔ Never-exceed speed (red line)"] }
+                    { id: "V_Arcs", type: "info", title: "The Arcs", text: "ASI Markings", desc: "V-speeds indicated by color arcs on the airspeed indicator.", items: ["Vso ➔ Stall speed in landing configuration (bottom of white arc)", "Vs1 ➔ Stall speed in clean configuration (bottom of green arc)", "Vfe ➔ Maximum flap extended speed (top of white arc)", "Vno ➔ Maximum structural cruising speed (top of green arc)", "Vne ➔ Never-exceed speed (red line)"] }
                 ],
                 "Performance & Ops": [
-                    { id: "VA", type: "definition", title: "Va", text: "Maneuvering Speed", desc: "Design maneuvering speed. Do not apply full or abrupt control movements above this speed.", items: ["Va ➔ Design maneuvering speed"] },
-                    { id: "VX", type: "definition", title: "Vx", text: "Best Angle", desc: "Speed for best angle of climb (most altitude over shortest distance).", items: ["Vx ➔ Best angle of climb speed"] },
-                    { id: "VY", type: "definition", title: "Vy", text: "Best Rate", desc: "Speed for best rate of climb (most altitude over shortest time).", items: ["Vy ➔ Best rate of climb speed"] },
-                    { id: "VLE", type: "definition", title: "Vle", text: "Gear Extended", desc: "Maximum landing gear extended speed (structural limit with gear down).", items: ["Vle ➔ Maximum landing gear extended speed"] },
-                    { id: "VLO", type: "definition", title: "Vlo", text: "Gear Operating", desc: "Maximum landing gear operating speed (limit for the retraction/extension motor).", items: ["Vlo ➔ Maximum landing gear operating speed"] },
-                    { id: "VR", type: "definition", title: "Vr", text: "Rotation Speed", desc: "The speed at which the pilot makes a control input with the intention of lifting the airplane out of contact with the runway.", items: ["Vr ➔ Rotation speed"] },
-                    { id: "VG", type: "definition", title: "Vg", text: "Best Glide", desc: "Best glide speed. Provides the maximum lift-to-drag ratio.", items: ["Vg ➔ Best glide speed"] }
+                    { id: "V_Perf", type: "info", title: "Performance", text: "Operational Limits", desc: "Critical V-speeds that are not color-coded on the airspeed indicator.", items: ["Va ➔ Design maneuvering speed", "Vx ➔ Best angle of climb speed", "Vy ➔ Best rate of climb speed", "Vle ➔ Maximum landing gear extended speed", "Vlo ➔ Maximum landing gear operating speed", "Vr ➔ Rotation speed", "Vg ➔ Best glide speed"] }
                 ]
             },
             "Weather": {
@@ -763,6 +753,12 @@
             
             document.getElementById('rightPanelContent').innerHTML = `<div class="flow-box">${buildFlowList(quizObj)}</div>`;
 
+            // Hide the Start Drill button if type is "info"
+            const startBtn = document.getElementById('mainStartBtn');
+            if (startBtn) {
+                startBtn.style.display = (quizObj.type === "info") ? "none" : "block";
+            }
+
             showPage('studyScreen', pushToHistory, {page: 'study', quizId: quizObj.id});
         }
 
@@ -776,7 +772,7 @@
         function getRandomOtherItems(currentFlow, count) {
             let allItems = [];
             Object.values(appDatabase).forEach(c => Object.values(c).forEach(sc => sc.forEach(f => {
-                if (f.title !== currentFlow.title && f.type === currentFlow.type && f.type !== "mcq") allItems = allItems.concat(f.items);
+                if (f.title !== currentFlow.title && f.type === currentFlow.type && f.type !== "mcq" && f.type !== "info") allItems = allItems.concat(f.items);
             })));
             let selected = [];
             if (allItems.length > 0) {
@@ -884,6 +880,8 @@
         function startQuizFromStudy() { startQuiz(currentActiveFlow, true); }
 
         function startQuiz(quizObj, pushToHistory = true) {
+            if (quizObj.type === "info") return; // Failsafe
+            
             currentActiveFlow = quizObj;
             generatedQuestions = [];
             
