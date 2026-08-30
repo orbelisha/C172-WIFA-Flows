@@ -405,7 +405,7 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.1.1 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.2.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -442,6 +442,24 @@
                 ],
                 "Emergencies": [
                     { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700"] }
+                ]
+            },
+            "V-Speeds": {
+                "Airspeed Indicator": [
+                    { id: "VSO", type: "definition", title: "Vso", text: "Stall (Landing)", desc: "Stalling speed or minimum steady flight speed in the landing configuration.", items: ["Vso ➔ Stall speed in landing configuration (bottom of white arc)"] },
+                    { id: "VS1", type: "definition", title: "Vs1", text: "Stall (Clean)", desc: "Stalling speed or minimum steady flight speed in a specified configuration.", items: ["Vs1 ➔ Stall speed in clean configuration (bottom of green arc)"] },
+                    { id: "VFE", type: "definition", title: "Vfe", text: "Flaps Extended", desc: "Maximum flap extended speed.", items: ["Vfe ➔ Maximum flap extended speed (top of white arc)"] },
+                    { id: "VNO", type: "definition", title: "Vno", text: "Structural Cruise", desc: "Maximum structural cruising speed.", items: ["Vno ➔ Maximum structural cruising speed (top of green arc)"] },
+                    { id: "VNE", type: "definition", title: "Vne", text: "Never Exceed", desc: "Never-exceed speed.", items: ["Vne ➔ Never-exceed speed (red line)"] }
+                ],
+                "Performance & Ops": [
+                    { id: "VA", type: "definition", title: "Va", text: "Maneuvering Speed", desc: "Design maneuvering speed. Do not apply full or abrupt control movements above this speed.", items: ["Va ➔ Design maneuvering speed"] },
+                    { id: "VX", type: "definition", title: "Vx", text: "Best Angle", desc: "Speed for best angle of climb (most altitude over shortest distance).", items: ["Vx ➔ Best angle of climb speed"] },
+                    { id: "VY", type: "definition", title: "Vy", text: "Best Rate", desc: "Speed for best rate of climb (most altitude over shortest time).", items: ["Vy ➔ Best rate of climb speed"] },
+                    { id: "VLE", type: "definition", title: "Vle", text: "Gear Extended", desc: "Maximum landing gear extended speed (structural limit with gear down).", items: ["Vle ➔ Maximum landing gear extended speed"] },
+                    { id: "VLO", type: "definition", title: "Vlo", text: "Gear Operating", desc: "Maximum landing gear operating speed (limit for the retraction/extension motor).", items: ["Vlo ➔ Maximum landing gear operating speed"] },
+                    { id: "VR", type: "definition", title: "Vr", text: "Rotation Speed", desc: "The speed at which the pilot makes a control input with the intention of lifting the airplane out of contact with the runway.", items: ["Vr ➔ Rotation speed"] },
+                    { id: "VG", type: "definition", title: "Vg", text: "Best Glide", desc: "Best glide speed. Provides the maximum lift-to-drag ratio.", items: ["Vg ➔ Best glide speed"] }
                 ]
             },
             "Weather": {
