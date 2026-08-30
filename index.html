@@ -405,11 +405,11 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.0.20 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.1.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
-        const QUESTIONS_PER_DRILL = 15;
+        let currentDrillLength = 15; // Dynamic length based on quiz type
 
         // FIXED DATABASE 
         const appDatabase = {
@@ -479,6 +479,34 @@
                     { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A ➔ Altimeter", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Airspeed", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
                     { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
                     { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
+                ]
+            },
+            "FAA Weak Spots": {
+                "Targeted Drills": [
+                    {
+                        id: "FAAMixed01",
+                        type: "mcq",
+                        title: "Personal Focus",
+                        text: "Top 15 Mistakes",
+                        desc: "A custom 15-question FAA drill focusing specifically on altimetry, weather theory, aircraft systems, and NTSB reporting.",
+                        items: [
+                            { question: "If a flight is made from an area of high pressure into an area of lower pressure without adjusting the altimeter setting, the altimeter will indicate:", options: ["lower than the true altitude.", "higher than the true altitude.", "the actual altitude above sea level."], correctAnswer: 1, explanation: "Rule of thumb: 'From High to Low, look out below'. In lower pressure or colder air, the aircraft is physically lower than what the altimeter displays." },
+                            { question: "What are characteristics of a moist, unstable air mass?", options: ["Cumuliform clouds and showery precipitation.", "Stratiform clouds and continuous precipitation.", "Poor visibility and smooth air."], correctAnswer: 0, explanation: "Unstable air encourages vertical development (cumuliform clouds) and causes showery, turbulent weather." },
+                            { question: "What weather conditions should be expected beneath a low-level temperature inversion layer when the relative humidity is high?", options: ["Light wind shear, poor visibility, haze, and light rain.", "Smooth air, poor visibility, fog, haze, or low clouds.", "Turbulent air, poor visibility, fog, low stratus type clouds, and showery precipitation."], correctAnswer: 1, explanation: "An inversion acts as a lid, trapping moisture and pollutants. Since the air is stable, it results in smooth air, fog, and poor visibility." },
+                            { question: "To determine the freezing level and areas of probable icing aloft, the pilot should refer to the:", options: ["Winds and temperatures aloft.", "Inflight Aviation Weather Advisories.", "Area Forecasts (FA)."], correctAnswer: 1, explanation: "AIRMET Zulu (an inflight advisory) is specifically issued for moderate icing and provides freezing level heights. Winds aloft only give dry temperatures." },
+                            { question: "Applying carburetor heat will:", options: ["enrich the fuel/air mixture.", "lean the fuel/air mixture.", "not affect the fuel/air mixture."], correctAnswer: 0, explanation: "Heated air is less dense. Introducing less dense air while the fuel amount remains the same results in a richer mixture and a slight drop in RPM." },
+                            { question: "If a pilot suspects detonation during climb-out after takeoff, the initial corrective action would be to:", options: ["lean the mixture.", "lower the nose slightly to increase airspeed.", "apply carburetor heat."], correctAnswer: 1, explanation: "Detonation is caused by excessive engine heat. Lowering the nose increases ram air flow, rapidly cooling the engine." },
+                            { question: "Which of the following would be the most appropriate recovery procedure for a nose-low unusual attitude?", options: ["Reduce power, level the wings, & then raise the nose to level flight attitude.", "Increase power, apply forward elevator pressure, & then level the wings.", "Reduce power, raise the nose to level flight attitude, & then level the wings."], correctAnswer: 0, explanation: "1. Reduce power (prevent Vne), 2. Level wings (prevent excessive G-loading), 3. Raise nose smoothly." },
+                            { question: "What does V_NO mean?", options: ["Maximum operating maneuvering speed.", "Maximum structural cruising speed.", "Never-exceed speed."], correctAnswer: 1, explanation: "V_NO is the Maximum Structural Cruising Speed (top of the green arc). Exceed this only in smooth air, with caution." },
+                            { question: "When must an aircraft's position lights be displayed?", options: ["From 30 minutes after sunset to 30 minutes before sunrise.", "From sunset to sunrise.", "During civil twilight."], correctAnswer: 1, explanation: "Position lights must be ON from sunset to sunrise. This differs from logging night time (civil twilight) or carrying passengers (1 hour after/before)." },
+                            { question: "No person may operate an airplane within Class D airspace at night under special VFR unless the:", options: ["flight can be conducted 500 feet below the clouds.", "airplane is equipped for instrument flight.", "flight visibility is at least 3 miles."], correctAnswer: 1, explanation: "Night SVFR for airplanes strictly requires both the aircraft to be IFR equipped and the pilot to be Instrument Rated." },
+                            { question: "Except for takeoff or landing, an aircraft may not be operated closer than what distance from any person, vessel, vehicle, or structure?", options: ["700 feet.", "500 feet.", "1,000 feet."], correctAnswer: 1, explanation: "Over non-congested areas, the minimum is 500 AGL. Over sparse areas or water, you must stay 500 feet away from any person or object." },
+                            { question: "The vertical limit of Class C airspace above the primary airport is normally:", options: ["3,000 feet AGL.", "4,000 feet AGL.", "1,200 feet AGL."], correctAnswer: 1, explanation: "The standard vertical ceiling of Class C airspace is 4,000 feet AGL above the primary airport's elevation." },
+                            { question: "How does the wake turbulence vortex circulate around each wingtip?", options: ["Inward, upward, and around each tip.", "Outward, upward, and around each tip.", "Outward, downward, and around each tip."], correctAnswer: 1, explanation: "High pressure from below the wing spills outward and rolls upward into the low pressure area above the wing." },
+                            { question: "The operator of an aircraft involved in an accident is required to file an NTSB accident report within how many days?", options: ["7.", "10.", "14."], correctAnswer: 1, explanation: "A written report for an ACCIDENT is due within 10 days. (A missing aircraft report is due in 7 days)." },
+                            { question: "What flight visibility is required to perform an acrobatic maneuver?", options: ["1 statute mile.", "3 statute miles.", "5 statute miles."], correctAnswer: 1, explanation: "Aerobatic flight requires at least 3 statute miles of flight visibility, and must not be conducted below 1,500 AGL." }
+                        ]
+                    }
                 ]
             }
         };
@@ -586,8 +614,14 @@
         }
 
         // HTML Builders
-        function buildFlowList(items) {
-            return "<ul style='margin:0; padding-left:1.2rem;'>" + items.map(item => {
+        function buildFlowList(quizObj) {
+            if (quizObj.type === "mcq") {
+                return "<ul style='margin:0; padding-left:1.2rem;'>" + quizObj.items.map((q, i) =>
+                    `<li style='margin-bottom:14px; font-size:1.05rem;'><strong style='color:var(--text-main)'>Q:</strong> ${q.question}<br><span style='color:var(--primary-color); display:block; margin-top:4px;'><strong>A:</strong> ${q.options[q.correctAnswer]}</span></li>`
+                ).join('') + "</ul>";
+            }
+            
+            return "<ul style='margin:0; padding-left:1.2rem;'>" + quizObj.items.map(item => {
                 let prefix = "";
                 
                 if (item.includes("6 Flight Instruments ➔ CHECK")) {
@@ -706,9 +740,9 @@
             document.getElementById('studyTitle').innerText = quizObj.title;
             document.getElementById('studySubtitle').innerText = quizObj.text;
             document.getElementById('studyScreenDesc').innerText = quizObj.desc;
-            document.getElementById('studyScreenContent').innerHTML = buildFlowList(quizObj.items);
+            document.getElementById('studyScreenContent').innerHTML = buildFlowList(quizObj);
             
-            document.getElementById('rightPanelContent').innerHTML = `<div class="flow-box">${buildFlowList(quizObj.items)}</div>`;
+            document.getElementById('rightPanelContent').innerHTML = `<div class="flow-box">${buildFlowList(quizObj)}</div>`;
 
             showPage('studyScreen', pushToHistory, {page: 'study', quizId: quizObj.id});
         }
@@ -723,7 +757,7 @@
         function getRandomOtherItems(currentFlow, count) {
             let allItems = [];
             Object.values(appDatabase).forEach(c => Object.values(c).forEach(sc => sc.forEach(f => {
-                if (f.title !== currentFlow.title && f.type === currentFlow.type) allItems = allItems.concat(f.items);
+                if (f.title !== currentFlow.title && f.type === currentFlow.type && f.type !== "mcq") allItems = allItems.concat(f.items);
             })));
             let selected = [];
             if (allItems.length > 0) {
@@ -834,25 +868,13 @@
             currentActiveFlow = quizObj;
             generatedQuestions = [];
             
-            let isSequence = (quizObj.type === "sequence");
-
-            for (let i = 0; i < QUESTIONS_PER_DRILL; i++) {
-                let q = null, attempts = 0;
-                while (!q && attempts < 15) {
-                    let rand = Math.random();
-                    
-                    if (isSequence) {
-                        if (rand < 0.33) q = genWhatIsNext();
-                        else if (rand < 0.66) q = genFirstAction();
-                        else q = genNotIncludedSequence();
-                    } else {
-                        if (rand < 0.75) q = genDefinitionQuestion();
-                        else q = genNotIncludedDefinition();
-                    }
-                    attempts++;
-                }
+            if (quizObj.type === "mcq") {
+                // Direct MCQ loading
+                let shuffledItems = shuffleArray(quizObj.items);
+                currentDrillLength = Math.min(15, shuffledItems.length);
                 
-                if (q) {
+                for(let i = 0; i < currentDrillLength; i++) {
+                    let q = shuffledItems[i];
                     let optsWithIdx = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctAnswer }));
                     optsWithIdx = shuffleArray(optsWithIdx);
                     generatedQuestions.push({
@@ -861,7 +883,39 @@
                         correctAnswer: optsWithIdx.findIndex(o => o.isCorrect),
                         explanation: q.explanation
                     });
-                } else i--;
+                }
+            } else {
+                // Dynamic generation for Flow / Definition
+                currentDrillLength = 15;
+                let isSequence = (quizObj.type === "sequence");
+
+                for (let i = 0; i < currentDrillLength; i++) {
+                    let q = null, attempts = 0;
+                    while (!q && attempts < 15) {
+                        let rand = Math.random();
+                        
+                        if (isSequence) {
+                            if (rand < 0.33) q = genWhatIsNext();
+                            else if (rand < 0.66) q = genFirstAction();
+                            else q = genNotIncludedSequence();
+                        } else {
+                            if (rand < 0.75) q = genDefinitionQuestion();
+                            else q = genNotIncludedDefinition();
+                        }
+                        attempts++;
+                    }
+                    
+                    if (q) {
+                        let optsWithIdx = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctAnswer }));
+                        optsWithIdx = shuffleArray(optsWithIdx);
+                        generatedQuestions.push({
+                            question: q.question,
+                            options: optsWithIdx.map(o => o.text),
+                            correctAnswer: optsWithIdx.findIndex(o => o.isCorrect),
+                            explanation: q.explanation
+                        });
+                    } else i--;
+                }
             }
 
             currentQ = 0; score = 0; errors = 0;
@@ -875,9 +929,9 @@
             fb.className = 'feedback'; fb.innerHTML = '';
             document.getElementById('nextBtn').style.display = 'none';
             
-            document.getElementById('qNumber').innerText = `Q ${currentQ + 1} / ${QUESTIONS_PER_DRILL}`;
+            document.getElementById('qNumber').innerText = `Q ${currentQ + 1} / ${currentDrillLength}`;
             document.getElementById('qScore').innerText = `Score: ${score}`;
-            document.getElementById('quizProgress').style.width = `${(currentQ / QUESTIONS_PER_DRILL) * 100}%`;
+            document.getElementById('quizProgress').style.width = `${(currentQ / currentDrillLength) * 100}%`;
             
             let q = generatedQuestions[currentQ];
             document.getElementById('qText').innerHTML = q.question;
@@ -917,16 +971,16 @@
 
             fb.innerHTML = `<strong>${isCorrect ? 'Correct' : 'Incorrect'}</strong><br><span style="display:block; margin-top:8px;">${q.explanation}</span>`;
             document.getElementById('qScore').innerText = `Score: ${score}`;
-            document.getElementById('quizProgress').style.width = `${((currentQ + 1) / QUESTIONS_PER_DRILL) * 100}%`;
+            document.getElementById('quizProgress').style.width = `${((currentQ + 1) / currentDrillLength) * 100}%`;
             
             let nextBtn = document.getElementById('nextBtn');
-            nextBtn.innerText = (currentQ === QUESTIONS_PER_DRILL - 1) ? "Finish Drill" : "Continue";
+            nextBtn.innerText = (currentQ === currentDrillLength - 1) ? "Finish Drill" : "Continue";
             nextBtn.style.display = 'block';
         }
 
         function nextQuestion() {
             currentQ++;
-            if (currentQ < QUESTIONS_PER_DRILL) loadQuestion();
+            if (currentQ < currentDrillLength) loadQuestion();
             else showScore();
             
             const appContainer = document.getElementById('appScrollContainer');
@@ -934,9 +988,9 @@
         }
 
         function showScore() {
-            let percentage = Math.round((score / QUESTIONS_PER_DRILL) * 100);
+            let percentage = Math.round((score / currentDrillLength) * 100);
             document.getElementById('finalScore').innerText = percentage + "%";
-            document.getElementById('finalStats').innerHTML = `Correct: ${score} out of ${QUESTIONS_PER_DRILL}<br>Errors: ${errors}`;
+            document.getElementById('finalStats').innerHTML = `Correct: ${score} out of ${currentDrillLength}<br>Errors: ${errors}`;
             showPage('scoreScreen', true, {page: 'score', quizId: currentActiveFlow.id});
         }
 
