@@ -405,7 +405,7 @@
             
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.1.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v1.1.1 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -434,7 +434,7 @@
                 ],
                 "Air": [
                     { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
-                    { id: "DIMS", type: "sequence", title: "DIMS", text: "Cruise Checklist", desc: "Cruise checklist including the DIMS mnemonic.", items: ["Aux Fuel Pump ➔ OFF", "Pitch Attitude ➔ OBTAIN", "Power ➔ CRUISE RPM", "D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED", "Next Frequencies ➔ PREPARE", "Map Range ➔ AS APPROPRIATE", "TOD ➔ DETERMINE"] },
+                    { id: "CruiseCheck", type: "sequence", title: "Cruise Check", text: "Level Flight", desc: "Standard cruise checklist configuration.", items: ["Aux Fuel Pump ➔ OFF", "Pitch Attitude ➔ OBTAIN", "Power ➔ CRUISE RPM", "DIMS Check ➔ PERFORM", "Next Frequencies ➔ PREPARE", "Map Range ➔ AS APPROPRIATE", "TOD ➔ DETERMINE"] },
                     { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns ➔ PERFORM", "Non Congested Area ➔ VERIFY", "Checklist ➔ PERFORM", "Declare ➔ PERFORM"] },
                     { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A ➔ ATIS/AWOS OBTAIN", "B ➔ Brief (Approach/Arrival) PERFORM", "C ➔ Checklist PERFORM"] },
                     { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C ➔ Clearance & Carb Heat OBTAIN", "G ➔ Gas BOTH", "U ➔ Undercarriage DOWN and WELDED", "M ➔ Mixture RICH <3000 D.A.", "P ➔ Props & Pumps ON", "S ➔ Seatbelts & Switches CHECK"] },
@@ -469,7 +469,8 @@
                 ],
                 "Flight Operations": [
                     { id: "GUMP", type: "definition", title: "GUMP", text: "Pre-Landing Check", desc: "Standard pre-landing acronym (often expanded to CGUMPS).", items: ["G ➔ Gas (Proper tank)", "U ➔ Undercarriage (Gear down)", "M ➔ Mixture (Rich)", "P ➔ Propeller / Pumps"] },
-                    { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] }
+                    { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] },
+                    { id: "DIMS", type: "definition", title: "DIMS", text: "Cruise Mnemonic", desc: "Acronym check performed during cruise.", items: ["D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED"] }
                 ],
                 "Emergencies": [
                     { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W ➔ Wind", "O ➔ Obstructions", "S ➔ Size", "S ➔ Shape", "S ➔ Surface"] },
