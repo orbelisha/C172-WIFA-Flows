@@ -2,22 +2,23 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="C172 PPL Memory">
-    
+    <meta name="theme-color" content="#f0f4f9" id="themeColorMeta">
+
     <!-- Tab Title -->
     <title>C172 PPL Memory Items</title>
-    
+
     <!-- Light Aircraft Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230b57d0'><path d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z'/></svg>">
-    
+
     <!-- Premium Google-like Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         /* =========================================================
            GEMINI / MATERIAL 3 DESIGN SYSTEM
@@ -28,7 +29,7 @@
             --card-bg: #ffffff;
             --text-main: #1f1f1f;
             --text-muted: #444746;
-            --primary-color: #0b57d0; 
+            --primary-color: #0b57d0;
             --hover-color: #e1e3e1;
             --card-hover: #f8fafd;
             --correct-color: #146c2e;
@@ -40,8 +41,8 @@
             --shadow-soft: 0 4px 12px rgba(0,0,0,0.05);
             --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
             --nav-bg: rgba(240, 244, 249, 0.85);
+            --accent-soft: rgba(11, 87, 208, 0.08);
         }
-
         body.dark-mode {
             /* Dark Mode */
             --bg-color: #131314;
@@ -60,33 +61,32 @@
             --shadow-soft: 0 4px 16px rgba(0,0,0,0.3);
             --shadow-hover: 0 12px 28px rgba(0,0,0,0.5);
             --nav-bg: rgba(19, 19, 20, 0.85);
+            --accent-soft: rgba(168, 199, 250, 0.12);
         }
-
-        * { 
-            -webkit-tap-highlight-color: transparent; 
-            box-sizing: border-box; 
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
-
         body {
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0; padding: 0;
             height: 100vh;
-            height: 100dvh; 
+            height: 100dvh;
             display: flex; flex-direction: column;
-            overflow: hidden; 
+            overflow: hidden;
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
-            font-size: 16px; 
+            font-size: 16px;
             transition: background-color 0.4s ease, color 0.4s ease;
         }
-        
+
         /* =========================================================
            TOP NAVIGATION (FIXED FOR MOBILE NOTCH/DYNAMIC ISLAND)
            ========================================================= */
         .top-nav {
-            position: fixed; 
+            position: fixed;
             top: 0; left: 0; width: 100%;
             padding-top: calc(max(env(safe-area-inset-top), 20px) + 10px);
             padding-bottom: 10px;
@@ -99,22 +99,19 @@
             box-shadow: 0 1px 4px rgba(0,0,0,0.06);
             transition: background-color 0.4s ease;
         }
-
         .icon-btn {
             background: transparent; border: none; color: var(--primary-color);
-            width: 48px; height: 48px; 
+            width: 48px; height: 48px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             border-radius: 50%; transition: all 0.2s ease;
         }
-        
+
         .icon-btn svg { width: 26px; height: 26px; }
         .icon-btn:hover { background-color: var(--card-hover); transform: translateY(-2px); }
         .icon-btn:active { transform: scale(0.9); background-color: var(--hover-color); transition: none; }
         .icon-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-
         .nav-group { display: flex; gap: 4px; }
         #backBtn, #studyBtn { display: none; }
-
         /* =========================================================
            LAYOUT, SCROLLING & SMART CENTERING
            ========================================================= */
@@ -123,52 +120,50 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
-
         .main-wrapper {
-            flex: 1 0 auto; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 100%; 
-            max-width: 800px; 
-            margin: 0 auto; 
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 16px;
-            padding-top: calc(max(env(safe-area-inset-top), 20px) + 90px); 
+            padding-top: calc(max(env(safe-area-inset-top), 20px) + 90px);
         }
-
-        .page { 
-            display: none; 
-            width: 100%; 
+        .page {
+            display: none;
+            width: 100%;
             background-color: var(--card-bg);
             border-radius: 24px;
             padding: 32px 24px;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-soft);
             transition: background-color 0.4s ease, border-color 0.4s ease;
-            margin: auto 0; 
-        }
-        
-        .page.active { 
-            display: block; 
-            animation: fadeInPage 0.4s cubic-bezier(0.2, 0, 0, 1) forwards; 
+            margin: auto 0;
         }
 
+        .page.active {
+            display: block;
+            animation: fadeInPage 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
+        }
         @keyframes fadeInPage {
             0% { opacity: 0; transform: translateY(15px) scale(0.99); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
         h1 { margin: 0 0 8px 0; font-size: 1.85rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
         .subtitle { color: var(--text-muted); margin-bottom: 35px; font-size: 0.95rem; text-align: center; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
-
         /* =========================================================
            INTERACTIVE CARDS & LISTS
            ========================================================= */
         .parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
-        
+
         .parent-card {
             background-color: var(--bg-color);
             border: 1.5px solid transparent;
@@ -179,15 +174,15 @@
             font-weight: 600;
             text-align: center;
             cursor: pointer;
+            font-family: inherit;
             transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
             outline: none;
         }
-        
+
         .category-section { margin-bottom: 40px; width: 100%; }
         .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.2px; }
-
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
-        
+
         .menu-btn {
             background-color: var(--bg-color);
             border: 1.5px solid var(--border-color);
@@ -204,75 +199,154 @@
             transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
             outline: none;
         }
-        
+
         .menu-btn small { display: block; font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 400; transition: color 0.3s; }
         .menu-btn:hover small { color: var(--primary-color); }
-
         .parent-card:hover, .menu-btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary-color); color: var(--primary-color); background-color: var(--card-bg); }
         .parent-card:focus-visible, .menu-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
         .parent-card:active, .menu-btn:active { transform: scale(0.96); background-color: var(--card-hover); transition: none; }
+
+        /* ---- Practice shortcuts on the dashboard ---- */
+        .quick-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px; }
+        .quick-card {
+            background: var(--accent-soft);
+            border: 1.5px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 18px; padding: 20px 18px; text-align: left;
+            font-size: 1.1rem; font-weight: 700; font-family: inherit; cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
+        }
+        .quick-card small { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-top: 6px; }
+        .quick-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .quick-card:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
+        .quick-card:active { transform: scale(0.96); transition: none; }
+        .section-label { color: var(--primary-color); margin: 0 0 12px 4px; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+
+        /* ---- Mastery badges ---- */
+        .badge {
+            display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 100px;
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.3px;
+            border: 1px solid var(--border-color); color: var(--text-muted); background: var(--card-bg);
+        }
+        .badge.good { color: var(--correct-color); border-color: var(--correct-color); background: var(--correct-bg); }
+        .badge.mid  { color: var(--primary-color); border-color: var(--primary-color); background: var(--accent-soft); }
+        .badge.weak { color: var(--wrong-color); border-color: var(--wrong-color); background: var(--wrong-bg); }
 
         /* =========================================================
            STUDY & QUIZ SCREENS
            ========================================================= */
         .study-title { font-size: 1.8rem; margin: 0 0 8px 0; color: var(--text-main); font-weight: 700; }
         .study-subtitle { font-size: 1.05rem; color: var(--primary-color); margin-bottom: 20px; font-weight: 600; }
-        
-        .study-desc { 
-            font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; 
-            background: var(--bg-color); padding: 18px 20px; border-radius: 16px; 
+
+        .study-desc {
+            font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;
+            background: var(--bg-color); padding: 18px 20px; border-radius: 16px;
             border: 1px solid var(--border-color); transition: box-shadow 0.3s ease;
         }
         .study-desc:hover { box-shadow: var(--shadow-soft); }
-
-        .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
+        .question-header { display: flex; justify-content: space-between; margin-bottom: 24px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; gap: 12px; }
+        .question-source { font-size: 0.85rem; color: var(--primary-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; }
         .question-text { font-size: 1.45rem; font-weight: 500; margin-bottom: 35px; line-height: 1.5; color: var(--text-main); }
-        
+
         .options { display: flex; flex-direction: column; gap: 14px; }
-        
-        .option-btn { 
-            background: var(--bg-color); border: 1.5px solid var(--border-color); color: var(--text-main); 
-            border-radius: 16px; padding: 20px 22px; font-size: 1.1rem; text-align: left; font-weight: 500; line-height: 1.4; 
+
+        .option-btn {
+            background: var(--bg-color); border: 1.5px solid var(--border-color); color: var(--text-main);
+            border-radius: 16px; padding: 20px 22px; font-size: 1.1rem; text-align: left; font-weight: 500; line-height: 1.4;
             font-family: inherit; cursor: pointer; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
+            display: flex; align-items: flex-start; gap: 14px;
         }
-        
+        .opt-key {
+            display: none; flex: 0 0 auto; width: 24px; height: 24px; border-radius: 6px;
+            border: 1px solid var(--border-color); color: var(--text-muted);
+            font-size: 0.8rem; font-weight: 700; line-height: 22px; text-align: center; margin-top: 1px;
+        }
+        @media (hover: hover) and (pointer: fine) { .opt-key { display: block; } }
+
         .option-btn:hover:not(:disabled) { transform: translateY(-2px) translateX(4px); box-shadow: var(--shadow-soft); border-color: var(--primary-color); background-color: var(--card-hover); }
         .option-btn:focus-visible { border-color: var(--primary-color); box-shadow: 0 0 0 4px var(--focus-ring); }
         .option-btn:active:not(:disabled) { transform: scale(0.98); background-color: var(--card-bg); transition: none; }
         .option-btn:disabled { cursor: default; box-shadow: none; transform: none; }
-        
+
         .option-btn.correct { background: var(--correct-bg) !important; border-color: var(--correct-color) !important; color: var(--correct-color); font-weight: 700; transform: scale(1.02); }
         .option-btn.wrong { background: var(--wrong-bg) !important; border-color: var(--wrong-color) !important; color: var(--wrong-color); font-weight: 700; transform: scale(0.98); }
-
         .feedback { margin-top: 28px; padding: 20px 24px; border-radius: 16px; font-size: 1.05rem; display: none; line-height: 1.5; font-weight: 500; box-shadow: var(--shadow-soft); }
         .feedback.show { display: block; animation: fadeInPage 0.35s ease forwards; }
         .feedback.success { background: var(--correct-bg); color: var(--correct-color); border: 1px solid rgba(20, 108, 46, 0.2); }
         .feedback.error { background: var(--wrong-bg); color: var(--wrong-color); border: 1px solid rgba(179, 38, 30, 0.2); }
-
         .flow-box { background: var(--bg-color); padding: 24px; margin-top: 24px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s; }
         .flow-box:hover { box-shadow: var(--shadow-hover); }
         .flow-box h4 { margin: 0 0 16px 0; color: var(--primary-color); font-size: 1.05rem; font-weight: 700; }
         .flow-box ul { margin: 0; padding-left: 20px; color: var(--text-main); font-weight: 400; font-size: 1.1rem; line-height: 1.6; }
         .flow-box li { margin-bottom: 10px; }
-
-        .primary-btn { 
-            background: var(--primary-color); color: #fff; border: none; padding: 20px; font-size: 1.15rem; 
+        .flow-box li.weak-item::marker { color: var(--wrong-color); }
+        .primary-btn {
+            background: var(--primary-color); color: #fff; border: none; padding: 20px; font-size: 1.15rem;
             border-radius: 100px; font-weight: 600; margin-top: 35px; width: 100%; display: none;
             cursor: pointer; font-family: inherit; transition: all 0.25s cubic-bezier(0.2, 0, 0, 1); outline: none;
             box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
         }
+        body.dark-mode .primary-btn { color: #062e6f; }
         .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11, 87, 208, 0.4); filter: brightness(1.1); }
         .primary-btn:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
         .primary-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(11, 87, 208, 0.3); filter: brightness(0.9); transition: none; }
-        
-        .start-btn { display: block; margin-top: 35px; }
 
+        .start-btn { display: block; margin-top: 35px; }
         .progress-container { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-bottom: 28px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--primary-color); width: 0%; transition: width 0.4s cubic-bezier(0.2, 0, 0, 1); border-radius: 3px; }
-
         .score-val { font-size: 5rem; font-weight: 700; color: var(--primary-color); margin: 16px 0; text-align: center; }
         .secondary-btn { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 16px; box-shadow: none; }
+        body.dark-mode .secondary-btn { color: var(--primary-color); }
         .secondary-btn:hover { background: var(--hover-color); box-shadow: var(--shadow-soft); }
+
+        /* ---- Drill setup (length chips + topic stats) ---- */
+        .drill-setup { margin-top: 24px; padding: 18px 20px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 16px; }
+        .cfg-label { display: block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 12px; }
+        .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+        .chip {
+            background: var(--card-bg); border: 1.5px solid var(--border-color); color: var(--text-main);
+            border-radius: 100px; padding: 10px 20px; font-size: 0.95rem; font-weight: 600;
+            font-family: inherit; cursor: pointer; transition: all 0.2s ease; outline: none;
+        }
+        .chip:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .chip:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
+        .chip.selected { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+        body.dark-mode .chip.selected { color: #062e6f; }
+        .topic-stats { margin-top: 16px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+        .hint { margin-top: 12px; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+        /* ---- Mistake review ---- */
+        .review-head { display: flex; align-items: center; justify-content: space-between; margin-top: 32px; margin-bottom: 12px; }
+        .review-title { color: var(--primary-color); font-size: 1.05rem; font-weight: 700; }
+        .review-item {
+            background: var(--bg-color); border: 1px solid var(--border-color); border-left: 4px solid var(--wrong-color);
+            border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; font-size: 0.98rem; line-height: 1.5;
+        }
+        .review-item .rq { font-weight: 600; color: var(--text-main); margin-bottom: 10px; }
+        .review-item .ra { color: var(--correct-color); font-weight: 700; }
+        .review-item .rx { color: var(--wrong-color); font-weight: 600; }
+        .review-item .re { color: var(--text-muted); margin-top: 8px; font-size: 0.92rem; }
+
+        /* ---- Progress screen ---- */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 28px; }
+        .stat-box { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px; text-align: center; }
+        .stat-box .sv { font-size: 1.9rem; font-weight: 700; color: var(--primary-color); }
+        .stat-box .sl { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+        .prog-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 14px;
+            padding: 14px 18px; margin-bottom: 10px; width: 100%; text-align: left;
+            font-family: inherit; font-size: 1rem; color: var(--text-main); cursor: pointer;
+            transition: all 0.2s ease; outline: none;
+        }
+        .prog-row:hover { border-color: var(--primary-color); transform: translateX(3px); }
+        .prog-row:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
+        .prog-row .pt { font-weight: 600; display: block; }
+        .prog-row .pm { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; margin-top: 3px; display: block; }
+        .prog-pct { font-size: 1.25rem; font-weight: 700; flex: 0 0 auto; }
+        .empty-note { color: var(--text-muted); text-align: center; padding: 28px 12px; font-size: 1rem; line-height: 1.6; }
+        .danger-btn, body.dark-mode .danger-btn { background: transparent; color: var(--wrong-color); border: 2px solid var(--wrong-color); box-shadow: none; }
+        .danger-btn:hover { background: var(--wrong-bg); filter: none; }
 
         /* =========================================================
            SIDE MENUS
@@ -282,29 +356,29 @@
             background: rgba(0,0,0,0.4); z-index: 998; opacity: 0; transition: opacity 0.3s ease;
         }
         #leftMenuOverlay.open, #rightMenuOverlay.open { display: block; opacity: 1; }
-
         .side-menu {
-            position: fixed; top: 0; height: 100vh; background: var(--card-bg);
-            transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto; 
+            position: fixed; top: 0; height: 100vh; height: 100dvh; background: var(--card-bg);
+            transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1); z-index: 1000; overflow-y: auto;
             padding-bottom: env(safe-area-inset-bottom, 20px);
+            max-width: 90vw;
         }
         #leftNavMenu { left: 0; width: 300px; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
         #leftNavMenu.open { transform: translateX(0); }
-        
+
         #rightNavMenu { right: 0; width: 340px; border-left: 1px solid var(--border-color); transform: translateX(100%); }
         #rightNavMenu.open { transform: translateX(0); }
-
         .menu-header { padding: calc(max(env(safe-area-inset-top), 20px) + 24px) 20px 16px 20px; color: var(--primary-color); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-
         .sidebar-item { display: flex; align-items: center; justify-content: space-between; background: transparent; }
-        
-        .sidebar-text { flex: 1; padding: 18px 24px; font-size: 1.1rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; }
+
+        .sidebar-text { flex: 1; padding: 18px 24px; font-size: 1.1rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; border-radius: 0 24px 24px 0; margin-right: 16px; font-family: inherit; text-align: left; background: none; border: none; }
         .sidebar-text:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 28px; }
         .sidebar-text:active { background: var(--hover-color); transition: none; }
-        
-        .sidebar-icon { padding: 18px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease, color 0.2s; }
+        .sidebar-text:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+
+        .sidebar-icon { padding: 18px; cursor: pointer; color: var(--text-muted); transition: transform 0.3s ease, color 0.2s; background: none; border: none; display: flex; align-items: center; }
         .sidebar-icon:hover { color: var(--primary-color); }
-        
+        .sidebar-icon:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+
         .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.2, 0, 0, 1); }
         .sidebar-sub button {
             width: 100%; text-align: left; padding: 16px 24px 16px 48px; background: none; border: none;
@@ -313,63 +387,63 @@
         }
         .sidebar-sub button:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 54px; }
         .sidebar-sub button:active { background: var(--hover-color); transition: none; }
-
-        .sidebar-icon svg { width: 18px; height: 18px; } 
-
+        .sidebar-icon svg { width: 18px; height: 18px; }
         .footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.85rem; width: 100%; margin-top: auto; font-weight: 500; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
     </style>
 </head>
 <body>
-
     <!-- TOP NAVIGATION -->
     <div class="top-nav">
         <div class="nav-group">
-            <button class="icon-btn" onclick="toggleLeftMenu()" aria-label="Open Menu">
+            <button class="icon-btn" id="menuBtn" aria-label="Open Menu">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <button class="icon-btn" id="backBtn" onclick="goBackLogic()" aria-label="Go Back">
+            <button class="icon-btn" id="backBtn" aria-label="Go Back">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
         </div>
         <div class="nav-group">
-            <button class="icon-btn" id="studyBtn" onclick="toggleRightMenu()" aria-label="View Study Material">
+            <button class="icon-btn" id="studyBtn" aria-label="View Study Material">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             </button>
-            <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
+            <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Theme"></button>
         </div>
     </div>
-
     <!-- LEFT MENU -->
-    <div id="leftMenuOverlay" onclick="closeLeftMenu()"></div>
+    <div id="leftMenuOverlay"></div>
     <div id="leftNavMenu" class="side-menu">
         <div id="leftNavMenuContent"></div>
     </div>
-
     <!-- RIGHT STUDY PANEL -->
-    <div id="rightMenuOverlay" onclick="closeRightMenu()"></div>
+    <div id="rightMenuOverlay"></div>
     <div id="rightNavMenu" class="side-menu">
-        <div class="menu-header">Study Material</div>
+        <div class="menu-header" id="rightPanelTitle">Study Material</div>
         <div id="rightPanelContent" style="padding: 16px;"></div>
     </div>
-
     <!-- SCROLLABLE APP CONTAINER -->
     <div class="app-container" id="appScrollContainer">
         <div class="main-wrapper">
-            
+
             <!-- HOME SCREEN -->
             <div class="page active" id="homeScreen">
                 <h1>C172 PPL Memory Items</h1>
-                <div class="subtitle">Master Your Flows & Acronyms</div>
+                <div class="subtitle">Master Your Flows &amp; Acronyms</div>
+                <div class="section-label">Practice</div>
+                <div class="quick-grid">
+                    <button class="quick-card" id="mixedEntryBtn">Mixed Drill<small>Random questions across every topic, weighted to your weak spots</small></button>
+                    <button class="quick-card" id="progressEntryBtn">Progress<small>Scores, weak items and drill history</small></button>
+                </div>
+                <div class="section-label">Categories</div>
                 <div id="homeCategories"></div>
             </div>
-
             <!-- CATEGORY SCREEN -->
             <div class="page" id="categoryScreen">
                 <h1 id="catTitle">Title</h1>
                 <div class="subtitle">Select Topic</div>
                 <div id="catContent"></div>
             </div>
-
             <!-- STUDY SCREEN -->
             <div class="page" id="studyScreen">
                 <h1 id="studyTitle">Title</h1>
@@ -378,9 +452,36 @@
                 <div class="flow-box">
                     <div id="studyScreenContent"></div>
                 </div>
-                <button class="primary-btn start-btn" id="mainStartBtn" onclick="startQuizFromStudy()">Start Drill</button>
+                <div class="drill-setup" id="drillSetup">
+                    <span class="cfg-label">Drill Length</span>
+                    <div class="chips" id="lengthChips"></div>
+                    <div class="topic-stats" id="topicStats"></div>
+                    <div class="hint" id="drillHint"></div>
+                </div>
+                <button class="primary-btn start-btn" id="mainStartBtn">Start Drill</button>
             </div>
-
+            <!-- MIXED DRILL SCREEN -->
+            <div class="page" id="mixedScreen">
+                <h1>Mixed Drill</h1>
+                <div class="subtitle">Exam-Style Random Practice</div>
+                <div class="study-desc">Questions are pulled at random from across the database. Topics and items you keep getting wrong show up more often.</div>
+                <div class="drill-setup">
+                    <span class="cfg-label">Scope</span>
+                    <div class="chips" id="scopeChips"></div>
+                    <span class="cfg-label" style="margin-top:20px;">Drill Length</span>
+                    <div class="chips" id="mixedLengthChips"></div>
+                    <div class="topic-stats" id="mixedStats"></div>
+                </div>
+                <button class="primary-btn start-btn" id="mixedStartBtn">Start Mixed Drill</button>
+            </div>
+            <!-- PROGRESS SCREEN -->
+            <div class="page" id="progressScreen">
+                <h1>Progress</h1>
+                <div class="subtitle">Weakest Topics First</div>
+                <div class="stat-grid" id="progressStats"></div>
+                <div id="progressList"></div>
+                <button class="primary-btn secondary-btn danger-btn start-btn" id="resetProgressBtn">Reset All Progress</button>
+            </div>
             <!-- QUIZ SCREEN -->
             <div class="page" id="quizScreen">
                 <div class="progress-container"><div class="progress-bar" id="quizProgress"></div></div>
@@ -388,68 +489,83 @@
                     <span id="qNumber">Q 1/15</span>
                     <span id="qScore" style="color: var(--primary-color);">Score: 0</span>
                 </div>
+                <div class="question-source" id="qSource" hidden></div>
                 <div class="question-text" id="qText">Question</div>
                 <div class="options" id="optionsContainer"></div>
-                <div class="feedback" id="feedbackBox"></div>
-                <button class="primary-btn" id="nextBtn" onclick="nextQuestion()">Continue</button>
+                <div class="feedback" id="feedbackBox" role="status" aria-live="polite"></div>
+                <button class="primary-btn" id="nextBtn">Continue</button>
             </div>
-
             <!-- SCORE SCREEN -->
             <div class="page" id="scoreScreen">
                 <h1>Drill Completed</h1>
                 <div class="score-val" id="finalScore">0%</div>
                 <div class="subtitle" id="finalStats" style="margin-bottom: 40px; color: var(--text-main);"></div>
-                <button class="primary-btn start-btn" onclick="restartSameQuiz()">Retry Drill</button>
-                <button class="primary-btn secondary-btn start-btn" onclick="goBackLogic()">Back to Topic</button>
+                <div id="reviewSection"></div>
+                <button class="primary-btn start-btn" id="retryMistakesBtn">Retry Mistakes</button>
+                <button class="primary-btn secondary-btn start-btn" id="retryDrillBtn">New Drill, Same Topic</button>
+                <button class="primary-btn secondary-btn start-btn" id="backToTopicBtn">Back to Topic</button>
             </div>
-            
+
         </div>
         <!-- FOOTER -->
-        <div class="footer">v1.2.2 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v2.1.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
-        let currentDrillLength = 15; // Dynamic length based on quiz type
-
-        // FIXED DATABASE 
+        /* =========================================================
+           DATABASE
+           Content is unchanged from v1.2.2 except for one correction,
+           marked below.
+           ========================================================= */
         const appDatabase = {
             "Checklists": {
                 "Normal Procedures": [
                     { id: "BeforeTaxi", type: "sequence", title: "Before Taxi Check", text: "Pre-Taxi configuration", desc: "Configuration setup prior to taxiing to the runup area.", items: ["Flaps ➔ UP (CHECK VISUALLY)", "Taxi Light ➔ ON", "Taxi Area ➔ CLEAR", "Parking Brake ➔ RELEASE", "Brakes ➔ CHECK", "TC, Ball & DG ➔ CHECK ON FIRST TURN"] },
-                    { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Passenger Briefing ➔ COMPLETE", "Doors and Seatbelts ➔ SECURED", "Parking Brake ➔ SET", "Fuel Selector ➔ BOTH", "Carburetor Heat ➔ COLD", "Mixture ➔ FULL RICH", "Primer ➔ 2-5 STROKES & LOCK", "Master Switch ➔ ON", "Lights ➔ AS REQUIRED", "Throttle ➔ OPEN 1/8 INCH", "Prop Area ➔ CLEAR", "Starter ➔ ENGAGE", "Throttle ➔ 1,000 RPM & ADJUST", "Oil Pressure ➔ GREEN", "Mixture ➔ LEAN FOR TAXI", "Radio Master ➔ ON"] },
-                    { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps ➔ SET FOR TAKEOFF", "Lights ➔ AS REQUIRED", "Aux Fuel Pump ➔ ON", "Mixture ➔ RICH <3000 D.A.", "Carburetor Heat ➔ OFF", "Doors, Windows & Seatbelts ➔ SECURED", "Fuel Timer ➔ SET", "Traffic ➔ CLEAR", "Assigned RWY/HDG ➔ CONFIRMED"] },
+                    { id: "EngineStart", type: "sequence", title: "Engine Starting", text: "Normal Start", desc: "Standard procedure for starting a cold or normal engine before taxi.", items: ["Interior/Exterior Preflight ➔ COMPLETED", "Passenger Briefing ➔ COMPLETE", "Doors and Seatbelts ➔ SECURED", "Parking Brake ➔ SET", "Fuel Selector ➔ BOTH", "Carburetor Heat ➔ COLD", "Mixture ➔ FULL RICH", "Primer (Cold Engine) ➔ 2-5 STROKES & LOCK", "Primer (Hot Engine) ➔ VERIFY LOCKED", "Master Switch (Bat & Alt) ➔ ON", "Lights ➔ AS REQUIRED", "Throttle ➔ OPEN 1/8 INCH", "Prop Area ➔ CLEAR", "Starter ➔ ENGAGE (RELEASE AFTER START)", "Throttle ➔ 1,000 RPM & ADJUST FRICTION", "Oil Pressure ➔ GREEN", "Mixture ➔ LEAN FOR TAXI", "Radio Master ➔ ON"] },
+                    { id: "FloodedStart", type: "sequence", title: "Flooded Start", text: "Same as Normal Start Except", desc: "Deviations from the normal start procedure when the engine is flooded.", items: ["Primer ➔ DO NOT PRIME", "Mixture ➔ IDLE CUTOFF", "Throttle ➔ FULL OPEN", "Starter ➔ ENGAGE", "When Engine Starts: Mixture ➔ FULL RICH", "When Engine Starts: Throttle ➔ 1,000 RPM"] },
+                    { id: "PreLineup", type: "sequence", title: "Pre-Lineup", text: "Before Takeoff Roll", desc: "Final checks performed at the holding point just before entering the active runway.", items: ["Trim/Flaps ➔ SET FOR TAKEOFF", "Lights ➔ AS REQUIRED", "Aux Fuel Pump ➔ ON", "Mixture ➔ RICH <3000' D.A.", "Carburetor Heat ➔ OFF", "Doors, Windows & Seatbelts ➔ SECURED", "Fuel Timer ➔ SET", "Traffic ➔ CLEAR", "Assigned RWY/HDG ➔ CONFIRMED"] },
                     { id: "AfterLanding", type: "sequence", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps ➔ UP", "Mixture ➔ LEAN FOR TAXI", "Carburetor Heat ➔ OFF", "Trim ➔ RESET FOR TAKEOFF", "Pitot Heat ➔ OFF", "Taxi Light ➔ ON", "Landing Light ➔ OFF", "Contact/Monitor Ground ➔ AS REQUIRED"] },
-                    { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake ➔ SET", "Radio Master ➔ OFF", "Exterior Lights ➔ OFF", "Cabin / Panel Lights ➔ OFF", "Throttle ➔ IDLE", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF & KEY OUT", "Master Switch ➔ OFF", "Parking Brake ➔ RELEASE"] },
-                    { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Lights ➔ ALL ON", "Tie Downs & Chocks ➔ APPLY", "Control Lock & Pitot Cover ➔ INSTALL", "Fuel Selector ➔ LEFT or RIGHT", "Engine Instruments ➔ CHECK", "Seatbelts ➔ FASTENED", "Cabin Air/Heat ➔ OFF", "Windows ➔ CLOSE", "Flight Plan ➔ CLOSE", "Binder & Fuel Load ➔ RECORD", "FSP & Squawks ➔ COMPLETE", "Garbage ➔ VERIFY CLEAN"] }
+                    { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake ➔ SET", "Radio Master ➔ OFF", "Exterior Lights (Except Beacon) ➔ OFF", "Cabin / Panel Lights ➔ OFF", "Throttle ➔ IDLE", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF & KEY OUT", "Master Switch ➔ OFF", "Parking Brake ➔ RELEASE"] },
+                    { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Tie Downs & Chocks ➔ APPLY", "Control Lock & Pitot Cover ➔ INSTALL", "Fuel Selector ➔ LEFT or RIGHT", "Cabin Air/Heat ➔ OFF", "Windows ➔ CLOSE", "Flight Plan ➔ CLOSE", "Binder & Fuel Load ➔ RECORD", "FSP & Squawks ➔ COMPLETE", "Garbage ➔ VERIFY AIRPLANE IS CLEAN"] }
                 ],
                 "Emergency Procedures": [
-                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start.", items: ["Cranking ➔ CONTINUE", "If Fails: Throttle ➔ FULL OPEN", "Mixture ➔ IDLE CUTOFF", "Cranking ➔ CONTINUE for 3 MINS", "Fire Extinguisher ➔ OBTAIN", "Master/Ignition/Fuel ➔ OFF"] },
-                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or electrical fire in the cabin.", items: ["Master Switch ➔ OFF", "Cabin Air & Heat ➔ OFF", "Fire Extinguisher ➔ CONSIDER USING"] }
+                    { id: "EngFailTakeoffRoll", type: "sequence", title: "Failure (T/O Roll)", text: "Engine Failure During Take-Off Roll", desc: "Abort actions for an engine failure while still on the runway.", items: ["Throttle ➔ IDLE", "Brakes ➔ APPLY", "Flaps ➔ RETRACT", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF"] },
+                    { id: "EngineRestart", type: "sequence", title: "Engine Restart", text: "Restart / Roughness", desc: "Restart attempt for a failed or rough-running engine, flown above 1,000' AGL as part of the ABCD checklist step.", items: ["Carb Heat ➔ ON", "Fuel Selector ➔ BOTH", "Mixture ➔ FULL", "Primer ➔ LOCKED", "Aux Fuel Pump ➔ ON (IF BELOW 0.5 PSI)", "Ignition Switch ➔ BOTH or START (IF PROP STOPPED)"] },
+                    { id: "EngineSecuring", type: "sequence", title: "Engine Securing", text: "Before Off-Field Touchdown", desc: "Securing the aircraft before an off-field landing, once a restart is not happening or you are below 1,000' AGL.", items: ["Mixture ➔ IDLE CUTOFF", "Fuel Selector ➔ OFF", "Ignition Switch ➔ OFF", "Flaps ➔ AS REQUIRED", "Master Switch ➔ OFF", "Doors ➔ OPEN", "Seatbelt ➔ FASTEN", "Touchdown ➔ SLIGHTLY NOSE HIGH", "Brakes ➔ APPLY HEAVILY"] },
+                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start. Two branches: the engine starts, or it fails to start.", items: ["Cranking ➔ CONTINUE", "If Engine Starts: Throttle ➔ 1,700 RPM for 3 MINS.", "If Engine Starts: Engine ➔ SHUTDOWN & INSPECT", "If Engine Fails to Start: Throttle ➔ FULL OPEN", "Mixture ➔ IDLE CUTOFF", "Cranking ➔ CONTINUE for 3 MINS.", "Fire Extinguisher ➔ OBTAIN", "Master Switch ➔ OFF", "Ignition Switch ➔ OFF", "Fuel Selector ➔ OFF"] },
+                    { id: "EngineFireFlight", type: "sequence", title: "Fire in Flight", text: "Engine Fire", desc: "Airborne engine fire. Flaps are unavailable after the master switch goes off, so Engine Securing is applied without them.", items: ["Source of Power ➔ CHECK", "Mixture ➔ IDLE CUTOFF", "Fuel Selector ➔ OFF", "Master Switch ➔ OFF", "Cabin Air & Heat ➔ OFF", "Airspeed ➔ 100 KIAS or MORE", "Engine Securing ➔ APPLY (FLAPS UNAVAILABLE)"] },
+                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or an electrical fire in the cabin.", items: ["Master Switch ➔ OFF", "All Other Switches (Except Ignition) ➔ OFF", "Cabin Air / Heat & Vents ➔ OFF", "Fire Extinguisher ➔ CONSIDER USING"] },
+                    { id: "Ammeter", type: "sequence", title: "Ammeter Discharge", text: "Ammeter Shows Discharge", desc: "Electrical system troubleshooting when the ammeter shows a discharge.", items: ["Circuit Breakers ➔ CHECK", "Alternator Switch ➔ RESET", "If Still Discharging: Alternator ➔ OFF", "Nonessential Electrical Equipment ➔ OFF", "Land ➔ AS SOON AS PRACTICAL"] },
+                    { id: "FlatTire", type: "sequence", title: "Flat Tire", text: "Landing With a Flat Tire", desc: "Landing technique for a flat main tire or a flat nose tire.", items: ["Main Tire: Approach ➔ NORMAL", "Main Tire: Touchdown ➔ GOOD TIRE FIRST", "Nose Tire ➔ SAME AS SOFT FIELD LANDING"] }
                 ]
             },
             "Flows": {
                 "Ground": [
                     { id: "SixPlusSix", type: "sequence", title: "6+6 Flow", text: "Instrument Check", desc: "Setup execution checking the 6 flight instruments followed by the 6 avionics setups.", items: ["6 Flight Instruments ➔ CHECK", "1. Clearance/Transponder ➔ OBTAIN/SET", "2. Barometers (ATIS/AWOS) ➔ OBTAIN/SET", "3. Altitude Select ➔ SET", "4. Comms ➔ SET", "5. Navs ➔ SET", "6. GPS & Map Range ➔ SET"] },
-                    { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake ➔ SET", "Taxi Light ➔ OFF", "Throttle ➔ 1,000 RPM", "Controls ➔ FREE & CORRECT", "Fuel Selector ➔ BOTH", "Primer ➔ VERIFY LOCKED", "Circuit Breakers ➔ VERIFY IN", "Departure Frequency ➔ SET", "Transponder ➔ ALT", "Aux Fuel Pump ➔ ON (CHECK RISE), OFF", "Mixture ➔ FULL RICH", "Throttle ➔ 1,700 RPM", "Magnetos (Max Drop 125, Diff 50) ➔ CHECK", "Engine Instruments ➔ CHECK", "Alternator ➔ CHECK", "Carburetor Heat ➔ ON, CHECK", "Throttle ➔ IDLE", "Carburetor Heat ➔ OFF", "Throttle ➔ 1,000 RPM", "Pitot Heat ➔ AS REQUIRED", "Mixture ➔ LEAN FOR TAXI", "Crew Briefing ➔ COMPLETE", "Parking Brake ➔ RELEASE", "Taxi Light ➔ ON"] }
+                    { id: "HalfAndHalf", type: "sequence", title: "1/2 & 1/2 Flow", text: "Before Takeoff", desc: "Split panel flow checking non-engine and engine items before takeoff.", items: ["Parking Brake ➔ SET", "Taxi Light ➔ OFF", "Throttle ➔ 1,000 RPM", "Controls ➔ FREE & CORRECT", "Fuel Selector ➔ BOTH", "Primer ➔ VERIFY LOCKED", "Circuit Breakers ➔ VERIFY IN", "Departure Frequency ➔ SET", "Transponder ➔ ALT", "Aux Fuel Pump ➔ ON (CHECK RISE), OFF", "Mixture ➔ FULL RICH", "Throttle ➔ 1,700 RPM", "Magnetos (Max Drop 125 ; Max Diff 50) ➔ CHECK", "Engine Instruments ➔ CHECK", "Alternator ➔ CHECK", "Carburetor Heat ➔ ON, CHECK", "Throttle ➔ IDLE", "Carburetor Heat ➔ OFF", "Throttle ➔ 1,000 RPM", "Pitot Heat ➔ AS REQUIRED", "Mixture ➔ LEAN FOR TAXI", "Crew Briefing ➔ COMPLETE", "Parking Brake ➔ RELEASE", "Taxi Light ➔ ON"] }
                 ],
                 "Air": [
-                    { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "Verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
+                    { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "\"Flaps Up, Climb Check\" — verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
                     { id: "CruiseCheck", type: "sequence", title: "Cruise Check", text: "Level Flight", desc: "Standard cruise checklist configuration.", items: ["Aux Fuel Pump ➔ OFF", "Pitch Attitude ➔ OBTAIN", "Power ➔ CRUISE RPM", "DIMS Check ➔ PERFORM", "Next Frequencies ➔ PREPARE", "Map Range ➔ AS APPROPRIATE", "TOD ➔ DETERMINE"] },
-                    { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers.", items: ["Clearing Turns ➔ PERFORM", "Non Congested Area ➔ VERIFY", "Checklist ➔ PERFORM", "Declare ➔ PERFORM"] },
-                    { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists.", items: ["A ➔ ATIS/AWOS OBTAIN", "B ➔ Brief (Approach/Arrival) PERFORM", "C ➔ Checklist PERFORM"] },
-                    { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "Pre-landing flow to verify Configuration, Gas, Undercarriage, Mixture, Props/Pumps, and Seatbelts.", items: ["C ➔ Clearance & Carb Heat OBTAIN", "G ➔ Gas BOTH", "U ➔ Undercarriage DOWN and WELDED", "M ➔ Mixture RICH <3000 D.A.", "P ➔ Props & Pumps ON", "S ➔ Seatbelts & Switches CHECK"] },
-                    { id: "GoAround", type: "sequence", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle ➔ FULL FWD", "Carburetor Heat ➔ OFF", "Pitch ➔ UP TO 8-10 DEG", "Flaps ➔ UP INCREMENTALLY", "Navigate ➔ FLY A/C", "Communicate ➔ TOWER", "IFR: GPS ➔ UNSUSPEND"] }
+                    { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers. The third C opens a five-item checklist.", items: ["Clearing Turns ➔ PERFORM", "Non Congested Area ➔ VERIFY", "Checklist ➔ PERFORM", "Checklist: Lights ➔ ALL ON", "Checklist: Mixture ➔ FULL RICH", "Checklist: Aux Fuel Pump ➔ ON", "Checklist: Engine Instruments ➔ CHECK", "Checklist: Seatbelts ➔ FASTENED", "deClare ➔ PERFORM"] },
+                    { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists. The C opens a five-item checklist.", items: ["A ➔ ATIS/AWOS OBTAIN", "B ➔ Brief (Approach/Arrival) PERFORM", "C ➔ Checklist PERFORM", "Checklist: Frequencies ➔ SET", "Checklist: Engine Instruments ➔ CHECK", "Checklist: Lights ➔ AS REQUIRED", "Checklist: Mixture ➔ RICH <3000' D.A.", "Checklist: Seatbelts ➔ FASTENED"] },
+                    { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "\"Final Flap, Final Check\" — the pre-landing flow: Clearance & Carb Heat, Gas, Undercarriage, Mixture, Props & Pumps, Seatbelts & Switches.", items: ["C ➔ Clearance & Carb Heat OBTAIN", "G ➔ Gas BOTH", "U ➔ Undercarriage DOWN and WELDED", "M ➔ Mixture RICH <3000' D.A.", "P ➔ Props & Pumps ON", "S ➔ Seatbelts & Switches CHECK"] },
+                    { id: "GoAround", type: "sequence", title: "Go Around", text: "Missed Approach", desc: "Go around cleanup flow.", items: ["Throttle ➔ FULL FWD", "Carburetor Heat ➔ OFF", "Airspeed >Vx ➔ PITCH UP TO 8-10°", "Flaps ➔ UP INCREMENTALLY", "Navigate ➔ FLY A/C", "Communicate ➔ TOWER", "IFR: GPS ➔ UNSUSPEND", "IFR: Fuel ➔ CONSIDER"] }
+                ],
+                "Short & Soft Field": [
+                    { id: "ShortField", type: "sequence", title: "Short Field", text: "Takeoff & Landing", desc: "Short field profile: maximum performance takeoff over an obstacle, and the shortest possible landing roll.", items: ["Takeoff: Flaps ➔ 10°", "Takeoff: All Available Runway ➔ FULL BRAKES", "Takeoff: Climb at Vx ➔ UNTIL CLEAR (57 KIAS)", "Takeoff: Climb at Vy ➔ UNTIL SAFE ALT (73 KIAS)", "Takeoff: Flaps ➔ RETRACT", "Landing: Approach ➔ FLAPS 30°, 60 KTS", "Landing: Flaps ➔ UP AFTER TOUCHDOWN", "Landing: Brakes ➔ SIMULATED FULL"] },
+                    { id: "SoftField", type: "sequence", title: "Soft Field", text: "Takeoff & Landing", desc: "Soft field profile: keep weight off the nosewheel, use ground effect to accelerate, and touch down as softly as possible.", items: ["Takeoff: Flaps ➔ 10°", "Takeoff: Brakes ➔ NONE, ELEVATOR ALL UP", "Takeoff: Ground Effect ➔ STAY UNTIL SAFE SPEED", "Takeoff: Climb at Vy ➔ UNTIL SAFE ALT (73 KIAS)", "Takeoff: Flaps ➔ RETRACT", "Landing: Power ➔ ADD RIGHT BEFORE TOUCHDOWN IF NEEDED", "Landing: Elevator ➔ FULL UP AFTER TOUCHDOWN"] }
                 ],
                 "Emergencies": [
-                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700"] }
+                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight. Above 1,000' AGL the C step runs Engine Restart; if it will not restart, or below 1,000' AGL, you declare and secure.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "Above 1000' AGL: Engine Restart ➔ APPLY", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700", "Engine Securing ➔ APPLY"] }
                 ]
             },
             "V-Speeds": {
                 "Airspeed Indicator": [
-                    { id: "V_Arcs", type: "info", title: "The Arcs", text: "ASI Markings", desc: "V-speeds indicated by color arcs on the airspeed indicator.", items: ["Vso ➔ Stall speed in landing configuration (bottom of white arc)", "Vs1 ➔ Stall speed in clean configuration (bottom of green arc)", "Vfe ➔ Maximum flap extended speed (top of white arc)", "Vno ➔ Maximum structural cruising speed (top of green arc)", "Vne ➔ Never-exceed speed (red line)"] }
+                    { id: "V_Arcs", type: "definition", title: "The Arcs", text: "ASI Markings", desc: "V-speeds indicated by color arcs on the airspeed indicator.", items: ["Vso ➔ Stall speed in landing configuration (bottom of white arc)", "Vs1 ➔ Stall speed in clean configuration (bottom of green arc)", "Vfe ➔ Maximum flap extended speed (top of white arc)", "Vno ➔ Maximum structural cruising speed (top of green arc)", "Vne ➔ Never-exceed speed (red line)"] }
                 ],
                 "Performance & Ops": [
-                    { id: "V_Perf", type: "info", title: "Performance", text: "Operational Limits", desc: "Critical V-speeds that are not color-coded on the airspeed indicator.", items: ["Va ➔ Design maneuvering speed", "Vx ➔ Best angle of climb speed", "Vy ➔ Best rate of climb speed", "Vle ➔ Maximum landing gear extended speed", "Vlo ➔ Maximum landing gear operating speed", "Vr ➔ Rotation speed", "Vg ➔ Best glide speed"] }
+                    { id: "V_Perf", type: "definition", title: "Performance", text: "Operational Limits", desc: "Critical V-speeds that are not color-coded on the airspeed indicator.", items: ["Va ➔ Design maneuvering speed", "Vx ➔ Best angle of climb speed", "Vy ➔ Best rate of climb speed", "Vle ➔ Maximum landing gear extended speed", "Vlo ➔ Maximum landing gear operating speed", "Vr ➔ Rotation speed", "Vg ➔ Best glide speed"] }
                 ]
             },
             "Weather": {
@@ -476,7 +592,6 @@
                     { id: "UNOS", type: "definition", title: "UNOS", text: "Compass Turn Errors", desc: "Magnetic compass errors when turning to North or South headings.", items: ["U ➔ Undershoot", "N ➔ North", "O ➔ Overshoot", "S ➔ South"] }
                 ],
                 "Flight Operations": [
-                    { id: "GUMP", type: "definition", title: "GUMP", text: "Pre-Landing Check", desc: "Standard pre-landing acronym (often expanded to CGUMPS).", items: ["G ➔ Gas (Proper tank)", "U ➔ Undercarriage (Gear down)", "M ➔ Mixture (Rich)", "P ➔ Propeller / Pumps"] },
                     { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] },
                     { id: "DIMS", type: "definition", title: "DIMS", text: "Cruise Mnemonic", desc: "Acronym check performed during cruise.", items: ["D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED"] }
                 ],
@@ -485,7 +600,10 @@
                     { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A ➔ Airspeed", "B ➔ Best Field", "C ➔ Checklist", "D ➔ Declare", "E ➔ Execute"] }
                 ],
                 "Equipment & Rules": [
-                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A ➔ Altimeter", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Airspeed", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
+                    /* CORRECTION v2.0.0: the first two A/T pairs were swapped in v1.2.2.
+                       The standard FAR 91.205(b) mnemonic order is
+                       Airspeed, Tachometer, Oil pressure, Manifold pressure, Altimeter, ... */
+                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A ➔ Airspeed", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Altimeter", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
                     { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
                     { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
                 ]
@@ -541,506 +659,1179 @@
             }
         };
 
-        // Attach parent mapping to database elements for accurate hierarchical navigation
+        /* =========================================================
+           C172 PPL MEMORY ITEMS — ENGINE v2.0.0
+           ========================================================= */
+        (function () {
+        'use strict';
+
+        /* ---------------------------------------------------------
+           0. DATABASE INDEXING
+           --------------------------------------------------------- */
+        const ALL_FLOWS = [];
         Object.keys(appDatabase).forEach(catName => {
             Object.keys(appDatabase[catName]).forEach(subCatName => {
-                appDatabase[catName][subCatName].forEach(quizObj => {
-                    quizObj.parentCat = catName;
+                appDatabase[catName][subCatName].forEach(flow => {
+                    flow.parentCat = catName;
+                    flow.subCat = subCatName;
+                    ALL_FLOWS.push(flow);
                 });
             });
         });
+        const FLOW_BY_ID = {};
+        ALL_FLOWS.forEach(f => { FLOW_BY_ID[f.id] = f; });
+        function findQuizById(id) { return FLOW_BY_ID[id] || null; }
 
-        // State
-        let currentParent = null;
-        let currentActiveFlow = null;
-        let generatedQuestions = [];
-        let currentQ = 0;
-        let score = 0;
-        let errors = 0;
-        let isAnswered = false;
+        /* ---------------------------------------------------------
+           1. SMALL UTILITIES
+           --------------------------------------------------------- */
+        const ARROW = '➔';
+        const $ = id => document.getElementById(id);
 
-        // SVGs
-        const sunIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        const arrowDownSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+        function norm(s) { return String(s).replace(/\s+/g, ' ').trim().toLowerCase(); }
 
-        // Theme
-        function updateThemeButton(isDark) { document.getElementById('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon; }
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            updateThemeButton(isDark);
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        function esc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        function stripTags(s) { return String(s).replace(/<[^>]*>/g, ' '); }
 
-        // History API
-        window.addEventListener('popstate', (e) => {
-            if (!e.state || e.state.page === 'home') showPage('homeScreen', false);
-            else if (e.state.page === 'category') { renderCategory(e.state.cat, false); }
-            else if (e.state.page === 'study') {
-                let f = findQuizById(e.state.quizId);
-                if (f) { renderStudyScreen(f, false); }
-                else showPage('homeScreen', false);
-            } else if (e.state.page === 'quiz') {
-                let f = findQuizById(e.state.quizId);
-                if (f) { startQuiz(f, false); }
-                else showPage('homeScreen', false);
+        // Splits "KEY ➔ VALUE" once, so a value containing the arrow is preserved.
+        function splitItem(s) {
+            const str = String(s);
+            const i = str.indexOf(ARROW);
+            if (i < 0) return null;
+            const key = str.slice(0, i).trim();
+            const val = str.slice(i + ARROW.length).trim();
+            if (!key || !val) return null;
+            return { key: key, val: val };
+        }
+
+        function shuffle(arr) {
+            const s = arr.slice();
+            for (let i = s.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const t = s[i]; s[i] = s[j]; s[j] = t;
             }
-        });
+            return s;
+        }
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-        function findQuizById(id) {
-            for (const cat in appDatabase)
-                for (const subCat in appDatabase[cat])
-                    for (const quiz of appDatabase[cat][subCat])
-                        if (quiz.id === id) return quiz;
+        function uniqueBy(arr, keyFn) {
+            const seen = new Set(); const out = [];
+            arr.forEach(x => { const k = keyFn(x); if (!seen.has(k)) { seen.add(k); out.push(x); } });
+            return out;
+        }
+        function uniqStrings(arr) { return uniqueBy(arr, norm); }
+
+        function weightedPick(list, wf) {
+            if (!list.length) return null;
+            const ws = list.map(wf);
+            let total = 0;
+            for (let i = 0; i < ws.length; i++) { if (!(ws[i] > 0)) ws[i] = 0.0001; total += ws[i]; }
+            let r = Math.random() * total;
+            for (let i = 0; i < list.length; i++) { r -= ws[i]; if (r <= 0) return list[i]; }
+            return list[list.length - 1];
+        }
+        function weightedSample(list, wf, n) {
+            const pool = list.slice(); const out = [];
+            while (out.length < n && pool.length) {
+                const chosen = weightedPick(pool, wf);
+                out.push(chosen);
+                pool.splice(pool.indexOf(chosen), 1);
+            }
+            return out;
+        }
+        function fmtDate(ts) {
+            if (!ts) return '';
+            const d = new Date(ts);
+            return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        }
+
+        /* ---------------------------------------------------------
+           2. PERSISTENCE  (degrades silently if storage is blocked)
+           --------------------------------------------------------- */
+        const LS_KEY = 'c172ppl.progress.v1';
+        const Store = (function () {
+            let usable = true;
+            let data = { topics: {}, items: {}, settings: { drillLength: 15, mixedLength: 25, mixedScope: 'all' } };
+            try {
+                const raw = localStorage.getItem(LS_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        data.topics = parsed.topics || {};
+                        data.items = parsed.items || {};
+                        data.settings = Object.assign(data.settings, parsed.settings || {});
+                    }
+                }
+            } catch (e) { usable = false; }
+
+            function save() {
+                if (!usable) return;
+                try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) { usable = false; }
+            }
+            return {
+                data: data,
+                save: save,
+                get usable() { return usable; },
+                topic(id) {
+                    if (!data.topics[id]) data.topics[id] = { runs: 0, best: 0, last: 0, lastAt: 0, correct: 0, wrong: 0 };
+                    return data.topics[id];
+                },
+                item(key) {
+                    if (!data.items[key]) data.items[key] = { r: 0, w: 0, at: 0 };
+                    return data.items[key];
+                },
+                reset() { data.topics = {}; data.items = {}; save(); }
+            };
+        })();
+
+        // 0.6 (always right) ... 4.0 (always wrong) ... 2.0 (never drilled)
+        function itemWeight(flowId, idx) {
+            const st = Store.data.items[flowId + '::' + idx];
+            if (!st) return 2.0;
+            const total = st.r + st.w;
+            if (!total) return 2.0;
+            return 0.6 + 3.4 * (st.w / total);
+        }
+        function flowWeight(flow) {
+            const n = flow.items.length;
+            let sum = 0;
+            for (let i = 0; i < n; i++) sum += itemWeight(flow.id, i);
+            return sum / n;
+        }
+        function weakItemIndices(flow) {
+            const out = [];
+            for (let i = 0; i < flow.items.length; i++) {
+                const st = Store.data.items[flow.id + '::' + i];
+                if (st && st.w > st.r) out.push(i);
+            }
+            return out;
+        }
+
+        /* ---------------------------------------------------------
+           3. DISTRACTOR POOLS
+           A distractor may never be an item of the current flow, and
+           may never share a KEY with the current flow — otherwise a
+           "which is NOT part of X" question can be factually wrong
+           (e.g. "Flaps ➔ UP" appears in three different flows).
+           --------------------------------------------------------- */
+        const poolCache = {};
+        function keyOf(item) { const p = splitItem(item); return norm(p ? p.key : item); }
+
+        function distractorPool(flow) {
+            if (poolCache[flow.id]) return poolCache[flow.id];
+            const ownItems = new Set(flow.items.map(norm));
+            const ownKeys = new Set(flow.items.map(keyOf));
+            const near = [], far = [];
+            ALL_FLOWS.forEach(f => {
+                if (f.id === flow.id || f.type === 'mcq' || f.type === 'info' || f.type !== flow.type) return;
+                f.items.forEach(it => {
+                    if (ownItems.has(norm(it)) || ownKeys.has(keyOf(it))) return;
+                    (f.parentCat === flow.parentCat ? near : far).push(it);
+                });
+            });
+            const pool = { near: uniqStrings(near), far: uniqStrings(far) };
+            poolCache[flow.id] = pool;
+            return pool;
+        }
+        function outsideItem(flow, excludeSet) {
+            const p = distractorPool(flow);
+            const src = p.near.length >= 3 ? p.near : p.near.concat(p.far);
+            const cand = src.filter(x => !excludeSet.has(norm(x)));
+            return cand.length ? pick(cand) : null;
+        }
+        function outsideDefinitions(flow, excludeSet) {
+            const p = distractorPool(flow);
+            const src = p.near.concat(p.far);
+            const out = [];
+            src.forEach(it => {
+                const parts = splitItem(it);
+                if (parts && !excludeSet.has(norm(parts.val))) out.push(parts.val);
+            });
+            return uniqStrings(out);
+        }
+
+        // Item indices whose text appears exactly once in the flow.
+        // A repeated item cannot anchor an ordering question — "what
+        // comes after Throttle ➔ 1,000 RPM" would have two answers.
+        function uniqueIndices(flow) {
+            if (flow._uniqIdx) return flow._uniqIdx;
+            const counts = {};
+            flow.items.forEach(it => { const k = norm(it); counts[k] = (counts[k] || 0) + 1; });
+            flow._uniqIdx = flow.items.map((_, i) => i).filter(i => counts[norm(flow.items[i])] === 1);
+            return flow._uniqIdx;
+        }
+        function parsedItems(flow) {
+            if (flow._parsed) return flow._parsed;
+            flow._parsed = flow.items.map((it, i) => ({ i: i, p: splitItem(it) })).filter(x => x.p);
+            return flow._parsed;
+        }
+
+        /* ---------------------------------------------------------
+           4. QUESTION GENERATORS
+           Every generator returns null rather than an unsound question.
+           --------------------------------------------------------- */
+        function validOptions(opts) {
+            if (!opts || opts.length < 2) return false;
+            if (opts.some(o => !o || !String(o).trim())) return false;
+            return new Set(opts.map(norm)).size === opts.length;
+        }
+
+        function genNext(flow) {
+            const cand = uniqueIndices(flow).filter(i => i < flow.items.length - 1);
+            if (!cand.length) return null;
+            const idx = weightedPick(cand, i => itemWeight(flow.id, i + 1));
+            const cur = flow.items[idx], ans = flow.items[idx + 1];
+            const excl = new Set([norm(cur), norm(ans)]);
+            const inFlow = uniqStrings(flow.items.filter(x => !excl.has(norm(x))));
+            const ds = shuffle(inFlow).slice(0, 2);
+            if (ds.length < 2) {
+                const ext = outsideItem(flow, excl);
+                if (ext) ds.push(ext);
+            }
+            if (ds.length < 2) return null;
+            return {
+                kind: 'next',
+                question: 'In <em>' + esc(flow.title) + '</em>, which item comes <strong>immediately after</strong>:<br><br><strong>' + esc(cur) + '</strong>',
+                options: [ans, ds[0], ds[1]],
+                correct: 0,
+                explanation: 'Correct order: <strong>' + esc(cur) + '</strong> then <strong>' + esc(ans) + '</strong>.',
+                anchor: idx + 1
+            };
+        }
+
+        function genPrev(flow) {
+            const cand = uniqueIndices(flow).filter(i => i > 0);
+            if (!cand.length) return null;
+            const idx = weightedPick(cand, i => itemWeight(flow.id, i - 1));
+            const cur = flow.items[idx], ans = flow.items[idx - 1];
+            const excl = new Set([norm(cur), norm(ans)]);
+            const inFlow = uniqStrings(flow.items.filter(x => !excl.has(norm(x))));
+            const ds = shuffle(inFlow).slice(0, 2);
+            if (ds.length < 2) return null;
+            return {
+                kind: 'prev',
+                question: 'In <em>' + esc(flow.title) + '</em>, which item comes <strong>immediately before</strong>:<br><br><strong>' + esc(cur) + '</strong>',
+                options: [ans, ds[0], ds[1]],
+                correct: 0,
+                explanation: 'Correct order: <strong>' + esc(ans) + '</strong> then <strong>' + esc(cur) + '</strong>.',
+                anchor: idx - 1
+            };
+        }
+
+        function genOrder(flow) {
+            const cand = uniqueIndices(flow);
+            if (cand.length < 3) return null;
+            const chosen = shuffle(cand).slice(0, 3).sort((a, b) => a - b);
+            const opts = chosen.map(i => flow.items[i]);
+            return {
+                kind: 'order',
+                question: 'In <em>' + esc(flow.title) + '</em>, which of these comes <strong>first</strong>?',
+                options: opts,
+                correct: 0,
+                explanation: 'Order in the flow: 1) ' + esc(opts[0]) + ' &rarr; 2) ' + esc(opts[1]) + ' &rarr; 3) ' + esc(opts[2]),
+                anchor: chosen[0]
+            };
+        }
+
+        function genEdge(flow, which) {
+            const isFirst = which === 'first';
+            const idx = isFirst ? 0 : flow.items.length - 1;
+            const ans = flow.items[idx];
+            const others = uniqStrings(flow.items.filter((x, i) => i !== idx && norm(x) !== norm(ans)));
+            if (others.length < 2) return null;
+            const ds = shuffle(others).slice(0, 2);
+            return {
+                kind: isFirst ? 'first' : 'last',
+                question: 'Which item is the <strong>' + (isFirst ? 'first' : 'last') + '</strong> step of <em>' + esc(flow.title) + '</em>?',
+                options: [ans, ds[0], ds[1]],
+                correct: 0,
+                explanation: (isFirst ? 'It starts with: ' : 'It ends with: ') + '<strong>' + esc(ans) + '</strong>',
+                anchor: idx
+            };
+        }
+        function genFirst(flow) { return genEdge(flow, 'first'); }
+        function genLast(flow) { return genEdge(flow, 'last'); }
+
+        function genNotIn(flow) {
+            const excl = new Set(flow.items.map(norm));
+            const foreign = outsideItem(flow, excl);
+            if (!foreign) return null;
+            const inFlow = uniqStrings(flow.items);
+            if (inFlow.length < 2) return null;
+            const two = shuffle(inFlow).slice(0, 2);
+            return {
+                kind: 'notin',
+                question: 'Which of the following is <strong>NOT</strong> part of <em>' + esc(flow.title) + '</em>?',
+                options: [foreign, two[0], two[1]],
+                correct: 0,
+                explanation: '<strong>' + esc(foreign) + '</strong> does not belong to ' + esc(flow.title) + '.',
+                anchor: null
+            };
+        }
+
+        function genDefFwd(flow) {
+            const parsed = parsedItems(flow);
+            if (parsed.length < 3) return null;
+            const target = weightedPick(parsed, x => itemWeight(flow.id, x.i));
+            const key = target.p.key, val = target.p.val;
+            // Every value that this same key also stands for is a correct
+            // answer too, so it can never be offered as a distractor.
+            // (WOSSS: S = Size / Shape / Surface.)
+            const sameKey = parsed.filter(x => norm(x.p.key) === norm(key));
+            const banned = new Set(sameKey.map(x => norm(x.p.val)));
+            let cand = uniqStrings(parsed.filter(x => !banned.has(norm(x.p.val))).map(x => x.p.val));
+            if (cand.length < 2) {
+                const allVals = new Set(parsed.map(x => norm(x.p.val)));
+                cand = cand.concat(outsideDefinitions(flow, allVals));
+                cand = uniqStrings(cand);
+            }
+            if (cand.length < 2) return null;
+            const ds = shuffle(cand).slice(0, 2);
+            const ambiguousKey = sameKey.length > 1;
+            const q = ambiguousKey
+                ? 'In <em>' + esc(flow.title) + '</em>, which of these is one of the items <strong>' + esc(key) + '</strong> stands for?'
+                : 'What does <strong>' + esc(key) + '</strong> stand for in <em>' + esc(flow.title) + '</em>?';
+            return {
+                kind: 'deffwd',
+                question: q,
+                options: [val, ds[0], ds[1]],
+                correct: 0,
+                explanation: '<strong>' + esc(key) + '</strong> ' + ARROW + ' <strong>' + esc(val) + '</strong>',
+                anchor: target.i
+            };
+        }
+
+        function genDefRev(flow) {
+            const parsed = parsedItems(flow);
+            if (parsed.length < 3) return null;
+            const keyCount = {}, valCount = {};
+            parsed.forEach(x => {
+                keyCount[norm(x.p.key)] = (keyCount[norm(x.p.key)] || 0) + 1;
+                valCount[norm(x.p.val)] = (valCount[norm(x.p.val)] || 0) + 1;
+            });
+            // Only ask the reverse question when both sides are unique.
+            const cand = parsed.filter(x => keyCount[norm(x.p.key)] === 1 && valCount[norm(x.p.val)] === 1);
+            if (!cand.length) return null;
+            const t = weightedPick(cand, x => itemWeight(flow.id, x.i));
+            const wrongKeys = uniqStrings(parsed.filter(x => norm(x.p.key) !== norm(t.p.key)).map(x => x.p.key));
+            if (wrongKeys.length < 2) return null;
+            const ds = shuffle(wrongKeys).slice(0, 2);
+            return {
+                kind: 'defrev',
+                question: 'In <em>' + esc(flow.title) + '</em>, which one means &ldquo;<strong>' + esc(t.p.val) + '</strong>&rdquo;?',
+                options: [t.p.key, ds[0], ds[1]],
+                correct: 0,
+                explanation: '<strong>' + esc(t.p.key) + '</strong> ' + ARROW + ' <strong>' + esc(t.p.val) + '</strong>',
+                anchor: t.i
+            };
+        }
+
+        const SEQ_GENS = [[genNext, 30], [genPrev, 18], [genOrder, 16], [genFirst, 9], [genLast, 9], [genNotIn, 18]];
+        const DEF_GENS = [[genDefFwd, 45], [genDefRev, 30], [genNotIn, 25]];
+
+        function generateOne(flow) {
+            const gens = (flow.type === 'sequence') ? SEQ_GENS : DEF_GENS;
+            for (let attempt = 0; attempt < 8; attempt++) {
+                const entry = weightedPick(gens, g => g[1]);
+                const q = entry[0](flow);
+                if (q && validOptions(q.options)) {
+                    q.sourceId = flow.id;
+                    q.sourceTitle = flow.title;
+                    q.anchorKey = (q.anchor === null || q.anchor === undefined) ? null : flow.id + '::' + q.anchor;
+                    return q;
+                }
+            }
             return null;
         }
 
-        // ================== PURE HIERARCHICAL NAVIGATION ==================
-        function goBackLogic() {
-            const activePage = document.querySelector('.page.active').id;
-            
-            if (activePage === 'categoryScreen') {
-                renderHome(true);
-            } else if (activePage === 'studyScreen') {
-                if (currentActiveFlow && currentActiveFlow.parentCat) {
-                    renderCategory(currentActiveFlow.parentCat, true);
-                } else if (currentParent) {
-                    renderCategory(currentParent, true);
-                } else {
-                    renderHome(true);
-                }
-            } else if (activePage === 'quizScreen' || activePage === 'scoreScreen') {
-                if (currentActiveFlow) {
-                    renderStudyScreen(currentActiveFlow, true);
-                } else {
-                    renderHome(true);
-                }
-            } else {
-                renderHome(true);
-            }
+        function mcqQuestion(flow, i) {
+            const raw = flow.items[i];
+            return {
+                kind: 'mcq',
+                question: esc(raw.question),
+                options: raw.options.map(esc),
+                correct: raw.correctAnswer,
+                explanation: esc(raw.explanation),
+                sourceId: flow.id,
+                sourceTitle: flow.title,
+                anchor: i,
+                anchorKey: flow.id + '::' + i
+            };
         }
 
-        // Page Router
-        function showPage(pageId, pushToHistory = true, historyState = {page: 'home'}) {
-            document.querySelectorAll('.page').forEach(p => {
-                p.classList.remove('active');
-            });
-            
-            const newPage = document.getElementById(pageId);
-            void newPage.offsetWidth; // trigger reflow
+        function finalize(q) {
+            const tagged = q.options.map((t, i) => ({ t: t, ok: i === q.correct }));
+            const sh = shuffle(tagged);
+            return {
+                kind: q.kind,
+                question: q.question,
+                options: sh.map(o => o.t),
+                correctAnswer: sh.findIndex(o => o.ok),
+                explanation: q.explanation,
+                sourceId: q.sourceId,
+                sourceTitle: q.sourceTitle,
+                anchorKey: q.anchorKey || null
+            };
+        }
+        function signature(q) {
+            return q.kind + '|' + norm(stripTags(q.question)) + '|' + norm(q.options[q.correct]);
+        }
+
+        /* ---------------------------------------------------------
+           5. DRILL BUILDERS
+           --------------------------------------------------------- */
+        function buildTopicDrill(flow, length) {
+            if (flow.type === 'mcq') {
+                const idxs = flow.items.map((_, i) => i);
+                const n = Math.min(length, idxs.length);
+                return weightedSample(idxs, i => itemWeight(flow.id, i), n).map(i => finalize(mcqQuestion(flow, i)));
+            }
+            const out = [], seen = new Set();
+            const budget = Math.max(60, length * 14);
+            for (let t = 0; t < budget && out.length < length; t++) {
+                const q = generateOne(flow);
+                if (!q) continue;
+                const sig = signature(q);
+                if (seen.has(sig)) continue;
+                seen.add(sig);
+                out.push(finalize(q));
+            }
+            return out;
+        }
+
+        function scopeFlows(scope) {
+            return ALL_FLOWS.filter(f => f.type !== 'info' && (scope === 'all' || f.parentCat === scope));
+        }
+
+        function buildMixedDrill(scope, length) {
+            const flows = scopeFlows(scope);
+            if (!flows.length) return [];
+            const out = [], seen = new Set();
+            const budget = Math.max(120, length * 20);
+            for (let t = 0; t < budget && out.length < length; t++) {
+                const flow = weightedPick(flows, flowWeight);
+                let q;
+                if (flow.type === 'mcq') {
+                    const i = weightedPick(flow.items.map((_, k) => k), k => itemWeight(flow.id, k));
+                    q = mcqQuestion(flow, i);
+                } else {
+                    q = generateOne(flow);
+                }
+                if (!q || !validOptions(q.options)) continue;
+                const sig = signature(q);
+                if (seen.has(sig)) continue;
+                seen.add(sig);
+                out.push(finalize(q));
+            }
+            return out;
+        }
+
+
+        /* ---------------------------------------------------------
+           6. NAVIGATION  (single source of truth = history state)
+           --------------------------------------------------------- */
+        let navIdx = 0;
+        const navStack = [];
+        let currentState = { page: 'home' };
+
+        function safeHistory(fn) { try { fn(); } catch (e) { /* sandboxed iframe */ } }
+
+        const PAGE_OF = {
+            home: 'homeScreen', category: 'categoryScreen', study: 'studyScreen',
+            mixed: 'mixedScreen', progress: 'progressScreen', quiz: 'quizScreen', score: 'scoreScreen'
+        };
+
+        function showPage(state, mode) {
+            const pageId = PAGE_OF[state.page];
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const newPage = $(pageId);
+            void newPage.offsetWidth;
             newPage.classList.add('active');
-            
-            document.getElementById('backBtn').style.display = (pageId === 'homeScreen') ? 'none' : 'flex';
-            document.getElementById('studyBtn').style.display = (pageId === 'quizScreen') ? 'flex' : 'none';
-            
-            closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
-            
-            const appContainer = document.getElementById('appScrollContainer');
-            if (appContainer) { appContainer.scrollTop = 0; }
 
-            if (pushToHistory) history.pushState(historyState, '');
+            currentState = state;
+            $('backBtn').style.display = (state.page === 'home') ? 'none' : 'flex';
+            $('studyBtn').style.display = (state.page === 'quiz' && activeDrill && activeDrill.showMaterial) ? 'flex' : 'none';
+
+            closeLeftMenu(); closeRightMenu(); resetLeftMenuAccordions();
+            const c = $('appScrollContainer');
+            if (c) c.scrollTop = 0;
+
+            if (mode === 'push') {
+                navIdx++;
+                navStack.length = navIdx + 1;
+                navStack[navIdx] = state;
+                safeHistory(() => history.pushState(Object.assign({ i: navIdx }, state), ''));
+            } else if (mode === 'replace') {
+                navStack[navIdx] = state;
+                safeHistory(() => history.replaceState(Object.assign({ i: navIdx }, state), ''));
+            }
         }
 
-        // HTML Builders
-        function buildFlowList(quizObj) {
-            if (quizObj.type === "mcq") {
-                return "<ul style='margin:0; padding-left:1.2rem;'>" + quizObj.items.map((q, i) =>
-                    `<li style='margin-bottom:14px; font-size:1.05rem;'><strong style='color:var(--text-main)'>Q:</strong> ${q.question}<br><span style='color:var(--primary-color); display:block; margin-top:4px;'><strong>A:</strong> ${q.options[q.correctAnswer]}</span></li>`
-                ).join('') + "</ul>";
-            }
-            
-            return "<ul style='margin:0; padding-left:1.2rem;'>" + quizObj.items.map(item => {
-                let prefix = "";
-                
-                if (item.includes("6 Flight Instruments ➔ CHECK")) {
-                    prefix = "<div style='margin-top:16px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 1: Six Flight Instruments</div>";
-                } else if (item.includes("1. Clearance/Transponder ➔ OBTAIN/SET")) {
-                    prefix = "<div style='margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;'>Part 2: Six Avionics Setups</div>";
-                }
+        function sameState(a, b) {
+            if (!a || !b || a.page !== b.page) return false;
+            return (a.cat || '') === (b.cat || '') && (a.quizId || '') === (b.quizId || '');
+        }
 
-                if (item.includes('➔')) {
-                    let parts = item.split('➔');
-                    return `${prefix}<li style='margin-bottom:10px;'><strong>${parts[0].trim()}</strong> ➔ ${parts[1].trim()}</li>`;
+        function parentStateOf(st) {
+            switch (st.page) {
+                case 'category': return { page: 'home' };
+                case 'study': {
+                    const f = findQuizById(st.quizId);
+                    return f ? { page: 'category', cat: f.parentCat } : { page: 'home' };
                 }
-                return `${prefix}<li style='margin-bottom:10px;'>${item}</li>`;
-            }).join('') + "</ul>";
+                case 'quiz':
+                case 'score':
+                    if (st.quizId && findQuizById(st.quizId)) return { page: 'study', quizId: st.quizId };
+                    return st.scope ? { page: 'mixed' } : { page: 'home' };
+                case 'mixed':
+                case 'progress':
+                default: return { page: 'home' };
+            }
+        }
+
+        function applyState(st, mode) {
+            switch (st.page) {
+                case 'category':
+                    if (appDatabase[st.cat]) renderCategory(st.cat, mode); else renderHome(mode);
+                    break;
+                case 'study': {
+                    const f = findQuizById(st.quizId);
+                    if (f) renderStudyScreen(f, mode); else renderHome(mode);
+                    break;
+                }
+                case 'mixed': renderMixedScreen(mode); break;
+                case 'progress': renderProgressScreen(mode); break;
+                case 'quiz':
+                    if (activeDrill && activeDrill.stateKey === st.stateKey) showPage(st, mode);
+                    else applyState(parentStateOf(st), mode === 'none' ? 'replace' : mode);
+                    break;
+                case 'score':
+                    if (lastResult && lastResult.stateKey === st.stateKey) { renderScoreScreen(mode); }
+                    else applyState(parentStateOf(st), mode === 'none' ? 'replace' : mode);
+                    break;
+                default: renderHome(mode);
+            }
+        }
+
+        function goBackLogic() {
+            const target = parentStateOf(currentState);
+            if (sameState(navStack[navIdx - 1], target)) safeHistory(() => history.back());
+            else applyState(target, 'replace');
+        }
+
+        window.addEventListener('popstate', e => {
+            const st = e.state ? Object.assign({}, e.state) : { page: 'home' };
+            navIdx = (typeof st.i === 'number') ? st.i : 0;
+            navStack[navIdx] = st;
+            applyState(st, 'none');
+        });
+
+        /* ---------------------------------------------------------
+           7. THEME
+           --------------------------------------------------------- */
+        const sunIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+        const moonIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+        const arrowDownSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+        function applyTheme(isDark) {
+            document.body.classList.toggle('dark-mode', isDark);
+            $('themeToggleBtn').innerHTML = isDark ? sunIcon : moonIcon;
+            const meta = $('themeColorMeta');
+            if (meta) meta.setAttribute('content', isDark ? '#131314' : '#f0f4f9');
+        }
+        function toggleTheme() {
+            const isDark = !document.body.classList.contains('dark-mode');
+            applyTheme(isDark);
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) { }
+        }
+
+        /* ---------------------------------------------------------
+           8. HTML BUILDERS
+           --------------------------------------------------------- */
+        function buildFlowList(flow) {
+            if (flow.type === 'mcq') {
+                return '<ul style="margin:0; padding-left:1.2rem;">' + flow.items.map(q =>
+                    '<li style="margin-bottom:14px; font-size:1.05rem;"><strong style="color:var(--text-main)">Q:</strong> ' + esc(q.question) +
+                    '<br><span style="color:var(--primary-color); display:block; margin-top:4px;"><strong>A:</strong> ' + esc(q.options[q.correctAnswer]) + '</span></li>'
+                ).join('') + '</ul>';
+            }
+            const weak = new Set(weakItemIndices(flow));
+            return '<ul style="margin:0; padding-left:1.2rem;">' + flow.items.map((item, i) => {
+                let prefix = '';
+                if (item.indexOf('6 Flight Instruments ' + ARROW + ' CHECK') === 0) {
+                    prefix = '<div style="margin-top:16px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;">Part 1: Six Flight Instruments</div>';
+                } else if (item.indexOf('1. Clearance/Transponder') === 0) {
+                    prefix = '<div style="margin-top:20px; margin-bottom:8px; margin-left:-20px; color:var(--primary-color); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border-color); padding-bottom:4px;">Part 2: Six Avionics Setups</div>';
+                }
+                const cls = weak.has(i) ? ' class="weak-item"' : '';
+                const parts = splitItem(item);
+                const body = parts
+                    ? '<strong>' + esc(parts.key) + '</strong> ' + ARROW + ' ' + esc(parts.val)
+                    : esc(item);
+                return prefix + '<li' + cls + ' style="margin-bottom:10px;">' + body + '</li>';
+            }).join('') + '</ul>';
+        }
+
+        function masteryBadge(topicId) {
+            const t = Store.data.topics[topicId];
+            if (!t || !t.runs) return '';
+            const cls = t.last >= 90 ? 'good' : (t.last >= 70 ? 'mid' : 'weak');
+            return '<span class="badge ' + cls + '">Last ' + t.last + '% &middot; Best ' + t.best + '%</span>';
         }
 
         function buildLeftMenu() {
-            const menu = document.getElementById('leftNavMenuContent');
-            menu.innerHTML = `<div class="menu-header">Main Menu</div>
-                <div class="sidebar-item"><div class="sidebar-text" onclick="showPage('homeScreen', true)">Dashboard</div></div>
-                <div class="menu-header">Categories</div><div id="sidebarCats"></div>`;
-            
-            const catContainer = document.getElementById('sidebarCats');
-            
+            const menu = $('leftNavMenuContent');
+            menu.innerHTML = '<div class="menu-header">Main Menu</div>' +
+                '<div class="sidebar-item"><button class="sidebar-text" data-nav="home">Dashboard</button></div>' +
+                '<div class="sidebar-item"><button class="sidebar-text" data-nav="mixed">Mixed Drill</button></div>' +
+                '<div class="sidebar-item"><button class="sidebar-text" data-nav="progress">Progress</button></div>' +
+                '<div class="menu-header">Categories</div><div id="sidebarCats"></div>';
+
+            menu.querySelectorAll('[data-nav]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const t = btn.getAttribute('data-nav');
+                    if (t === 'home') renderHome('push');
+                    else if (t === 'mixed') renderMixedScreen('push');
+                    else renderProgressScreen('push');
+                });
+            });
+
+            const catContainer = $('sidebarCats');
             Object.keys(appDatabase).forEach(catName => {
                 const itemDiv = document.createElement('div');
-                itemDiv.innerHTML = `
-                    <div class="sidebar-item">
-                        <div class="sidebar-text" onclick="renderCategory('${catName}')">${catName}</div>
-                        <div class="sidebar-icon">${arrowDownSvg}</div>
-                    </div>
-                    <div class="sidebar-sub"></div>`;
-                
+                itemDiv.innerHTML =
+                    '<div class="sidebar-item">' +
+                    '<button class="sidebar-text"></button>' +
+                    '<button class="sidebar-icon" aria-label="Expand" aria-expanded="false">' + arrowDownSvg + '</button>' +
+                    '</div><div class="sidebar-sub"></div>';
+
+                const textBtn = itemDiv.querySelector('.sidebar-text');
+                textBtn.textContent = catName;
+                textBtn.addEventListener('click', () => renderCategory(catName, 'push'));
+
                 const iconBtn = itemDiv.querySelector('.sidebar-icon');
                 const subContent = itemDiv.querySelector('.sidebar-sub');
-                
+
                 Object.keys(appDatabase[catName]).forEach(subCat => {
-                    appDatabase[catName][subCat].forEach(quizObj => {
+                    appDatabase[catName][subCat].forEach(flow => {
                         const btn = document.createElement('button');
-                        btn.innerText = quizObj.title;
-                        btn.onclick = () => renderStudyScreen(quizObj);
+                        btn.textContent = flow.title;
+                        btn.addEventListener('click', () => renderStudyScreen(flow, 'push'));
                         subContent.appendChild(btn);
                     });
                 });
-
-                iconBtn.onclick = () => {
-                    const isOpen = subContent.style.maxHeight;
+                iconBtn.addEventListener('click', () => {
+                    const isOpen = !!subContent.style.maxHeight;
                     resetLeftMenuAccordions();
                     if (!isOpen) {
-                        subContent.style.maxHeight = subContent.scrollHeight + "px";
-                        iconBtn.style.transform = "rotate(180deg)";
+                        subContent.style.maxHeight = subContent.scrollHeight + 'px';
+                        iconBtn.style.transform = 'rotate(180deg)';
+                        iconBtn.setAttribute('aria-expanded', 'true');
                     }
-                };
+                });
                 catContainer.appendChild(itemDiv);
             });
         }
-
         function resetLeftMenuAccordions() {
-            document.querySelectorAll('.sidebar-sub').forEach(c => c.style.maxHeight = null);
-            document.querySelectorAll('.sidebar-icon').forEach(s => s.style.transform = "rotate(0deg)");
+            document.querySelectorAll('.sidebar-sub').forEach(c => { c.style.maxHeight = null; });
+            document.querySelectorAll('.sidebar-icon').forEach(s => { s.style.transform = 'rotate(0deg)'; s.setAttribute('aria-expanded', 'false'); });
         }
 
-        function renderHome(pushToHistory = true) {
-            const container = document.getElementById('homeCategories');
+        /* ---------------------------------------------------------
+           9. SCREENS
+           --------------------------------------------------------- */
+        function renderHome(mode) {
+            const container = $('homeCategories');
             container.innerHTML = '';
-            
             const grid = document.createElement('div');
             grid.className = 'parent-grid';
-
             Object.keys(appDatabase).forEach(catName => {
                 const btn = document.createElement('button');
                 btn.className = 'parent-card';
-                btn.innerText = catName;
-                btn.onclick = () => renderCategory(catName);
+                btn.textContent = catName;
+                btn.addEventListener('click', () => renderCategory(catName, 'push'));
                 grid.appendChild(btn);
             });
-
             container.appendChild(grid);
-            showPage('homeScreen', pushToHistory, {page: 'home'});
+            showPage({ page: 'home' }, mode);
         }
 
-        function renderCategory(catName, pushToHistory = true) {
-            currentParent = catName;
-            document.getElementById('catTitle').innerText = catName;
-            const container = document.getElementById('catContent');
+        function renderCategory(catName, mode) {
+            $('catTitle').textContent = catName;
+            const container = $('catContent');
             container.innerHTML = '';
-
             Object.keys(appDatabase[catName]).forEach(subCatName => {
                 const section = document.createElement('div');
                 section.className = 'category-section';
-                section.innerHTML = `<h3 class="category-title">${subCatName}</h3>`;
-
+                const h = document.createElement('h3');
+                h.className = 'category-title';
+                h.textContent = subCatName;
+                section.appendChild(h);
                 const grid = document.createElement('div');
                 grid.className = 'menu-grid';
-
-                appDatabase[catName][subCatName].forEach(quizObj => {
+                appDatabase[catName][subCatName].forEach(flow => {
                     const btn = document.createElement('button');
                     btn.className = 'menu-btn';
-                    btn.innerHTML = `${quizObj.title} <small>${quizObj.text}</small>`;
-                    btn.onclick = () => renderStudyScreen(quizObj);
+                    btn.innerHTML = esc(flow.title) + ' <small>' + esc(flow.text) + '</small>' + masteryBadge(flow.id);
+                    btn.addEventListener('click', () => renderStudyScreen(flow, 'push'));
                     grid.appendChild(btn);
                 });
-
                 section.appendChild(grid);
                 container.appendChild(section);
             });
-            showPage('categoryScreen', pushToHistory, {page: 'category', cat: catName});
+            showPage({ page: 'category', cat: catName }, mode);
         }
 
-        function renderStudyScreen(quizObj, pushToHistory = true) {
-            currentActiveFlow = quizObj;
-            if (quizObj.parentCat) {
-                currentParent = quizObj.parentCat; // Ensure parent is tracked correctly!
-            }
-            
-            document.getElementById('studyTitle').innerText = quizObj.title;
-            document.getElementById('studySubtitle').innerText = quizObj.text;
-            document.getElementById('studyScreenDesc').innerText = quizObj.desc;
-            document.getElementById('studyScreenContent').innerHTML = buildFlowList(quizObj);
-            
-            document.getElementById('rightPanelContent').innerHTML = `<div class="flow-box">${buildFlowList(quizObj)}</div>`;
+        let currentStudyFlow = null;
 
-            // Hide the Start Drill button if type is "info"
-            const startBtn = document.getElementById('mainStartBtn');
-            if (startBtn) {
-                startBtn.style.display = (quizObj.type === "info") ? "none" : "block";
-            }
+        function renderStudyScreen(flow, mode) {
+            currentStudyFlow = flow;
+            $('studyTitle').textContent = flow.title;
+            $('studySubtitle').textContent = flow.text;
+            $('studyScreenDesc').textContent = flow.desc;
+            $('studyScreenContent').innerHTML = buildFlowList(flow);
 
-            showPage('studyScreen', pushToHistory, {page: 'study', quizId: quizObj.id});
+            const drillable = flow.type !== 'info';
+            $('drillSetup').style.display = drillable ? 'block' : 'none';
+            $('mainStartBtn').style.display = drillable ? 'block' : 'none';
+
+            if (drillable) {
+                renderLengthChips($('lengthChips'), 'drillLength', flow.type === 'mcq' ? flow.items.length : 0);
+                const t = Store.data.topics[flow.id];
+                const weak = weakItemIndices(flow).length;
+                const bits = [];
+                if (t && t.runs) {
+                    bits.push(t.runs + (t.runs === 1 ? ' drill' : ' drills'));
+                    bits.push('Last: ' + t.last + '%');
+                    bits.push('Best: ' + t.best + '%');
+                    if (t.lastAt) bits.push(fmtDate(t.lastAt));
+                } else {
+                    bits.push('Not drilled yet');
+                }
+                if (weak) bits.push(weak + ' weak item' + (weak > 1 ? 's' : ''));
+                $('topicStats').textContent = bits.join('  ·  ');
+                $('drillHint').textContent = (flow.type === 'mcq')
+                    ? 'Bank holds ' + flow.items.length + ' questions. Weak questions are drawn first.'
+                    : 'Questions are generated from the flow. Items you get wrong come back more often.';
+            }
+            showPage({ page: 'study', quizId: flow.id }, mode);
         }
 
-        // Side Menus
-        function toggleLeftMenu() { document.getElementById('leftNavMenu').classList.add('open'); document.getElementById('leftMenuOverlay').classList.add('open'); }
-        function closeLeftMenu() { document.getElementById('leftNavMenu').classList.remove('open'); document.getElementById('leftMenuOverlay').classList.remove('open'); }
-        function toggleRightMenu() { document.getElementById('rightNavMenu').classList.add('open'); document.getElementById('rightMenuOverlay').classList.add('open'); }
-        function closeRightMenu() { document.getElementById('rightNavMenu').classList.remove('open'); document.getElementById('rightMenuOverlay').classList.remove('open'); }
+        // `cap` is a hard ceiling (a fixed question bank); pass 0 for generated drills.
+        function renderLengthChips(container, settingKey, cap) {
+            let opts = [10, 15, 25, 50];
+            if (cap > 0) {
+                opts = opts.filter(n => n < cap);
+                opts.push(cap);
+            }
+            container.innerHTML = '';
+            let current = Store.data.settings[settingKey] || 15;
+            if (opts.indexOf(current) === -1) current = opts[opts.length - 1];
+            Store.data.settings[settingKey] = current;
+            opts.forEach(n => {
+                const b = document.createElement('button');
+                b.className = 'chip' + (n === current ? ' selected' : '');
+                b.textContent = n + ' Q';
+                b.addEventListener('click', () => {
+                    Store.data.settings[settingKey] = n;
+                    Store.save();
+                    container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+                    b.classList.add('selected');
+                });
+                container.appendChild(b);
+            });
+        }
 
-        // ================== QUIZ ENGINE ==================
-        function getRandomOtherItems(currentFlow, count) {
-            let allItems = [];
-            Object.values(appDatabase).forEach(c => Object.values(c).forEach(sc => sc.forEach(f => {
-                if (f.title !== currentFlow.title && f.type === currentFlow.type && f.type !== "mcq" && f.type !== "info") allItems = allItems.concat(f.items);
-            })));
-            let selected = [];
-            if (allItems.length > 0) {
-                for(let i=0; i<count; i++) selected.push(allItems[Math.floor(Math.random() * allItems.length)]);
+        function renderMixedScreen(mode) {
+            const scopeBox = $('scopeChips');
+            scopeBox.innerHTML = '';
+            const scopes = ['all'].concat(Object.keys(appDatabase).filter(c => scopeFlows(c).length > 0));
+            let current = Store.data.settings.mixedScope || 'all';
+            if (scopes.indexOf(current) === -1) current = 'all';
+            Store.data.settings.mixedScope = current;
+            scopes.forEach(s => {
+                const b = document.createElement('button');
+                b.className = 'chip' + (s === current ? ' selected' : '');
+                b.textContent = (s === 'all') ? 'All Topics' : s;
+                b.addEventListener('click', () => {
+                    Store.data.settings.mixedScope = s;
+                    Store.save();
+                    scopeBox.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+                    b.classList.add('selected');
+                    updateMixedStats();
+                });
+                scopeBox.appendChild(b);
+            });
+            renderLengthChips($('mixedLengthChips'), 'mixedLength', 0);
+            updateMixedStats();
+            showPage({ page: 'mixed' }, mode);
+        }
+        function updateMixedStats() {
+            const scope = Store.data.settings.mixedScope || 'all';
+            const flows = scopeFlows(scope);
+            const weak = flows.reduce((n, f) => n + weakItemIndices(f).length, 0);
+            $('mixedStats').textContent = flows.length + ' topics in scope  ·  ' + weak + ' weak items tracked';
+        }
+
+        function renderProgressScreen(mode) {
+            const topics = ALL_FLOWS.filter(f => f.type !== 'info');
+            const done = topics.filter(f => Store.data.topics[f.id] && Store.data.topics[f.id].runs > 0);
+            let runs = 0, correct = 0, wrong = 0;
+            Object.keys(Store.data.topics).forEach(k => {
+                const t = Store.data.topics[k];
+                runs += t.runs || 0; correct += t.correct || 0; wrong += t.wrong || 0;
+            });
+            const answered = correct + wrong;
+            const acc = answered ? Math.round(correct / answered * 100) : 0;
+            const weakTotal = topics.reduce((n, f) => n + weakItemIndices(f).length, 0);
+
+            $('progressStats').innerHTML =
+                '<div class="stat-box"><div class="sv">' + runs + '</div><div class="sl">Drills</div></div>' +
+                '<div class="stat-box"><div class="sv">' + answered + '</div><div class="sl">Answers</div></div>' +
+                '<div class="stat-box"><div class="sv">' + acc + '%</div><div class="sl">Accuracy</div></div>' +
+                '<div class="stat-box"><div class="sv">' + weakTotal + '</div><div class="sl">Weak Items</div></div>';
+
+            const list = $('progressList');
+            list.innerHTML = '';
+            if (!done.length) {
+                list.innerHTML = '<div class="empty-note">No drills recorded yet.<br>Finish a drill and your weakest topics will be listed here, worst first.</div>';
             } else {
-                for(let i=0; i<count; i++) selected.push("N/A"); 
+                done.sort((a, b) => {
+                    const ta = Store.data.topics[a.id], tb = Store.data.topics[b.id];
+                    return ta.last - tb.last;
+                }).forEach(f => {
+                    const t = Store.data.topics[f.id];
+                    const weak = weakItemIndices(f).length;
+                    const cls = t.last >= 90 ? 'good' : (t.last >= 70 ? 'mid' : 'weak');
+                    const row = document.createElement('button');
+                    row.className = 'prog-row';
+                    row.innerHTML =
+                        '<span><span class="pt">' + esc(f.title) + '</span>' +
+                        '<span class="pm">' + esc(f.parentCat) + '  ·  ' + t.runs + (t.runs === 1 ? ' drill' : ' drills') + '  ·  best ' + t.best + '%' +
+                        (weak ? '  ·  ' + weak + ' weak' : '') + (t.lastAt ? '  ·  ' + fmtDate(t.lastAt) : '') + '</span></span>' +
+                        '<span class="prog-pct badge ' + cls + '" style="margin-top:0;">' + t.last + '%</span>';
+                    row.addEventListener('click', () => renderStudyScreen(f, 'push'));
+                    list.appendChild(row);
+                });
             }
-            return selected;
+            const btn = $('resetProgressBtn');
+            btn.textContent = 'Reset All Progress';
+            btn.dataset.armed = '';
+            showPage({ page: 'progress' }, mode);
         }
 
-        function genWhatIsNext() {
-            let flow = currentActiveFlow;
-            if (flow.items.length < 2) return null;
-            let idx = Math.floor(Math.random() * (flow.items.length - 1));
-            let currentItem = flow.items[idx];
-            let nextItem = flow.items[idx + 1];
-            let wrong1 = flow.items[(idx + 2) % flow.items.length];
-            let wrong2 = getRandomOtherItems(flow, 1)[0];
-            if(wrong1 === nextItem) wrong1 = "Master Switch ➔ OFF";
+        /* ---------------------------------------------------------
+           10. QUIZ RUNNER
+           --------------------------------------------------------- */
+        let activeDrill = null;
+        let lastResult = null;
+        let isAnswered = false;
 
-            return {
-                question: `In "${flow.title}", what follows:<br><br><strong>${currentItem}</strong> ?`,
-                options: [nextItem, wrong1, wrong2],
-                correctAnswer: 0,
-                explanation: `Correct sequence: <strong>${nextItem}</strong>`
+        function startDrill(config) {
+            if (!config.questions.length) return; // nothing generatable — stay put
+            activeDrill = {
+                stateKey: config.stateKey,
+                topicId: config.topicId,
+                title: config.title,
+                flow: config.flow || null,
+                showMaterial: !!config.flow,
+                showSource: !!config.showSource,
+                scope: config.scope || null,
+                questions: config.questions,
+                idx: 0, score: 0, wrong: []
             };
-        }
-
-        function genFirstAction() {
-            let flow = currentActiveFlow;
-            return {
-                question: `What is the **first** item in "${flow.title}"?`,
-                options: [flow.items[0], flow.items[1] || "Throttle ➔ IDLE", flow.items[flow.items.length - 1] || "Mixture ➔ CUTOFF"],
-                correctAnswer: 0,
-                explanation: `It starts with: <strong>${flow.items[0]}</strong>`
-            };
-        }
-
-        function genNotIncludedSequence() {
-            let flow = currentActiveFlow;
-            let wrongItem = getRandomOtherItems(flow, 1)[0] || "Declare ➔ Emergency";
-            return {
-                question: `Which is **NOT** part of "${flow.title}"?`,
-                options: [wrongItem, flow.items[0], flow.items[flow.items.length - 1] || flow.items[1]],
-                correctAnswer: 0,
-                explanation: `<strong>${wrongItem}</strong> is not in this procedure.`
-            };
-        }
-
-        function genDefinitionQuestion() {
-            let flow = currentActiveFlow;
-            if (flow.items.length < 1) return null;
-            
-            let idx = Math.floor(Math.random() * flow.items.length);
-            let correctItem = flow.items[idx];
-            let parts = correctItem.split(" ➔ ");
-            if (parts.length !== 2) return null;
-            
-            let code = parts[0];
-            let definition = parts[1];
-            
-            let wrongDefs = [];
-            while(wrongDefs.length < 2) {
-                let randomIdx = Math.floor(Math.random() * flow.items.length);
-                if (randomIdx !== idx) {
-                    let wParts = flow.items[randomIdx].split(" ➔ ");
-                    if (wParts.length === 2) {
-                        let wrongPart = wParts[1];
-                        if (!wrongDefs.includes(wrongPart)) wrongDefs.push(wrongPart);
-                    }
-                }
+            if (activeDrill.flow) {
+                $('rightPanelTitle').textContent = 'Study Material';
+                $('rightPanelContent').innerHTML = '<div class="flow-box">' + buildFlowList(activeDrill.flow) + '</div>';
             }
-
-            return {
-                question: `What does <strong>${code}</strong> stand for in ${flow.title}?`,
-                options: [definition, wrongDefs[0], wrongDefs[1]],
-                correctAnswer: 0,
-                explanation: `<strong>${code}</strong> stands for <strong>${definition}</strong>.`
-            };
-        }
-
-        function genNotIncludedDefinition() {
-            let flow = currentActiveFlow;
-            let wrongItem = getRandomOtherItems(flow, 1)[0] || "XYZ ➔ Unknown";
-            let correct1 = flow.items[0];
-            let correct2 = flow.items[flow.items.length - 1] || flow.items[1];
-
-            return {
-                question: `Which of the following is **NOT** part of the ${flow.title} list?`,
-                options: [wrongItem, correct1, correct2],
-                correctAnswer: 0,
-                explanation: `<strong>${wrongItem}</strong> is not part of this list.`
-            };
-        }
-
-        function shuffleArray(array) {
-            let shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
-
-        function startQuizFromStudy() { startQuiz(currentActiveFlow, true); }
-
-        function startQuiz(quizObj, pushToHistory = true) {
-            if (quizObj.type === "info") return; // Failsafe
-            
-            currentActiveFlow = quizObj;
-            generatedQuestions = [];
-            
-            if (quizObj.type === "mcq") {
-                // Direct MCQ loading
-                let shuffledItems = shuffleArray(quizObj.items);
-                currentDrillLength = Math.min(15, shuffledItems.length);
-                
-                for(let i = 0; i < currentDrillLength; i++) {
-                    let q = shuffledItems[i];
-                    let optsWithIdx = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctAnswer }));
-                    optsWithIdx = shuffleArray(optsWithIdx);
-                    generatedQuestions.push({
-                        question: q.question,
-                        options: optsWithIdx.map(o => o.text),
-                        correctAnswer: optsWithIdx.findIndex(o => o.isCorrect),
-                        explanation: q.explanation
-                    });
-                }
-            } else {
-                // Dynamic generation for Flow / Definition
-                currentDrillLength = 15;
-                let isSequence = (quizObj.type === "sequence");
-
-                for (let i = 0; i < currentDrillLength; i++) {
-                    let q = null, attempts = 0;
-                    while (!q && attempts < 15) {
-                        let rand = Math.random();
-                        
-                        if (isSequence) {
-                            if (rand < 0.33) q = genWhatIsNext();
-                            else if (rand < 0.66) q = genFirstAction();
-                            else q = genNotIncludedSequence();
-                        } else {
-                            if (rand < 0.75) q = genDefinitionQuestion();
-                            else q = genNotIncludedDefinition();
-                        }
-                        attempts++;
-                    }
-                    
-                    if (q) {
-                        let optsWithIdx = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctAnswer }));
-                        optsWithIdx = shuffleArray(optsWithIdx);
-                        generatedQuestions.push({
-                            question: q.question,
-                            options: optsWithIdx.map(o => o.text),
-                            correctAnswer: optsWithIdx.findIndex(o => o.isCorrect),
-                            explanation: q.explanation
-                        });
-                    } else i--;
-                }
-            }
-
-            currentQ = 0; score = 0; errors = 0;
+            isAnswered = false;
             loadQuestion();
-            showPage('quizScreen', pushToHistory, {page: 'quiz', quizId: quizObj.id});
+            showPage({
+                page: 'quiz',
+                quizId: config.flow ? config.flow.id : null,
+                scope: config.scope || null,
+                stateKey: config.stateKey
+            }, 'push');
+        }
+
+        function startTopicDrill(flow) {
+            const len = Store.data.settings.drillLength || 15;
+            const questions = buildTopicDrill(flow, len);
+            startDrill({
+                stateKey: 'topic:' + flow.id + ':' + Date.now(),
+                topicId: flow.id, title: flow.title, flow: flow, questions: questions
+            });
+        }
+
+        function startMixedDrill() {
+            const scope = Store.data.settings.mixedScope || 'all';
+            const len = Store.data.settings.mixedLength || 25;
+            const questions = buildMixedDrill(scope, len);
+            startDrill({
+                stateKey: 'mixed:' + scope + ':' + Date.now(),
+                topicId: 'mixed::' + scope, title: 'Mixed Drill (' + (scope === 'all' ? 'All Topics' : scope) + ')',
+                scope: scope, showSource: true, questions: questions
+            });
+        }
+
+        function retryMistakes() {
+            if (!lastResult || !lastResult.wrong.length) return;
+            const questions = lastResult.wrong.map(w => finalize({
+                kind: w.kind, question: w.question, options: w.options,
+                correct: w.correctAnswer, explanation: w.explanation,
+                sourceId: w.sourceId, sourceTitle: w.sourceTitle, anchorKey: w.anchorKey
+            }));
+            startDrill({
+                stateKey: 'retry:' + Date.now(),
+                topicId: lastResult.topicId, title: lastResult.title + ' — Mistakes',
+                flow: lastResult.flow, scope: lastResult.scope,
+                showSource: lastResult.showSource, questions: questions
+            });
         }
 
         function loadQuestion() {
             isAnswered = false;
-            let fb = document.getElementById('feedbackBox');
-            fb.className = 'feedback'; fb.innerHTML = '';
-            document.getElementById('nextBtn').style.display = 'none';
-            
-            document.getElementById('qNumber').innerText = `Q ${currentQ + 1} / ${currentDrillLength}`;
-            document.getElementById('qScore').innerText = `Score: ${score}`;
-            document.getElementById('quizProgress').style.width = `${(currentQ / currentDrillLength) * 100}%`;
-            
-            let q = generatedQuestions[currentQ];
-            document.getElementById('qText').innerHTML = q.question;
-            
-            const optsContainer = document.getElementById('optionsContainer');
-            optsContainer.innerHTML = '';
+            const d = activeDrill;
+            const q = d.questions[d.idx];
+            const fb = $('feedbackBox');
+            fb.className = 'feedback';
+            fb.innerHTML = '';
+            $('nextBtn').style.display = 'none';
+
+            $('qNumber').textContent = 'Q ' + (d.idx + 1) + ' / ' + d.questions.length;
+            $('qScore').textContent = 'Score: ' + d.score;
+            $('quizProgress').style.width = (d.idx / d.questions.length * 100) + '%';
+
+            const src = $('qSource');
+            if (d.showSource) { src.textContent = q.sourceTitle; src.hidden = false; }
+            else { src.hidden = true; }
+
+            $('qText').innerHTML = q.question;
+
+            const box = $('optionsContainer');
+            box.innerHTML = '';
             q.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.innerHTML = opt; 
-                btn.onclick = () => checkAnswer(index, btn);
-                optsContainer.appendChild(btn);
+                btn.innerHTML = '<span class="opt-key" aria-hidden="true">' + (index + 1) + '</span><span>' + opt + '</span>';
+                btn.addEventListener('click', () => checkAnswer(index, btn));
+                box.appendChild(btn);
             });
         }
 
         function checkAnswer(selectedIndex, btnElement) {
             if (isAnswered) return;
             isAnswered = true;
+            const d = activeDrill;
+            const q = d.questions[d.idx];
+            const btns = $('optionsContainer').querySelectorAll('.option-btn');
+            btns.forEach(b => { b.disabled = true; });
 
-            let q = generatedQuestions[currentQ];
-            let allBtns = document.getElementById('optionsContainer').querySelectorAll('.option-btn');
-            allBtns.forEach(btn => btn.disabled = true);
-
-            let isCorrect = (selectedIndex === q.correctAnswer);
-            let fb = document.getElementById('feedbackBox');
-
+            const isCorrect = (selectedIndex === q.correctAnswer);
+            const fb = $('feedbackBox');
             if (isCorrect) {
                 btnElement.classList.add('correct');
-                score++;
+                d.score++;
                 fb.classList.add('show', 'success');
             } else {
                 btnElement.classList.add('wrong');
-                errors++;
-                allBtns[q.correctAnswer].classList.add('correct');
+                btns[q.correctAnswer].classList.add('correct');
                 fb.classList.add('show', 'error');
+                d.wrong.push(Object.assign({}, q, { chosen: selectedIndex }));
             }
 
-            fb.innerHTML = `<strong>${isCorrect ? 'Correct' : 'Incorrect'}</strong><br><span style="display:block; margin-top:8px;">${q.explanation}</span>`;
-            document.getElementById('qScore').innerText = `Score: ${score}`;
-            document.getElementById('quizProgress').style.width = `${((currentQ + 1) / currentDrillLength) * 100}%`;
-            
-            let nextBtn = document.getElementById('nextBtn');
-            nextBtn.innerText = (currentQ === currentDrillLength - 1) ? "Finish Drill" : "Continue";
+            // Persist per-topic and per-item performance.
+            if (q.sourceId) {
+                const t = Store.topic(q.sourceId);
+                if (isCorrect) t.correct++; else t.wrong++;
+            }
+            if (q.anchorKey) {
+                const it = Store.item(q.anchorKey);
+                if (isCorrect) it.r++; else it.w++;
+                it.at = Date.now();
+            }
+            Store.save();
+
+            let extra = '';
+            if (d.showSource && q.sourceTitle) extra = '<br><span style="opacity:0.8; font-size:0.9rem;">Topic: ' + esc(q.sourceTitle) + '</span>';
+            fb.innerHTML = '<strong>' + (isCorrect ? 'Correct' : 'Incorrect') + '</strong>' +
+                '<span style="display:block; margin-top:8px;">' + q.explanation + '</span>' + extra;
+
+            $('qScore').textContent = 'Score: ' + d.score;
+            $('quizProgress').style.width = ((d.idx + 1) / d.questions.length * 100) + '%';
+
+            const nextBtn = $('nextBtn');
+            nextBtn.textContent = (d.idx === d.questions.length - 1) ? 'Finish Drill' : 'Continue';
             nextBtn.style.display = 'block';
         }
 
         function nextQuestion() {
-            currentQ++;
-            if (currentQ < currentDrillLength) loadQuestion();
-            else showScore();
-            
-            const appContainer = document.getElementById('appScrollContainer');
-            if(appContainer) appContainer.scrollTop = 0;
+            const d = activeDrill;
+            d.idx++;
+            if (d.idx < d.questions.length) loadQuestion();
+            else finishDrill();
+            const c = $('appScrollContainer');
+            if (c) c.scrollTop = 0;
         }
 
-        function showScore() {
-            let percentage = Math.round((score / currentDrillLength) * 100);
-            document.getElementById('finalScore').innerText = percentage + "%";
-            document.getElementById('finalStats').innerHTML = `Correct: ${score} out of ${currentDrillLength}<br>Errors: ${errors}`;
-            showPage('scoreScreen', true, {page: 'score', quizId: currentActiveFlow.id});
+        function finishDrill() {
+            const d = activeDrill;
+            const total = d.questions.length;
+            const pct = Math.round(d.score / total * 100);
+
+            const t = Store.topic(d.topicId);
+            t.runs++;
+            t.last = pct;
+            t.best = Math.max(t.best || 0, pct);
+            t.lastAt = Date.now();
+            Store.save();
+
+            lastResult = {
+                stateKey: d.stateKey, topicId: d.topicId, title: d.title, flow: d.flow,
+                scope: d.scope, showSource: d.showSource,
+                total: total, score: d.score, pct: pct, wrong: d.wrong.slice()
+            };
+            renderScoreScreen('replace');
         }
 
-        function restartSameQuiz() { startQuiz(currentActiveFlow, false); }
+        function renderScoreScreen(mode) {
+            const r = lastResult;
+            $('finalScore').textContent = r.pct + '%';
+            $('finalStats').innerHTML = 'Correct: ' + r.score + ' out of ' + r.total + '<br>Errors: ' + (r.total - r.score);
 
-        // Initialize App
-        document.addEventListener("DOMContentLoaded", () => {
-            updateThemeButton(document.body.classList.contains('dark-mode'));
+            const sec = $('reviewSection');
+            sec.innerHTML = '';
+            if (r.wrong.length) {
+                const head = document.createElement('div');
+                head.className = 'review-head';
+                head.innerHTML = '<span class="review-title">Review Your Mistakes (' + r.wrong.length + ')</span>';
+                sec.appendChild(head);
+                r.wrong.forEach(w => {
+                    const div = document.createElement('div');
+                    div.className = 'review-item';
+                    div.innerHTML =
+                        '<div class="rq">' + w.question + '</div>' +
+                        '<div class="rx">Your answer: ' + w.options[w.chosen] + '</div>' +
+                        '<div class="ra">Correct: ' + w.options[w.correctAnswer] + '</div>' +
+                        '<div class="re">' + w.explanation + (r.showSource && w.sourceTitle ? ' <em>(' + esc(w.sourceTitle) + ')</em>' : '') + '</div>';
+                    sec.appendChild(div);
+                });
+            }
+            const rm = $('retryMistakesBtn');
+            if (r.wrong.length) { rm.style.display = 'block'; rm.textContent = 'Retry Mistakes (' + r.wrong.length + ')'; }
+            else rm.style.display = 'none';
+
+            $('retryDrillBtn').style.display = 'block';
+            $('backToTopicBtn').textContent = r.flow ? 'Back to Topic' : 'Back to Mixed Drill';
+
+            showPage({
+                page: 'score', quizId: r.flow ? r.flow.id : null,
+                scope: r.scope || null, stateKey: r.stateKey
+            }, mode);
+        }
+
+        function restartSameDrill() {
+            const r = lastResult;
+            if (!r) return;
+            if (r.flow) startTopicDrill(r.flow);
+            else startMixedDrill();
+        }
+
+        /* ---------------------------------------------------------
+           11. SIDE MENUS
+           --------------------------------------------------------- */
+        function openLeftMenu() { $('leftNavMenu').classList.add('open'); $('leftMenuOverlay').classList.add('open'); }
+        function closeLeftMenu() { $('leftNavMenu').classList.remove('open'); $('leftMenuOverlay').classList.remove('open'); }
+        function openRightMenu() { $('rightNavMenu').classList.add('open'); $('rightMenuOverlay').classList.add('open'); }
+        function closeRightMenu() { $('rightNavMenu').classList.remove('open'); $('rightMenuOverlay').classList.remove('open'); }
+
+        /* ---------------------------------------------------------
+           12. WIRING
+           --------------------------------------------------------- */
+        function wire() {
+            $('menuBtn').addEventListener('click', openLeftMenu);
+            $('backBtn').addEventListener('click', goBackLogic);
+            $('studyBtn').addEventListener('click', openRightMenu);
+            $('themeToggleBtn').addEventListener('click', toggleTheme);
+            $('leftMenuOverlay').addEventListener('click', closeLeftMenu);
+            $('rightMenuOverlay').addEventListener('click', closeRightMenu);
+
+            $('mixedEntryBtn').addEventListener('click', () => renderMixedScreen('push'));
+            $('progressEntryBtn').addEventListener('click', () => renderProgressScreen('push'));
+            $('mainStartBtn').addEventListener('click', () => { if (currentStudyFlow) startTopicDrill(currentStudyFlow); });
+            $('mixedStartBtn').addEventListener('click', startMixedDrill);
+            $('nextBtn').addEventListener('click', nextQuestion);
+            $('retryMistakesBtn').addEventListener('click', retryMistakes);
+            $('retryDrillBtn').addEventListener('click', restartSameDrill);
+            $('backToTopicBtn').addEventListener('click', goBackLogic);
+
+            const reset = $('resetProgressBtn');
+            reset.addEventListener('click', () => {
+                if (reset.dataset.armed === '1') {
+                    Store.reset();
+                    renderProgressScreen('replace');
+                } else {
+                    reset.dataset.armed = '1';
+                    reset.textContent = 'Tap again to confirm';
+                    setTimeout(() => {
+                        if (reset.dataset.armed === '1') { reset.dataset.armed = ''; reset.textContent = 'Reset All Progress'; }
+                    }, 4000);
+                }
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') { closeLeftMenu(); closeRightMenu(); return; }
+                if (!$('quizScreen').classList.contains('active')) return;
+                if (e.metaKey || e.ctrlKey || e.altKey) return;
+                if (!isAnswered && /^[1-9]$/.test(e.key)) {
+                    const btns = $('optionsContainer').querySelectorAll('.option-btn');
+                    const i = parseInt(e.key, 10) - 1;
+                    if (btns[i]) { e.preventDefault(); btns[i].click(); }
+                } else if (isAnswered && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    nextQuestion();
+                }
+            });
+        }
+
+        /* ---------------------------------------------------------
+           13. INIT
+           --------------------------------------------------------- */
+        function init() {
+            // Explicit in-app choice wins; otherwise follow the host/OS preference.
+            let stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (e) { }
+            let dark;
+            if (stored === 'dark' || stored === 'light') dark = (stored === 'dark');
+            else {
+                const stamped = document.documentElement.getAttribute('data-theme');
+                if (stamped === 'dark' || stamped === 'light') dark = (stamped === 'dark');
+                else dark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            }
+            applyTheme(dark);
+            wire();
             buildLeftMenu();
-            renderHome(false);
-            history.replaceState({ page: 'home' }, '');
-        });
+            renderHome('none');
+            navStack[0] = { page: 'home' };
+            safeHistory(() => history.replaceState({ page: 'home', i: 0 }, ''));
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+
+        /* Exposed for automated testing only. */
+        window.__ppl = {
+            ALL_FLOWS: ALL_FLOWS, appDatabase: appDatabase, Store: Store,
+            generateOne: generateOne, buildTopicDrill: buildTopicDrill, buildMixedDrill: buildMixedDrill,
+            splitItem: splitItem, norm: norm, validOptions: validOptions,
+            distractorPool: distractorPool, uniqueIndices: uniqueIndices, stripTags: stripTags
+        };
+
+        })();
+
     </script>
 </body>
 </html>
