@@ -508,7 +508,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">v2.1.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v2.1.1 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -681,6 +681,41 @@
         const FLOW_BY_ID = {};
         ALL_FLOWS.forEach(f => { FLOW_BY_ID[f.id] = f; });
         function findQuizById(id) { return FLOW_BY_ID[id] || null; }
+
+        /* Virtual categories: extra ways to REACH flows that already exist.
+           They reference the same flow objects by id, so the checklist stays a
+           single source of truth and one set of progress stats follows a flow
+           no matter which category you opened it from. */
+        const VIRTUAL_CATS = {
+            'Maneuvers & Emergencies': {
+                'Pre-Maneuver & Pattern': ['FourCs', 'ClimbCheck', 'CruiseCheck', 'ABC', 'CGUMPS', 'GoAround'],
+                'Takeoff & Landing Profiles': ['ShortField', 'SoftField'],
+                'Emergencies': ['ABCD', 'ABCDE', 'WOSSS', 'EngFailTakeoffRoll', 'EngineRestart',
+                    'EngineSecuring', 'EngineFireStart', 'EngineFireFlight', 'ElecFire', 'Ammeter', 'FlatTire']
+            }
+        };
+
+        // catName -> subCatName -> [flow]   (real categories first, then virtual ones)
+        const CATS = {};
+        Object.keys(appDatabase).forEach(catName => {
+            CATS[catName] = {};
+            Object.keys(appDatabase[catName]).forEach(sub => { CATS[catName][sub] = appDatabase[catName][sub].slice(); });
+        });
+        Object.keys(VIRTUAL_CATS).forEach(catName => {
+            const built = {};
+            Object.keys(VIRTUAL_CATS[catName]).forEach(sub => {
+                const list = VIRTUAL_CATS[catName][sub].map(id => FLOW_BY_ID[id]).filter(Boolean);
+                if (list.length) built[sub] = list;
+            });
+            if (Object.keys(built).length) CATS[catName] = built;
+        });
+        function catFlows(catName) {
+            const c = CATS[catName];
+            if (!c) return [];
+            const out = [], seen = {};
+            Object.keys(c).forEach(sub => c[sub].forEach(f => { if (!seen[f.id]) { seen[f.id] = 1; out.push(f); } }));
+            return out;
+        }
 
         /* ---------------------------------------------------------
            1. SMALL UTILITIES
@@ -1103,6 +1138,7 @@
         }
 
         function scopeFlows(scope) {
+            if (scope !== 'all' && VIRTUAL_CATS[scope]) return catFlows(scope).filter(f => f.type !== 'info');
             return ALL_FLOWS.filter(f => f.type !== 'info' && (scope === 'all' || f.parentCat === scope));
         }
 
@@ -1180,11 +1216,12 @@
                 case 'category': return { page: 'home' };
                 case 'study': {
                     const f = findQuizById(st.quizId);
-                    return f ? { page: 'category', cat: f.parentCat } : { page: 'home' };
+                    if (!f) return { page: 'home' };
+                    return { page: 'category', cat: (st.cat && CATS[st.cat]) ? st.cat : f.parentCat };
                 }
                 case 'quiz':
                 case 'score':
-                    if (st.quizId && findQuizById(st.quizId)) return { page: 'study', quizId: st.quizId };
+                    if (st.quizId && findQuizById(st.quizId)) return { page: 'study', quizId: st.quizId, cat: st.cat || '' };
                     return st.scope ? { page: 'mixed' } : { page: 'home' };
                 case 'mixed':
                 case 'progress':
@@ -1195,11 +1232,11 @@
         function applyState(st, mode) {
             switch (st.page) {
                 case 'category':
-                    if (appDatabase[st.cat]) renderCategory(st.cat, mode); else renderHome(mode);
+                    if (CATS[st.cat]) renderCategory(st.cat, mode); else renderHome(mode);
                     break;
                 case 'study': {
                     const f = findQuizById(st.quizId);
-                    if (f) renderStudyScreen(f, mode); else renderHome(mode);
+                    if (f) renderStudyScreen(f, mode, st.cat); else renderHome(mode);
                     break;
                 }
                 case 'mixed': renderMixedScreen(mode); break;
@@ -1300,7 +1337,7 @@
             });
 
             const catContainer = $('sidebarCats');
-            Object.keys(appDatabase).forEach(catName => {
+            Object.keys(CATS).forEach(catName => {
                 const itemDiv = document.createElement('div');
                 itemDiv.innerHTML =
                     '<div class="sidebar-item">' +
@@ -1315,11 +1352,11 @@
                 const iconBtn = itemDiv.querySelector('.sidebar-icon');
                 const subContent = itemDiv.querySelector('.sidebar-sub');
 
-                Object.keys(appDatabase[catName]).forEach(subCat => {
-                    appDatabase[catName][subCat].forEach(flow => {
+                Object.keys(CATS[catName]).forEach(subCat => {
+                    CATS[catName][subCat].forEach(flow => {
                         const btn = document.createElement('button');
                         btn.textContent = flow.title;
-                        btn.addEventListener('click', () => renderStudyScreen(flow, 'push'));
+                        btn.addEventListener('click', () => renderStudyScreen(flow, 'push', catName));
                         subContent.appendChild(btn);
                     });
                 });
@@ -1348,7 +1385,7 @@
             container.innerHTML = '';
             const grid = document.createElement('div');
             grid.className = 'parent-grid';
-            Object.keys(appDatabase).forEach(catName => {
+            Object.keys(CATS).forEach(catName => {
                 const btn = document.createElement('button');
                 btn.className = 'parent-card';
                 btn.textContent = catName;
@@ -1363,7 +1400,7 @@
             $('catTitle').textContent = catName;
             const container = $('catContent');
             container.innerHTML = '';
-            Object.keys(appDatabase[catName]).forEach(subCatName => {
+            Object.keys(CATS[catName]).forEach(subCatName => {
                 const section = document.createElement('div');
                 section.className = 'category-section';
                 const h = document.createElement('h3');
@@ -1372,11 +1409,11 @@
                 section.appendChild(h);
                 const grid = document.createElement('div');
                 grid.className = 'menu-grid';
-                appDatabase[catName][subCatName].forEach(flow => {
+                CATS[catName][subCatName].forEach(flow => {
                     const btn = document.createElement('button');
                     btn.className = 'menu-btn';
                     btn.innerHTML = esc(flow.title) + ' <small>' + esc(flow.text) + '</small>' + masteryBadge(flow.id);
-                    btn.addEventListener('click', () => renderStudyScreen(flow, 'push'));
+                    btn.addEventListener('click', () => renderStudyScreen(flow, 'push', catName));
                     grid.appendChild(btn);
                 });
                 section.appendChild(grid);
@@ -1386,9 +1423,11 @@
         }
 
         let currentStudyFlow = null;
+        let currentStudyCat = null;
 
-        function renderStudyScreen(flow, mode) {
+        function renderStudyScreen(flow, mode, viaCat) {
             currentStudyFlow = flow;
+            currentStudyCat = (viaCat && CATS[viaCat]) ? viaCat : flow.parentCat;
             $('studyTitle').textContent = flow.title;
             $('studySubtitle').textContent = flow.text;
             $('studyScreenDesc').textContent = flow.desc;
@@ -1417,7 +1456,7 @@
                     ? 'Bank holds ' + flow.items.length + ' questions. Weak questions are drawn first.'
                     : 'Questions are generated from the flow. Items you get wrong come back more often.';
             }
-            showPage({ page: 'study', quizId: flow.id }, mode);
+            showPage({ page: 'study', quizId: flow.id, cat: currentStudyCat }, mode);
         }
 
         // `cap` is a hard ceiling (a fixed question bank); pass 0 for generated drills.
@@ -1448,7 +1487,7 @@
         function renderMixedScreen(mode) {
             const scopeBox = $('scopeChips');
             scopeBox.innerHTML = '';
-            const scopes = ['all'].concat(Object.keys(appDatabase).filter(c => scopeFlows(c).length > 0));
+            const scopes = ['all'].concat(Object.keys(CATS).filter(c => scopeFlows(c).length > 0));
             let current = Store.data.settings.mixedScope || 'all';
             if (scopes.indexOf(current) === -1) current = 'all';
             Store.data.settings.mixedScope = current;
@@ -1540,6 +1579,7 @@
                 showMaterial: !!config.flow,
                 showSource: !!config.showSource,
                 scope: config.scope || null,
+                cat: config.cat || null,
                 questions: config.questions,
                 idx: 0, score: 0, wrong: []
             };
@@ -1553,6 +1593,7 @@
                 page: 'quiz',
                 quizId: config.flow ? config.flow.id : null,
                 scope: config.scope || null,
+                cat: config.cat || '',
                 stateKey: config.stateKey
             }, 'push');
         }
@@ -1562,7 +1603,7 @@
             const questions = buildTopicDrill(flow, len);
             startDrill({
                 stateKey: 'topic:' + flow.id + ':' + Date.now(),
-                topicId: flow.id, title: flow.title, flow: flow, questions: questions
+                topicId: flow.id, title: flow.title, flow: flow, cat: currentStudyCat, questions: questions
             });
         }
 
@@ -1587,7 +1628,7 @@
             startDrill({
                 stateKey: 'retry:' + Date.now(),
                 topicId: lastResult.topicId, title: lastResult.title + ' — Mistakes',
-                flow: lastResult.flow, scope: lastResult.scope,
+                flow: lastResult.flow, scope: lastResult.scope, cat: lastResult.cat,
                 showSource: lastResult.showSource, questions: questions
             });
         }
@@ -1691,7 +1732,7 @@
 
             lastResult = {
                 stateKey: d.stateKey, topicId: d.topicId, title: d.title, flow: d.flow,
-                scope: d.scope, showSource: d.showSource,
+                scope: d.scope, cat: d.cat, showSource: d.showSource,
                 total: total, score: d.score, pct: pct, wrong: d.wrong.slice()
             };
             renderScoreScreen('replace');
@@ -1729,7 +1770,7 @@
 
             showPage({
                 page: 'score', quizId: r.flow ? r.flow.id : null,
-                scope: r.scope || null, stateKey: r.stateKey
+                scope: r.scope || null, cat: r.cat || '', stateKey: r.stateKey
             }, mode);
         }
 
