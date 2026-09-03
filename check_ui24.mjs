@@ -18,8 +18,10 @@ const out = await p.evaluate(async () => {
   r.resourceLinks = [...$('studyResources').querySelectorAll('a')].map(a => ({t: a.textContent, u: a.href}));
   r.hintAll = $('drillHint').textContent;
 
-  // mark 20 of the 22 items as already answered
-  for (let i = 0; i < 20; i++) P.Store.data.items['PFRegs::' + i] = { r: 1, w: 0, at: Date.now() };
+  // mark all but the last 2 items as already answered (bank size changes as items are appended)
+  const N = flow.items.length;
+  const seenUpTo = N - 2;
+  for (let i = 0; i < seenUpTo; i++) P.Store.data.items['PFRegs::' + i] = { r: 1, w: 0, at: Date.now() };
   P.Store.save();
 
   // switch to "not done yet"
@@ -32,7 +34,8 @@ const out = await p.evaluate(async () => {
   // the drill must contain ONLY the two unanswered items (indices 20,21)
   const drill = P.buildTopicDrill(flow, 15);
   const qs = drill.map(q => q.question);
-  const expect = [20, 21].map(i => flow.items[i].question);
+  const expect = [seenUpTo, seenUpTo + 1].map(i => flow.items[i].question);
+  r.bankSize = N;
   r.drillLen = drill.length;
   r.onlyUnseen = qs.every(x => expect.some(e => x.indexOf(e.slice(0, 40)) !== -1));
 
