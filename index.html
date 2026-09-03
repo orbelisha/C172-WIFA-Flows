@@ -308,6 +308,12 @@
             border-radius: 100px; padding: 10px 20px; font-size: 0.95rem; font-weight: 600;
             font-family: inherit; cursor: pointer; transition: all 0.2s ease; outline: none;
         }
+        .resources { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .resources .cfg-label { width: 100%; margin: 0 0 2px 0; }
+        .res-link { display: inline-block; padding: 7px 13px; border: 1px solid var(--border-color); border-radius: 999px; font-size: 0.82rem; font-weight: 600; text-decoration: none; color: var(--text-muted); }
+        .res-link:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .res-link:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
+        .chip:disabled { opacity: 0.4; cursor: default; }
         .chip:hover { border-color: var(--primary-color); color: var(--primary-color); }
         .chip:focus-visible { box-shadow: 0 0 0 4px var(--focus-ring); }
         .chip.selected { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
@@ -453,10 +459,13 @@
                     <div id="studyScreenContent"></div>
                 </div>
                 <div class="drill-setup" id="drillSetup">
+                    <span class="cfg-label" id="modeLabel">Questions</span>
+                    <div class="chips" id="modeChips"></div>
                     <span class="cfg-label">Drill Length</span>
                     <div class="chips" id="lengthChips"></div>
                     <div class="topic-stats" id="topicStats"></div>
                     <div class="hint" id="drillHint"></div>
+                    <div class="resources" id="studyResources"></div>
                 </div>
                 <button class="primary-btn start-btn" id="mainStartBtn">Start Drill</button>
             </div>
@@ -508,7 +517,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">v2.3.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v2.4.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -640,8 +649,9 @@
                     {
                         id: "PFRegs",
                         type: "mcq",
+                        resources: [{ label: "VFR weather minimums", url: "https://www.youtube.com/results?search_query=VFR+weather+minimums+91.155+explained" }, { label: "Airspace & ADS-B requirements", url: "https://www.youtube.com/results?search_query=ADS-B+out+requirements+airspace+explained+private+pilot" }, { label: "Currency, medicals & reporting deadlines", url: "https://www.youtube.com/results?search_query=pilot+currency+recency+medical+certificate+duration+explained" }],
                         title: "Regulations & Airspace",
-                        text: "18 questions",
+                        text: "22 questions",
                         desc: "Your weakest area by volume. Currency and reporting deadlines, airspace requirements, medical durations and the minimum-altitude rules — the family where the right rule in the wrong context has cost you the most answers.",
                         items: [
                             { question: "When must an aircraft's position lights be displayed?", options: ["From sunset to sunrise.", "From 30 minutes after sunset to 30 minutes before sunrise.", "During civil twilight."], correctAnswer: 0, explanation: "Position lights are ON sunset to sunrise. Keep the three 'night' definitions apart: position lights use sunset-to-sunrise, logging night time uses evening-to-morning civil twilight, and carrying passengers requires recency from 1 hour after sunset to 1 hour before sunrise." },
@@ -661,14 +671,19 @@
                             { question: "Unless otherwise authorized, which situation requires Automatic Dependent Surveillance-Broadcast (ADS-B) Out equipment and use?", options: ["Overflying Class C airspace below 10,000 feet MSL.", "Flying beneath the shelf of Class C airspace.", "Operating in Class E airspace below 2,500 feet AGL."], correctAnswer: 0, explanation: "91.225 requires ADS-B Out within AND ABOVE the lateral boundaries of Class B and Class C, up to 10,000 feet MSL. Picture an invisible column rising from the Class C rings all the way to 10,000 MSL: overflying it counts, ducking UNDER the shelf leaves you outside the airspace entirely, so no ADS-B is required there." },
                             { question: "The issuance of a Temporary Flight Restriction (TFR) may include:", options: ["protecting public figures.", "announcing parachute jump areas.", "marking permanent military training routes."], correctAnswer: 0, explanation: "TFRs under 91.137 through 91.145 cover disaster relief, hazards, special events, space operations and protection of public figures. Parachute jump areas and military training routes are permanently charted and published, not temporary. If it is printed on the sectional, it is not a TFR." },
                             { question: "Except when necessary for takeoff or landing, what is the minimum safe altitude for a pilot to operate an aircraft anywhere?", options: ["An altitude allowing, if a power unit fails, an emergency landing without undue hazard to persons or property on the surface.", "An altitude of 500 feet above the surface and no closer than 500 feet to any person, vessel, vehicle or structure.", "An altitude of 1,000 feet above the highest obstacle within a horizontal radius of 2,000 feet."], correctAnswer: 0, explanation: "91.119(a) is the ANYWHERE rule and it contains no number at all — it is the general requirement covering every kind of terrain. The 1,000-foot figure is congested areas, 91.119(b); the 500-foot figure is other than congested areas, 91.119(c). When a question says 'anywhere', the numeric answers are the trap." },
-                            { question: "If an aircraft is involved in an accident which results in substantial damage, the nearest NTSB field office should be notified:", options: ["immediately.", "within 7 days.", "within 10 days."], correctAnswer: 0, explanation: "NTSB Part 830 splits this into two duties that are easy to merge: IMMEDIATE notification for an accident or substantial damage, and the WRITTEN report within 10 days. The 7-day figure belongs to the written report for an overdue aircraft believed missing." }
+                            { question: "If an aircraft is involved in an accident which results in substantial damage, the nearest NTSB field office should be notified:", options: ["immediately.", "within 7 days.", "within 10 days."], correctAnswer: 0, explanation: "NTSB Part 830 splits this into two duties that are easy to merge: IMMEDIATE notification for an accident or substantial damage, and the WRITTEN report within 10 days. The 7-day figure belongs to the written report for an overdue aircraft believed missing." },
+                            { question: "An airplane and a glider are on a head-on collision course. What should each pilot do?", options: ["Both pilots should alter course to the right.", "The airplane gives way, because a glider has right of way over a powered aircraft.", "The glider gives way, because it is the more manoeuvrable aircraft."], correctAnswer: 0, explanation: "91.113(e) overrides the category hierarchy when the approach is head-on or nearly head-on: BOTH aircraft turn right, whatever they are. The right-of-way order in 91.113(d) - balloon, glider, airship, airplane - governs CONVERGING traffic, not a head-on." },
+                            { question: "Flying VFR at 4,500 feet MSL between two Class D airports, remaining outside Class B and C airspace, outside any Mode C veil, and below 10,000 feet MSL - what does 91.225 require?", options: ["None of that equipment is required on this route.", "ADS-B Out, because Class D airspace requires it.", "ADS-B Out and Mode C, because the flight is above 2,500 feet AGL."], correctAnswer: 0, explanation: "ADS-B Out is required in Class A, B and C, above the ceiling of B and C up to 10,000 MSL, inside the Mode C veil, and at or above 10,000 MSL except below 2,500 AGL. Class D is NOT on that list. Knowing where the rule does NOT reach is just as testable as knowing where it does." },
+                            { question: "What are the reporting requirements for a pilot convicted of possessing and selling marijuana?", options: ["The conviction must be reported to the FAA Aeromedical Certification Division when applying for a medical certificate.", "A written report must be sent to the Civil Aviation Security Division within 60 days.", "No report is required unless the offence involved operating a motor vehicle."], correctAnswer: 0, explanation: "Two separate regimes, and this is the pair that catches people. A MOTOR VEHICLE ACTION for drugs or alcohol - driving-related - needs written notification to the Civil Aviation Security Division within 60 days under 61.15. A criminal drug conviction NOT tied to driving carries no 60-day letter: it is disclosed on the medical application to the Aeromedical Certification Division, and is separately grounds for certificate action." },
+                            { question: "If a certificated pilot changes their permanent mailing address and fails to notify the FAA, for how long may they continue to exercise pilot privileges?", options: ["30 days after the date of the move.", "60 days after the date of the move.", "Indefinitely, as long as the certificate itself remains valid."], correctAnswer: 0, explanation: "61.60 allows 30 days after the move before your privileges stop. Watch the family of deadlines that blur together: 30 days for an address change, 60 days for a motor vehicle action report, 10 days for the written NTSB accident report, and IMMEDIATELY for notifying the NTSB of the accident itself." }
                         ]
                     },
                     {
                         id: "PFWeather",
                         type: "mcq",
+                        resources: [{ label: "Stability, cloud types & precipitation", url: "https://www.youtube.com/results?search_query=atmospheric+stability+cloud+types+aviation+weather+explained" }, { label: "Fog types & icing hazards", url: "https://www.youtube.com/results?search_query=fog+types+aviation+radiation+advection+steam+fog+icing" }, { label: "Temperature, dewpoint & cloud bases", url: "https://www.youtube.com/results?search_query=temperature+dewpoint+spread+cloud+base+formula+aviation" }],
                         title: "Weather",
-                        text: "10 questions",
+                        text: "11 questions",
                         desc: "Stability and cloud type, icing and frost formation, inversions, cloud-base arithmetic and forecast coding.",
                         items: [
                             { question: "What are characteristics of a moist, unstable air mass?", options: ["Cumuliform clouds and showery precipitation.", "Stratiform clouds and continuous precipitation.", "Poor visibility and smooth air."], correctAnswer: 0, explanation: "Unstable air supports vertical development, giving cumuliform clouds, showery precipitation, turbulence and good visibility between showers. Stable air gives the opposite: stratiform layers, steady precipitation, smooth air and poor visibility." },
@@ -680,14 +695,16 @@
                             { question: "Surface temperature is 82 degrees F and dewpoint is 38 degrees F. Using the standard formula, the approximate height of the cumulus cloud base is:", options: ["10,000 feet AGL.", "11,000 feet AGL.", "8,800 feet AGL."], correctAnswer: 0, explanation: "Cloud base (ft AGL) = (Temp - Dewpoint) / 4.4 x 1,000. (82-38) = 44; 44/4.4 = 10; x 1,000 = 10,000 ft AGL. The 4.4 comes from the gap between the dry adiabatic lapse rate near 5.4 degrees F per 1,000 feet and the dewpoint lapse rate near 1 degree F per 1,000 feet." },
                             { question: "Frost forms on an aircraft surface when:", options: ["the surface temperature is at or below the dewpoint of the adjacent air, and the dewpoint is below freezing.", "liquid water droplets already in the air freeze on contact with a cold surface.", "warm, moist air condenses on a surface above freezing and then cools."], correctAnswer: 0, explanation: "Frost is deposition: water vapor goes straight from gas to ice with no liquid stage. The other two options describe freezing rain and glaze ice, an entirely different process. Frost must be removed before flight because it disrupts the boundary layer, not because of its weight." },
                             { question: "Clouds, fog, or dew will always form when:", options: ["water vapor condenses.", "water vapor is present.", "relative humidity reaches 100 percent."], correctAnswer: 0, explanation: "Clouds, fog and dew ARE condensed water — condensation is the definition, not a correlate. 100 percent relative humidity usually accompanies it but is not the trigger: without condensation nuclei air can be supersaturated with no droplets, and hygroscopic nuclei can start condensation slightly below 100 percent." },
-                            { question: "The presence of ice pellets at the surface is evidence that there:", options: ["is a temperature inversion with freezing rain at a higher altitude.", "has been a cold frontal passage with no precipitation aloft.", "are thunderstorms with hail directly overhead."], correctAnswer: 0, explanation: "Ice pellets begin as snow, melt into rain passing through a WARM layer aloft, then refreeze in colder air below. Their presence therefore proves warm air sits above cold air — an inversion — with freezing rain up there. Operationally it is a warning not to climb into that layer." }
+                            { question: "The presence of ice pellets at the surface is evidence that there:", options: ["is a temperature inversion with freezing rain at a higher altitude.", "has been a cold frontal passage with no precipitation aloft.", "are thunderstorms with hail directly overhead."], correctAnswer: 0, explanation: "Ice pellets begin as snow, melt into rain passing through a WARM layer aloft, then refreeze in colder air below. Their presence therefore proves warm air sits above cold air — an inversion — with freezing rain up there. Operationally it is a warning not to climb into that layer." },
+                            { question: "Low-level turbulence can occur and icing can become hazardous in which type of fog?", options: ["Steam fog.", "Radiation fog.", "Advection fog."], correctAnswer: 0, explanation: "Steam fog forms when cold dry air moves over much warmer water. The water heats the air from below, so the layer is convectively UNSTABLE - that is the low-level turbulence - and the droplets it carries are supercooled, so they freeze on contact with the airframe. Radiation fog forms in calm stable air, and advection fog is warm air over a cold surface; neither produces that combination." }
                         ]
                     },
                     {
                         id: "PFAero",
                         type: "mcq",
+                        resources: [{ label: "Load factor & bank angle", url: "https://www.youtube.com/results?search_query=load+factor+bank+angle+stall+speed+explained" }, { label: "Stalls & the phases of a spin", url: "https://www.youtube.com/results?search_query=spin+phases+incipient+fully+developed+recovery+explained" }, { label: "Ground effect & soft-field takeoff", url: "https://www.youtube.com/results?search_query=ground+effect+soft+field+takeoff+technique+explained" }],
                         title: "Aerodynamics & Performance",
-                        text: "11 questions",
+                        text: "13 questions",
                         desc: "Load factor and bank angle, V-speeds, stability, ground effect, spins, stalls and unusual attitude recoveries.",
                         items: [
                             { question: "Which of the following would be the most appropriate recovery procedure for a nose-low unusual attitude?", options: ["Reduce power, level the wings, then raise the nose to level flight attitude.", "Increase power, apply forward elevator pressure, then level the wings.", "Reduce power, raise the nose to level flight attitude, then level the wings."], correctAnswer: 0, explanation: "Nose low means airspeed is building: reduce power first to stay below Vne, level the wings BEFORE pulling so the pull does not become a high-G spiral, then raise the nose. Pulling with the wings still banked is what overstresses the airframe." },
@@ -700,12 +717,15 @@
                             { question: "Does the elevator of a T-tail airplane buffet as the main wing approaches a stall?", options: ["No — the horizontal stabilizer sits above the wing's turbulent wake, so the pre-stall buffet warning is absent or greatly reduced.", "Yes, but only when flaps are extended.", "Yes — the buffet is stronger than on a conventional tail."], correctAnswer: 0, explanation: "On a conventional tail the stabilizer sits in the turbulent wake the wing sheds approaching a stall, and that shaking IS the natural warning. A T-tail's stabilizer is mounted high on the fin, outside that wake, so the tactile warning is missing — which is why T-tails depend on an electronic stall warning system." },
                             { question: "What is the load factor on an airplane flying a 45 degree steep turn at a level altitude?", options: ["1.4 Gs.", "2.0 Gs.", "2.4 Gs."], correctAnswer: 0, explanation: "Load factor = 1 / cos(bank). cos 45 = 0.707, so 1/0.707 = 1.41 G. The 2.0 G answer belongs to a 60 degree bank, the most commonly confused pair. Worth memorizing: 30 deg = 1.15 G, 45 deg = 1.4 G, 60 deg = 2.0 G, 75 deg = 3.9 G." },
                             { question: "The load factor on any airplane during a constant altitude turn is determined by:", options: ["bank angle alone.", "airspeed alone.", "airspeed and gross weight together."], correctAnswer: 0, explanation: "In a level turn, load factor = 1 / cos(bank angle). Airspeed, weight and aircraft type do not appear in that formula: a 60 degree level bank is 2.0 G in a loaded 172 and in an empty one, fast or slow. Airspeed matters for a different question — whether you can HOLD that bank without stalling, since stall speed rises with the square root of load factor." },
-                            { question: "During the incipient phase of a spin, the aerodynamic and inertial forces on the airplane are:", options: ["out of balance.", "in balance.", "equal and opposite, producing a steady rotation."], correctAnswer: 0, explanation: "A spin has three phases. INCIPIENT: still developing, rotation and attitude changing, forces out of balance. FULLY DEVELOPED: rotation rate, airspeed and vertical speed stabilized, so the forces ARE in balance. RECOVERY: inputs break that balance again. Only the fully developed phase is in balance." }
+                            { question: "During the incipient phase of a spin, the aerodynamic and inertial forces on the airplane are:", options: ["out of balance.", "in balance.", "equal and opposite, producing a steady rotation."], correctAnswer: 0, explanation: "A spin has three phases. INCIPIENT: still developing, rotation and attitude changing, forces out of balance. FULLY DEVELOPED: rotation rate, airspeed and vertical speed stabilized, so the forces ARE in balance. RECOVERY: inputs break that balance again. Only the fully developed phase is in balance." },
+                            { question: "What is meant by the term load factor?", options: ["The ratio of the load supported by the airplane's wings to the actual weight of the aircraft and its contents.", "The total load an airplane is certified to carry, expressed in pounds.", "The ratio of maximum gross weight to basic empty weight."], correctAnswer: 0, explanation: "Load factor n = total lift / gross weight, expressed in G. Straight and level is 1.0 G by definition, because lift equals weight. A 60 degree level bank is 2.0 G - the wings are carrying twice the airplane's weight. It is a RATIO, never a number of pounds." },
+                            { question: "What minimum airspeed should be obtained before leaving ground effect during a soft-field takeoff?", options: ["Vx, the best angle-of-climb speed.", "Vs1, the clean stall speed.", "Vy, the best rate-of-climb speed."], correctAnswer: 0, explanation: "Inside ground effect the reduced induced drag lets the airplane fly at or even below Vs1 - but the instant you climb out of it, induced drag surges back. Pitching for the climb before accelerating to at least Vx gives an immediate departure stall: low, slow and behind the power curve. The technique is lift off early, STAY in ground effect, accelerate, then climb." }
                         ]
                     },
                     {
                         id: "PFNav",
                         type: "mcq",
+                        resources: [{ label: "Sectional charts & the MEF", url: "https://www.youtube.com/results?search_query=sectional+chart+maximum+elevation+figure+MEF+explained" }, { label: "GPS, WAAS & RAIM", url: "https://www.youtube.com/results?search_query=GPS+WAAS+RAIM+accuracy+explained+pilot" }, { label: "The wind triangle", url: "https://www.youtube.com/results?search_query=wind+triangle+true+heading+true+course+explained" }],
                         title: "Navigation & Charts",
                         text: "4 questions",
                         desc: "Chart reading and terrain clearance, the wind triangle, GPS and WAAS accuracy, and flight plan entries.",
@@ -719,6 +739,7 @@
                     {
                         id: "PFInstruments",
                         type: "mcq",
+                        resources: [{ label: "Altimeter & the types of altitude", url: "https://www.youtube.com/results?search_query=altimeter+setting+true+altitude+pressure+altitude+explained" }, { label: "Compass errors: ANDS and UNOS", url: "https://www.youtube.com/results?search_query=magnetic+compass+errors+ANDS+UNOS+explained" }, { label: "Pitot-static blockages", url: "https://www.youtube.com/results?search_query=pitot+static+system+blockage+failures+explained" }],
                         title: "Flight Instruments",
                         text: "3 questions",
                         desc: "Altimetry — what the altimeter actually indicates and how pressure and temperature mislead it — plus magnetic compass errors.",
@@ -731,25 +752,30 @@
                     {
                         id: "PFSystems",
                         type: "mcq",
+                        resources: [{ label: "Carburetor heat & carb icing", url: "https://www.youtube.com/results?search_query=carburetor+heat+carburetor+icing+explained+pilot" }, { label: "Constant-speed propeller & governor", url: "https://www.youtube.com/results?search_query=constant+speed+propeller+governor+manifold+pressure+RPM+explained" }, { label: "Detonation vs pre-ignition", url: "https://www.youtube.com/results?search_query=detonation+vs+preignition+aircraft+engine+explained" }],
                         title: "Aircraft Systems",
-                        text: "3 questions",
+                        text: "4 questions",
                         desc: "Carburetor heat and icing, mixture behaviour, and detonation. Small bank, but carburetor questions have caught you more than once.",
                         items: [
                             { question: "Applying carburetor heat will:", options: ["enrich the fuel/air mixture.", "lean the fuel/air mixture.", "not affect the fuel/air mixture."], correctAnswer: 0, explanation: "Heated air is LESS DENSE, so less air mass reaches the cylinders while the carburetor meters the same fuel — less air per unit of fuel is a RICHER mixture, along with a slight RPM drop. The intuition that misleads people is 'hot air, more energy, therefore leaner'; what actually matters is density, and hot air is thinner." },
                             { question: "If a pilot suspects detonation during climb-out after takeoff, the initial corrective action would be to:", options: ["lower the nose slightly to increase airspeed.", "lean the mixture.", "apply carburetor heat."], correctAnswer: 0, explanation: "Detonation is uncontrolled combustion driven by excessive heat, so every fix is a cooling action: lower the nose for more cooling airflow, enrich the mixture, reduce power. Leaning and carburetor heat both make it HOTTER and would worsen it." },
-                            { question: "The possibility of carburetor icing exists even when the ambient air temperature is as:", options: ["high as 70 degrees F and the relative humidity is high.", "low as 0 degrees F and the relative humidity is high.", "high as 95 degrees F and there is visible moisture."], correctAnswer: 0, explanation: "Fuel vaporization plus the venturi pressure drop can cool the carburetor 60 to 70 degrees F below ambient, so icing is possible on a mild humid day. At 0 degrees F the air holds very little moisture, so risk is actually LOWER — the dangerous case is moderate temperature with high humidity, exactly when a pilot is not expecting ice." }
+                            { question: "The possibility of carburetor icing exists even when the ambient air temperature is as:", options: ["high as 70 degrees F and the relative humidity is high.", "low as 0 degrees F and the relative humidity is high.", "high as 95 degrees F and there is visible moisture."], correctAnswer: 0, explanation: "Fuel vaporization plus the venturi pressure drop can cool the carburetor 60 to 70 degrees F below ambient, so icing is possible on a mild humid day. At 0 degrees F the air holds very little moisture, so risk is actually LOWER — the dangerous case is moderate temperature with high humidity, exactly when a pilot is not expecting ice." },
+                            { question: "How is engine operation controlled on an engine equipped with a constant-speed propeller?", options: ["The throttle controls power output as registered on the manifold pressure gauge, and the propeller control regulates engine RPM.", "The throttle controls power output and the propeller control regulates a constant blade angle.", "The throttle controls RPM and the propeller control sets manifold pressure."], correctAnswer: 0, explanation: "Black knob is the throttle: power, read as manifold pressure in inches of mercury. Blue knob is the propeller: the RPM you want, held there by a governor. The misconception is that the prop control sets a FIXED blade angle - it does the opposite. Blade angle changes continually so that RPM stays constant, which is exactly where the name constant-speed comes from." }
                         ]
                     },
                     {
                         id: "PFComms",
                         type: "mcq",
-                        title: "Comms & Human Factors",
-                        text: "3 questions",
-                        desc: "Radio procedure at non-towered fields, how ATC references traffic, and the decision-making failures that kill VFR pilots.",
+                        resources: [{ label: "Non-towered radio procedures", url: "https://www.youtube.com/results?search_query=non+towered+airport+radio+procedures+CTAF+UNICOM" }, { label: "Line up and wait & runway safety", url: "https://www.youtube.com/results?search_query=line+up+and+wait+runway+incursion+safety+explained" }, { label: "Taxiing in strong wind", url: "https://www.youtube.com/results?search_query=taxi+in+strong+wind+aileron+elevator+position+explained" }, { label: "VFR into IMC & spatial disorientation", url: "https://www.youtube.com/results?search_query=VFR+into+IMC+spatial+disorientation+178+seconds" }],
+                        title: "Ops, Comms & Human Factors",
+                        text: "5 questions",
+                        desc: "Radio procedure at non-towered fields, runway safety and line up and wait, taxiing in strong wind, how ATC references traffic, and the decision-making failures that kill VFR pilots.",
                         items: [
                             { question: "At an airport without an operating control tower, UNICOM is:", options: ["a non-government ground station, often sharing the CTAF frequency, that may relay wind, runway, and traffic advisories on request.", "another aircraft currently in the traffic pattern.", "Flight Service Station personnel monitoring the field remotely."], correctAnswer: 0, explanation: "Per AIM 4-1-9, UNICOM is a non-government air-ground station, usually the FBO, often on the same frequency as the CTAF at small fields. Silence on frequency does not mean nobody is listening — UNICOM transmits only when called." },
                             { question: "What often leads to spatial disorientation or collision with ground/obstacles when flying under Visual Flight Rules (VFR)?", options: ["Continual flight into instrument conditions.", "Duck-under syndrome.", "Getting behind the aircraft."], correctAnswer: 0, explanation: "VFR into IMC is the classic fatal general aviation scenario: with the external horizon gone the vestibular system lies to you, and disorientation often ends in a graveyard spiral or CFIT. Duck-under syndrome is an IFR approach error, descending below MDA or DH to get visual with the runway, so it does not apply to VFR flight." },
-                            { question: "When an air traffic controller issues radar traffic information in relation to the 12-hour clock, the reference the controller uses is the aircraft's:", options: ["ground track.", "magnetic heading.", "true heading."], correctAnswer: 0, explanation: "Radar shows the controller where you are MOVING over the ground, not where your nose points. In a crosswind those differ by the wind correction angle, so traffic called at 12 o'clock can actually appear off to one side of the nose. Expect the offset and scan wider than the clock position suggests." }
+                            { question: "When an air traffic controller issues radar traffic information in relation to the 12-hour clock, the reference the controller uses is the aircraft's:", options: ["ground track.", "magnetic heading.", "true heading."], correctAnswer: 0, explanation: "Radar shows the controller where you are MOVING over the ground, not where your nose points. In a crosswind those differ by the wind correction angle, so traffic called at 12 o'clock can actually appear off to one side of the nose. Expect the offset and scan wider than the clock position suggests." },
+                            { question: "ATC advises 'line up and wait' on runway 33. After more than 90 seconds on the runway with no takeoff clearance, the appropriate action is to:", options: ["contact ATC.", "continue waiting, since the instruction carries no time limit.", "begin the takeoff, since line up and wait implies a clearance is imminent."], correctAnswer: 0, explanation: "Line Up and Wait is NEVER a takeoff clearance. Per AIM 4-3-10, if you have held in position for a significant period - 90 seconds is the practical trigger - or you see conflicting traffic, you contact the tower and confirm your status. Sitting stationary on an active runway is one of the highest-exposure positions in aviation." },
+                            { question: "When taxiing with a strong quartering TAILWIND, which aileron position should be used?", options: ["Aileron down on the side the wind is coming from - yoke turned away from the wind.", "Aileron down on the downwind side - yoke turned into the wind.", "Ailerons neutral, with the elevator held full up."], correctAnswer: 0, explanation: "Climb into, DIVE AWAY. With a quartering tailwind you push the yoke forward and turn it AWAY from the wind: elevator down stops the wind lifting the tail, and turning away puts the UPWIND aileron down, pressing that wing toward the ground so the tailwind cannot get under it. A quartering tailwind is the most dangerous taxi wind precisely because both controls reverse from the headwind case." }
                         ]
                     }
                 ]
@@ -886,7 +912,7 @@
         const LS_KEY = 'c172ppl.progress.v1';
         const Store = (function () {
             let usable = true;
-            let data = { topics: {}, items: {}, settings: { drillLength: 15, mixedLength: 25, mixedScope: 'all' } };
+            let data = { topics: {}, items: {}, settings: { drillLength: 15, mixedLength: 25, mixedScope: 'all', unseenOnly: false } };
             try {
                 const raw = localStorage.getItem(LS_KEY);
                 if (raw) {
@@ -932,6 +958,15 @@
             let sum = 0;
             for (let i = 0; i < n; i++) sum += itemWeight(flow.id, i);
             return sum / n;
+        }
+        // Items with no answer history at all — "questions I have not done yet".
+        function unseenIndices(flow) {
+            const out = [];
+            if (flow.type !== 'mcq') return out;
+            for (let i = 0; i < flow.items.length; i++) {
+                if (!Store.data.items[flow.id + '::' + i]) out.push(i);
+            }
+            return out;
         }
         function weakItemIndices(flow) {
             const out = [];
@@ -1217,7 +1252,11 @@
            --------------------------------------------------------- */
         function buildTopicDrill(flow, length) {
             if (flow.type === 'mcq') {
-                const idxs = flow.items.map((_, i) => i);
+                let idxs = flow.items.map((_, i) => i);
+                if (Store.data.settings.unseenOnly) {
+                    const fresh = unseenIndices(flow);
+                    if (fresh.length) idxs = fresh;   // fall back to the whole bank once nothing is left unseen
+                }
                 const n = Math.min(length, idxs.length);
                 return weightedSample(idxs, i => itemWeight(flow.id, i), n).map(i => finalize(mcqQuestion(flow, i)));
             }
@@ -1535,7 +1574,12 @@
             $('mainStartBtn').style.display = drillable ? 'block' : 'none';
 
             if (drillable) {
-                renderLengthChips($('lengthChips'), 'drillLength', flow.type === 'mcq' ? flow.items.length : 0);
+                renderModeChips(flow);
+                const freshCount = unseenIndices(flow).length;
+                const effectiveCap = (flow.type === 'mcq')
+                    ? ((Store.data.settings.unseenOnly && freshCount) ? freshCount : flow.items.length)
+                    : 0;
+                renderLengthChips($('lengthChips'), 'drillLength', effectiveCap);
                 const t = Store.data.topics[flow.id];
                 const weak = weakItemIndices(flow).length;
                 const bits = [];
@@ -1549,11 +1593,50 @@
                 }
                 if (weak) bits.push(weak + ' weak item' + (weak > 1 ? 's' : ''));
                 $('topicStats').textContent = bits.join('  ·  ');
-                $('drillHint').textContent = (flow.type === 'mcq')
-                    ? 'Bank holds ' + flow.items.length + ' questions. Weak questions are drawn first.'
-                    : 'Questions are generated from the flow. Items you get wrong come back more often.';
+                if (flow.type !== 'mcq') {
+                    $('drillHint').textContent = 'Questions are generated from the flow. Items you get wrong come back more often.';
+                } else if (Store.data.settings.unseenOnly && freshCount) {
+                    $('drillHint').textContent = 'Drawing only from the ' + freshCount + ' question' + (freshCount > 1 ? 's' : '') + " you have not answered yet, so you don't repeat what you have already done.";
+                } else if (Store.data.settings.unseenOnly) {
+                    $('drillHint').textContent = 'Nothing left unseen in this bank — falling back to all ' + flow.items.length + ' questions, weakest first.';
+                } else {
+                    $('drillHint').textContent = 'Bank holds ' + flow.items.length + ' questions. Weak questions are drawn first.'
+                        + (freshCount ? '  ' + freshCount + ' not answered yet.' : '');
+                }
+                renderResources(flow);
             }
             showPage({ page: 'study', quizId: flow.id, cat: currentStudyCat }, mode);
+        }
+
+        function renderModeChips(flow) {
+            const wrap = $('modeChips'), label = $('modeLabel');
+            if (flow.type !== 'mcq') { wrap.style.display = 'none'; label.style.display = 'none'; return; }
+            wrap.style.display = ''; label.style.display = '';
+            const fresh = unseenIndices(flow).length;
+            const unseenOn = !!Store.data.settings.unseenOnly;
+            wrap.innerHTML = '';
+            [['all', 'All (' + flow.items.length + ')'], ['unseen', 'Not done yet (' + fresh + ')']].forEach(function (pair) {
+                const key = pair[0];
+                const b = document.createElement('button');
+                b.className = 'chip' + (((key === 'unseen') === unseenOn) ? ' selected' : '');
+                b.textContent = pair[1];
+                if (key === 'unseen' && !fresh) b.disabled = true;
+                b.addEventListener('click', function () {
+                    Store.data.settings.unseenOnly = (key === 'unseen');
+                    Store.save();
+                    renderStudyScreen(flow, 'replace', currentStudyCat);
+                });
+                wrap.appendChild(b);
+            });
+        }
+
+        function renderResources(flow) {
+            const box = $('studyResources');
+            if (!flow.resources || !flow.resources.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+            box.style.display = '';
+            box.innerHTML = '<span class="cfg-label">Watch on this topic</span>' + flow.resources.map(function (r) {
+                return '<a class="res-link" href="' + r.url + '" target="_blank" rel="noopener noreferrer">' + esc(r.label) + '</a>';
+            }).join('');
         }
 
         // `cap` is a hard ceiling (a fixed question bank); pass 0 for generated drills.
@@ -1965,6 +2048,7 @@
             ALL_FLOWS: ALL_FLOWS, appDatabase: appDatabase, Store: Store,
             generateOne: generateOne, buildTopicDrill: buildTopicDrill, buildMixedDrill: buildMixedDrill,
             splitItem: splitItem, norm: norm, validOptions: validOptions,
+            renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices,
             distractorPool: distractorPool, uniqueIndices: uniqueIndices, stripTags: stripTags
         };
 
