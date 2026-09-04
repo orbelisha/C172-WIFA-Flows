@@ -316,6 +316,15 @@
         .bank-review[open] > summary::before { content: '▾'; }
         .bank-review > summary:hover { color: var(--primary-color); }
         .bank-review-hint { font-size: 0.75rem; font-weight: 400; opacity: 0.65; }
+        .cat-note { margin: 0 0 26px 0; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--card-bg); }
+        .cat-note-intro { margin: 12px 0 4px 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+        .cat-note-list { margin: 10px 0 2px 0; display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; align-items: baseline; }
+        .cat-note-list dt { font-weight: 700; font-size: 0.85rem; color: var(--primary-color); white-space: nowrap; }
+        .cat-note-list dd { margin: 0; font-size: 0.88rem; color: var(--text-main); line-height: 1.45; }
+        @media (max-width: 520px) {
+            .cat-note-list { grid-template-columns: 1fr; gap: 2px 0; }
+            .cat-note-list dd { margin-bottom: 12px; }
+        }
         /* Top-of-home sign-in banner. Loud while signed out so the sync
            never gets forgotten; quiet and out of the way once signed in. */
         .sync-banner {
@@ -597,7 +606,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">Version 6 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
+        <div class="footer">Version 7 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -654,17 +663,10 @@
                     { id: "FlatTire", type: "sequence", title: "Flat Tire", text: "Landing With a Flat Tire", desc: "Landing technique for a flat main tire or a flat nose tire.", items: ["Main Tire: Approach ➔ NORMAL", "Main Tire: Touchdown ➔ GOOD TIRE FIRST", "Nose Tire ➔ SAME AS SOFT FIELD LANDING"] }
                 ]
             },
-            "V-Speeds": {
-                "Airspeed Indicator": [
-                    { id: "V_Arcs", type: "definition", title: "The Arcs", text: "ASI Markings", desc: "V-speeds indicated by color arcs on the airspeed indicator.", items: ["Vso ➔ Stall speed in landing configuration (bottom of white arc)", "Vs1 ➔ Stall speed in clean configuration (bottom of green arc)", "Vfe ➔ Maximum flap extended speed (top of white arc)", "Vno ➔ Maximum structural cruising speed (top of green arc)", "Vne ➔ Never-exceed speed (red line)"] }
-                ],
-                "Performance & Ops": [
-                    { id: "V_Perf", type: "definition", title: "Performance", text: "Operational Limits", desc: "Critical V-speeds that are not color-coded on the airspeed indicator.", items: ["Va ➔ Design maneuvering speed", "Vx ➔ Best angle of climb speed", "Vy ➔ Best rate of climb speed", "Vle ➔ Maximum landing gear extended speed", "Vlo ➔ Maximum landing gear operating speed", "Vr ➔ Rotation speed", "Vg ➔ Best glide speed"] }
-                ]
-            },
             "POH Navigation": {
                 "Structure": [
-                    { id: "POHOrder", type: "sequence", title: "The 9 Sections", text: "POH Layout", desc: "The nine sections of the C-172Q POH, in order. Every GAMA-format POH uses this same running order, so learning it once transfers to any modern aircraft handbook.", items: ["1 ➔ General", "2 ➔ Limitations", "3 ➔ Emergency Procedures", "4 ➔ Normal Procedures", "5 ➔ Performance", "6 ➔ Weight & Balance / Equipment List", "7 ➔ Airplane & Systems Descriptions", "8 ➔ Handling, Service & Maintenance", "9 ➔ Supplements"] },
+                    { id: "POHNumbers", type: "definition", title: "Section Numbers", text: "Number and Title", desc: "Which number is which section, drilled in BOTH directions — given the number, name the section; given the section, give the number. This is the half an ordering drill cannot teach you, and it is how an examiner actually asks it: \"where would you look for that?\"", items: ["Section 1 ➔ General", "Section 2 ➔ Limitations", "Section 3 ➔ Emergency Procedures", "Section 4 ➔ Normal Procedures", "Section 5 ➔ Performance", "Section 6 ➔ Weight & Balance / Equipment List", "Section 7 ➔ Airplane & Systems Descriptions", "Section 8 ➔ Handling, Service & Maintenance", "Section 9 ➔ Supplements"] },
+                    { id: "POHOrder", type: "sequence", title: "The 9 Sections", text: "POH Layout", desc: "The nine sections in running order. The numbers are deliberately left out here — this bank drills what FOLLOWS what, and with the numbers showing you could answer it by counting. Section Numbers is the bank for the number-to-title mapping. Every GAMA-format POH uses this same order, so learning it once transfers to any modern handbook.", items: ["General", "Limitations", "Emergency Procedures", "Normal Procedures", "Performance", "Weight & Balance / Equipment List", "Airplane & Systems Descriptions", "Handling, Service & Maintenance", "Supplements"] },
                     { id: "POHContents", type: "definition", title: "What Lives Where", text: "Section Contents", desc: "What each POH section actually holds — enough to know where to look without memorizing the numbers inside.", items: ["Section 1 ➔ General: descriptive data (engine, propeller, fuel, oil, weights, dimensions) plus definitions of symbols and terminology", "Section 2 ➔ Limitations: airspeed limits and ASI markings, power plant limits and instrument markings, weight limits, CG limits, maneuver limits, placards", "Section 3 ➔ Emergency Procedures: operational checklists then amplified procedures for engine failures, fires, icing, forced landings and system malfunctions", "Section 4 ➔ Normal Procedures: preflight inspection walkaround, and checklists from starting through securing the airplane", "Section 5 ➔ Performance: all the charts and tables — takeoff and landing distance, climb, cruise, range, endurance, stall speeds, wind components", "Section 6 ➔ Weight & Balance: weighing procedures, the loading computation and the airplane's equipment list", "Section 7 ➔ Airplane & Systems Descriptions: how each system actually works — airframe, flight controls, electrical, fuel, engine, landing gear", "Section 8 ➔ Handling, Service & Maintenance: servicing, ground handling, towing, tie-down, cleaning, and required inspection intervals", "Section 9 ➔ Supplements: operating information for optional equipment such as autopilots, transponders, DME and strobe lights"] }
                 ],
                 "Where To Find It": [
@@ -690,16 +692,16 @@
                 ]
             },
             "FAR Navigation": {
-                "The Map": [
-                    { id: "FARParts", type: "definition", title: "Where The Rules Live", text: "Navigating the FARs", desc: "Before you can apply PAVE you have to know which Part the answer lives in. The examiner cares less about the citation than about whether you open the right book.", items: ["Part 1 ➔ Definitions and abbreviations — V-speeds, and the legal definition of night (end of evening civil twilight to beginning of morning civil twilight)", "Part 61 ➔ The Pilot — certificates, medicals, flight reviews, passenger currency, the 30-day address change rule (61.60)", "Part 91 ➔ The Aircraft and the Environment — right-of-way, weather minimums, airspace, required equipment, required inspections", "Part 141 ➔ Structured pilot schools — an approved syllabus, which is what allows the reduced minimum flight hours (35 vs 40 for the PPL)"] },
+                "How To Read It": [
                     { id: "FARCitation", type: "definition", title: "Reading a Citation", text: "14 CFR § 91.205(b)(1)", desc: "How to take a regulation apart. The examiner does not expect you to quote section numbers from memory, but he does expect you to hear a citation and know how deep in the rule he is pointing.", items: ["14 CFR ➜ Title 14 of the Code of Federal Regulations — Aeronautics and Space. This is what everyone calls 'the FARs'", "§ ➜ the section symbol. Two of them (§§) means more than one section is being cited", "Part (91) ➜ the subject area. 91 is General Operating and Flight Rules", "Section (.205) ➜ the specific rule inside that Part. 91.205 is required instruments and equipment", "Paragraph (b) ➜ the subdivision. In 91.205, (b) is Visual flight rules (day)", "Sub-paragraph (1) ➜ the individual item. In 91.205(b), (1) is the airspeed indicator", "The AIM ➜ bound with the FARs in the same book, but it is NOT regulatory. It is guidance and recommended procedure"] }
                 ],
                 "The Core Triad": [
                     { id: "FAR61", type: "definition", title: "Part 61 — The Pilot", text: "Who Is Flying?", desc: "Everything about earning and keeping the certificate. If the question is about YOU rather than the airplane, the answer is almost always in Part 61.", items: ["61.3 ➜ Certificates required — pilot certificate, medical or BasicMed, and photo ID in your personal possession", "61.23 ➜ Medical duration — a third class lasts 60 calendar months if you were under 40 on the day of the exam, 24 calendar months if you were 40 or over. Your age at the EXAM sets it, not your age now", "61.56 ➜ Flight review — 1 hour of flight and 1 hour of ground every 24 calendar months", "61.57 ➜ Recency to carry passengers — 3 takeoffs and landings in the preceding 90 days. Day may be touch-and-go in a tricycle-gear airplane; NIGHT must be to a full stop, and so must tailwheel at any hour", "61.60 ➜ Change of address — notify the FAA within 30 days, and you may not exercise privileges after that until you do", "61.113 ➜ Private pilot privileges — no compensation or hire. Passengers may be asked only for the PRO RATA share of fuel, oil, airport expenditures and rental fees"] },
                     { id: "FAR91", type: "definition", title: "Part 91 — The Flight", text: "How Is It Flying?", desc: "General operating and flight rules — the airplane, the airspace and the conduct of the flight. If the question is about the machine or the environment rather than about you, it is a Part 91 question.", items: ["91.3 ➜ PIC authority — the pilot in command is DIRECTLY responsible for and the FINAL authority on the operation, and may deviate from any rule in Part 91 to the extent required to meet an in-flight emergency", "91.103 ➜ Preflight action — become familiar with all available information concerning that flight (NWKRAFT)", "91.155 ➜ Basic VFR weather minimums — visibility and cloud clearance by airspace and altitude", "91.205 ➜ Required instruments and equipment (A TOMATO FLAMES for day, plus FLAPS for night)", "91.213 ➜ Inoperative equipment with no MEL — the item must not be part of the VFR-day type certificate, not required by 91.205 for this flight, not required by an AD, and not required by the equipment list. Then deactivate or remove it and placard it INOPERATIVE", "91.215 ➜ Transponder and ADS-B airspace requirements", "91.403 ➜ Maintenance responsibility — the OWNER or OPERATOR is primarily responsible for airworthiness. Not the mechanic, and not the flight school", "91.409 / 91.411 / 91.413 ➜ Required inspections — annual, altimeter and static system, transponder (AV1ATE)"] },
+                    { id: "FAR141School", type: "definition", title: "Part 141 — The School", text: "Where You Trained", desc: "What Part 141 actually is as a regulation rather than as a marketing line. It certificates the SCHOOL, not the pilot — WIFA holds the certificate, and each course it teaches is approved separately.", items: ["Subpart A ➔ General — certification of the school, its ratings, and the application process", "Subpart B ➔ Personnel, aircraft and facilities — the chief instructor the school must appoint, and the aircraft and ground facilities it must provide", "Subpart C ➔ Training Course Outline and curriculum — the TCO, which is the FAA-APPROVED syllabus the school is then required to follow", "Subpart D ➔ Examining authority — a school that qualifies for it may issue certificates to its own graduates without an FAA practical test", "Subpart E ➔ Operating rules — enrolment, training in the approved order, stage checks, and graduation certificates", "Subpart F ➔ Records — what the school must keep, and for how long", "Appendix B ➔ the Private Pilot Certification Course — this is the appendix that sets the 35-hour minimum"] },
                     { id: "FAR141", type: "definition", title: "Part 61 vs Part 141", text: "Where You Trained", desc: "The difference between the two training paths, and what it actually buys. WIFA is where this matters to you directly.", items: ["Part 61 ➜ flexible and instructor-led. The syllabus is the instructor's judgement. 40 hours minimum for the PPL", "Part 141 ➜ an FAA-certificated school flying an FAA-APPROVED syllabus, under regular FAA oversight and stage checks", "The trade ➜ structure and oversight in exchange for a lower floor — 35 hours for the PPL instead of 40", "What does NOT change ➜ the ACS standards, the written and the checkride are identical either way", "The honest caveat ➜ both numbers are legal floors, not plans. Most pilots need more than either, so the 5-hour gap rarely decides the real cost"] }
                 ],
-                "Beyond 61 and 91": [
+                "The Other Parts": [
                     { id: "FARPeripheral", type: "definition", title: "Beyond 61 and 91", text: "The Other Parts", desc: "The Parts that come up when the scenario steps outside normal flight operations. Knowing these is what separates an examiner's 'good' from 'he actually knows the book'.", items: ["Part 1 ➜ Definitions and abbreviations — V-speeds, category versus class, and the legal definition of night (end of evening civil twilight to beginning of morning civil twilight)", "Part 43 ➜ Maintenance — who may perform what, and the preventive maintenance a pilot may legally do", "Part 67 ➜ Medical STANDARDS — the physical requirements to pass the exam. Part 61 says how long the certificate then lasts. Two different questions, two different Parts", "Part 71 ➜ Designation of Class A, B, C, D and E airspace, air traffic service routes and reporting points", "Part 73 ➜ Special use airspace — but ONLY restricted and prohibited areas. MOAs, alert areas and warning areas are not established by Part 73", "49 CFR 830 ➜ NTSB accident and incident notification. Note the title — 49, not 14, and NTSB, not FAA"] },
                     { id: "FAR43", type: "definition", title: "Preventive Maintenance", text: "Part 43, Appendix A(c)", desc: "The single most useful thing in Part 43 for a private pilot: the closed list of jobs you may legally do yourself. The examiner's question is almost never 'name all 31' — it is 'may you do THIS one'.", items: ["Where it lives ➜ Part 43, Appendix A, paragraph (c)", "What it is ➜ a closed list of 31 preventive maintenance tasks. If the job is not on the list it is maintenance, and it needs a certificated mechanic", "Who may do it ➜ 43.3(g) — the holder of a pilot certificate, on an aircraft owned or operated by that pilot, and not used under Part 121, 129 or 135", "Typical items ➜ servicing landing gear tires and wheel bearings, changing engine oil, replacing safety wire and cotter keys, replacing side windows, replacing seat belts, replacing bulbs and reflectors, replacing spark plugs", "The limit ➜ it may not involve complex assembly operations, and the work must be recorded in the aircraft maintenance records with a description, date and your certificate number", "The trap ➜ a rented airplane is not obviously yours to work on. Ask the operator before you touch it, whatever the reg's wording allows"] },
                     { id: "NTSB830", type: "definition", title: "NTSB Reporting", text: "49 CFR Part 830", desc: "Accident and incident reporting. The distinction the FAA tests hardest is ACCIDENT versus INCIDENT — they carry completely different reporting duties, and only one of them has a 10-day clock.", items: ["830.2 Accident ➜ death or serious injury, or SUBSTANTIAL damage to the aircraft, between the time anyone boards intending flight until everyone has disembarked", "NOT substantial damage ➜ engine failure damage limited to one engine, bent fairings or cowling, dented skin, small punctures, ground damage to rotor or propeller blades, damage to landing gear, tires, brakes or wingtips", "830.5 Immediate notification ➜ any accident, plus a listed set of serious INCIDENTS — flight control system malfunction or failure, a crewmember unable to perform duties through illness or injury, in-flight fire, and in-flight collision among them", "830.15 Written report ➜ within 10 days for an ACCIDENT. For an incident, a report is filed ONLY when the NTSB asks for one", "830.10 Preserve the wreckage ➜ you may disturb it only to protect life, protect the wreckage from further damage, or protect the public", "The trap ➜ an incident does not start a 10-day clock. Answering '10 days' to an incident question is the mistake the wording is designed to produce"] }
@@ -727,6 +729,14 @@
                             { question: "You move house. What does the FAA require, and under which Part?", options: ["61.60 — notify the FAA within 30 days, and you may not exercise privileges after that until you do.", "Part 47 — the same 30-day rule as aircraft registration.", "Nothing until your certificate is next renewed."], correctAnswer: 0, explanation: "61.60 is a pilot-certificate rule, so it lives under the P of PAVE and in Part 61. There is a separate address rule for aircraft REGISTRATION in Part 47 — different Part, different subject. The question is which of the two you were asked about." }
                         ]
                     }
+                ]
+            },
+            "V-Speeds": {
+                "Airspeed Indicator": [
+                    { id: "V_Arcs", type: "definition", title: "The Arcs", text: "ASI Markings", desc: "V-speeds indicated by color arcs on the airspeed indicator.", items: ["Vso ➔ Stall speed in landing configuration (bottom of white arc)", "Vs1 ➔ Stall speed in clean configuration (bottom of green arc)", "Vfe ➔ Maximum flap extended speed (top of white arc)", "Vno ➔ Maximum structural cruising speed (top of green arc)", "Vne ➔ Never-exceed speed (red line)"] }
+                ],
+                "Performance & Ops": [
+                    { id: "V_Perf", type: "definition", title: "Performance", text: "Operational Limits", desc: "Critical V-speeds that are not color-coded on the airspeed indicator.", items: ["Va ➔ Design maneuvering speed", "Vx ➔ Best angle of climb speed", "Vy ➔ Best rate of climb speed", "Vle ➔ Maximum landing gear extended speed", "Vlo ➔ Maximum landing gear operating speed", "Vr ➔ Rotation speed", "Vg ➔ Best glide speed"] }
                 ]
             },
             "Weather": {
@@ -766,6 +776,9 @@
                 "A — Aircraft": [
                     { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight. Traps: the Airworthiness Certificate never expires as long as the aircraft is maintained per 91.409 and 91.403; the Registration DOES expire — 7 years since the 2023 rule change (14 CFR 47.40); the Radio Station License is only needed for international flights; and Weight and Balance data is tail-number specific, so a sister ship's data is not legal for this airplane.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] },
                     { id: "AV1ATE", type: "definition", title: "AV1ATE", text: "A — Inspections", desc: "The required-inspections half of the Aircraft pillar. The pattern worth memorizing: 12 calendar months for Annual and ELT, 24 calendar months for Altimeter/static and Transponder, 30 days for the VOR check, 100 hours for the 100-hour. Note which ones are IFR-only — the examiner's favorite trap is applying an IFR requirement to a VFR question.", items: ["A ➔ Annual — every 12 calendar months, requires an A and P mechanic with Inspection Authorization (91.409a)", "A ➔ Airworthiness Directives — mandatory FAA recalls; can be emergency or routine, one-time or recurring (91.403)", "V ➔ VOR check — every 30 days, IFR ONLY (91.171)", "1 ➔ 100-hour — ONLY for carrying persons for hire or flight instruction for hire in an aircraft the instructor provides; may be exceeded by up to 10 hours only to reach a maintenance base, and the excess is subtracted from the next interval (91.409b)", "A ➔ Altimeter and pitot-static system — every 24 calendar months, IFR ONLY (91.411)", "T ➔ Transponder — every 24 calendar months, VFR too (91.413)", "E ➔ ELT — inspected every 12 calendar months; battery replaced after 1 cumulative hour of use or when 50 percent of useful life has expired (91.207d) — remember it as 121.5: the frequency, 1 hour, 50 percent"] },
+                    /* CORRECTION v2.0.0: the first two A/T pairs were swapped in v1.2.2.
+                       The standard FAR 91.205(b) mnemonic order is
+                       Airspeed, Tachometer, Oil pressure, Manifold pressure, Altimeter, ... */,
                     /* CORRECTION v2.0.0: the first two A/T pairs were swapped in v1.2.2.
                        The standard FAR 91.205(b) mnemonic order is
                        Airspeed, Tachometer, Oil pressure, Manifold pressure, Altimeter, ... */
@@ -1037,6 +1050,51 @@
             const rest = Object.keys(CATS).filter(c => !known[c]);
             if (rest.length) groups.push({ title: 'More', cats: rest });
             return groups;
+        }
+
+        // Collapsed reference block shown at the top of a category page. This is
+        // LOOKUP material, not a drill — an index of twenty Parts is something
+        // you check, not something you memorize, so it does not get its own bank.
+        const CAT_NOTES = {
+            'FAR Navigation': {
+                summary: 'The Parts at a glance',
+                hint: 'tap for the index',
+                intro: 'Everything below is 14 CFR unless the row says otherwise. You are not expected to know all of these — you are expected to know which one to open.',
+                rows: [
+                    ['Part 1', 'Definitions and Abbreviations. Where night, category, class and the V-speed symbols are legally defined.'],
+                    ['Part 21', 'Certification Procedures for Products and Articles. How a design earns a type certificate and an aircraft earns its airworthiness certificate.'],
+                    ['Part 23', 'Airworthiness Standards: Normal Category Airplanes. The design standard a light aircraft is certificated against.'],
+                    ['Part 39', 'Airworthiness Directives. The rule that makes an AD legally binding rather than advisory.'],
+                    ['Part 43', 'Maintenance, Preventive Maintenance, Rebuilding and Alteration. Who may do what — and Appendix A(c), the 31 jobs a pilot may do.'],
+                    ['Part 47', 'Aircraft Registration. The registration certificate and its 7-year life.'],
+                    ['Part 61', 'Certification: Pilots, Flight Instructors and Ground Instructors. Everything about YOU — ratings, currency, privileges, medicals’ duration.'],
+                    ['Part 67', 'Medical Standards and Certification. The physical standard you must meet to be issued one. How long it then lasts is 61.23, not here.'],
+                    ['Part 68', 'BasicMed. The alternative to a medical certificate for certain small aircraft.'],
+                    ['Part 71', 'Designation of Class A, B, C, D and E airspace, ATS routes and reporting points. The dimensions of the airspace itself.'],
+                    ['Part 73', 'Special Use Airspace — but only RESTRICTED and PROHIBITED areas. MOAs, alert and warning areas are not established here.'],
+                    ['Part 91', 'General Operating and Flight Rules. The flight, the aircraft and how you may operate in the airspace.'],
+                    ['Part 97', 'Standard Instrument Procedures. The published IFR approaches themselves.'],
+                    ['Part 119', 'Certification: Air Carriers and Commercial Operators. Decides whether an operation falls under 121 or 135.'],
+                    ['Part 121', 'Domestic, Flag and Supplemental Operations. The airlines.'],
+                    ['Part 135', 'Commuter and On-Demand Operations. Charter and air taxi.'],
+                    ['Part 141', 'Pilot Schools. WIFA holds one of these. Approved syllabus, stage checks, 35-hour PPL minimum.'],
+                    ['Part 142', 'Training Centers. Simulator-based training organisations.'],
+                    ['49 CFR 830', 'NTSB accident and incident notification and reporting. Note the title — 49, not 14, and NTSB, not FAA.'],
+                    ['The AIM', 'NOT regulatory. Guidance and recommended practice, bound in the same book as the FARs, which is why people confuse the two.']
+                ]
+            }
+        };
+        function buildCatNote(catName) {
+            const n = CAT_NOTES[catName];
+            if (!n) return null;
+            const el = document.createElement('details');
+            el.className = 'bank-review cat-note';
+            el.innerHTML = '<summary>' + esc(n.summary)
+                + '<span class="bank-review-hint">' + esc(n.hint) + '</span></summary>'
+                + (n.intro ? '<p class="cat-note-intro">' + esc(n.intro) + '</p>' : '')
+                + '<dl class="cat-note-list">' + n.rows.map(r =>
+                    '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>').join('') + '</dl>';
+            return el;
         }
 
         function catFlows(catName) {
@@ -1797,6 +1855,8 @@
             $('catTitle').textContent = catName;
             const container = $('catContent');
             container.innerHTML = '';
+            const note = buildCatNote(catName);
+            if (note) container.appendChild(note);
             Object.keys(CATS[catName]).forEach(subCatName => {
                 const section = document.createElement('div');
                 section.className = 'category-section';
@@ -2567,7 +2627,7 @@
             generateOne: generateOne, buildTopicDrill: buildTopicDrill, buildMixedDrill: buildMixedDrill,
             splitItem: splitItem, norm: norm, validOptions: validOptions,
             renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices, Sync: Sync,
-            renderHome: renderHome, renderMixedScreen: renderMixedScreen,
+            renderHome: renderHome, renderMixedScreen: renderMixedScreen, renderCategory: renderCategory,
             groupedCats: groupedCats, selectedFlows: selectedFlows,
             distractorPool: distractorPool, uniqueIndices: uniqueIndices, stripTags: stripTags
         };

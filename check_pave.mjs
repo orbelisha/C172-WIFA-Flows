@@ -76,10 +76,28 @@ const out = await page.evaluate((expected) => {
     // FAR navigation is its own top-level category, a peer of POH Navigation,
     // NOT a sub-section of PAVE.
     r.farIsTopLevel = !!CATS['FAR Navigation'];
-    r.farPartsMoved = !!byId['FARParts'] && byId['FARParts'].parentCat === 'FAR Navigation';
+    // FARParts was dropped in Version 7 — it duplicated FARPeripheral
+    r.farPartsGone = !byId['FARParts'];
+    r.farNoteRendered = (function () {
+        P.renderCategory && P.renderCategory('FAR Navigation', 'replace');
+        const d = document.querySelector('#catContent details.cat-note');
+        return { exists: !!d, rows: d ? d.querySelectorAll('dt').length : 0,
+                 collapsed: d ? d.open === false : null,
+                 first: d ? (d.querySelector('dt') || {}).textContent : null };
+    })();
+    // POH: the ordering bank must not give the numbers away, and a separate
+    // bank must map number to title in both directions.
+    const po = byId['POHOrder'], pn = byId['POHNumbers'];
+    r.pohOrderHasNoNumbers = !!po && po.items.every(i => !/^\s*\d/.test(i));
+    r.pohOrderCount = po ? po.items.length : 0;
+    r.pohOrderFirst = po ? po.items[0] : null;
+    r.pohNumbersExists = !!pn && pn.type === 'definition';
+    r.pohNumbersCount = pn ? pn.items.length : 0;
+    r.pohNumbersMapsBoth = !!pn && pn.items.every(i => /^Section \d ➔ .+/.test(i));
     r.farSubs = CATS['FAR Navigation'] ? Object.keys(CATS['FAR Navigation']) : [];
     r.farTopics = CATS['FAR Navigation']
         ? Object.values(CATS['FAR Navigation']).flat().map(f => f.id) : [];
+    r.farTriad = (CATS['FAR Navigation'] && CATS['FAR Navigation']['The Core Triad'] || []).map(f => f.id);
     const findIt = byId['FARFindIt'];
     r.farFindItCount = findIt ? findIt.items.length : 0;
     r.farFindItValid = !!findIt && findIt.items.every(it =>
@@ -166,9 +184,22 @@ req(out.safetyInAcronyms, 'SAFETY should live in Acronyms, not PAVE');
 req(out.emergenciesOwnsAbcd, 'ABCD should live in Emergencies');
 req(out.emergenciesOwnsFire, 'ElecFire should live in Emergencies');
 req(out.farIsTopLevel, 'FAR Navigation must be its own top-level category');
-req(out.farPartsMoved, 'FARParts should have moved out of PAVE into FAR Navigation');
-['FAR61', 'FAR91', 'FAR141', 'FARPeripheral', 'FAR43', 'NTSB830', 'FARCitation', 'FARFindIt']
+req(out.farPartsGone, 'FARParts should have been dropped — it duplicated FARPeripheral');
+['FAR61', 'FAR91', 'FAR141School', 'FAR141', 'FARPeripheral', 'FAR43', 'NTSB830', 'FARCitation', 'FARFindIt']
     .forEach(id => req(out.farTopics.indexOf(id) !== -1, 'FAR Navigation is missing ' + id));
+// the 61-vs-141 comparison must come LAST in the Triad, after the standalone 141
+req(out.farTriad.indexOf('FAR141') === out.farTriad.length - 1,
+    'FAR141 (61 vs 141) must be last in The Core Triad, got: ' + out.farTriad.join(', '));
+req(out.farTriad.indexOf('FAR141School') === out.farTriad.length - 2,
+    'FAR141School must sit just before the comparison, got: ' + out.farTriad.join(', '));
+req(out.farNoteRendered.exists, 'the collapsed Parts index is missing from the FAR Navigation page');
+req(out.farNoteRendered.collapsed === true, 'the Parts index should start collapsed');
+req(out.farNoteRendered.rows >= 15, 'the Parts index is too short: ' + out.farNoteRendered.rows);
+req(out.pohOrderHasNoNumbers, 'POHOrder still shows section numbers — the drill can be answered by counting');
+req(out.pohOrderCount === 9, 'POHOrder should still have 9 items, got ' + out.pohOrderCount);
+req(out.pohNumbersExists, 'POHNumbers bank missing');
+req(out.pohNumbersCount === 9, 'POHNumbers should have 9 items, got ' + out.pohNumbersCount);
+req(out.pohNumbersMapsBoth, 'POHNumbers items must be "Section N -> Title" so both directions drill');
 req(out.farFindItCount >= 10, 'FARFindIt bank too small: ' + out.farFindItCount);
 req(out.farFindItValid, 'a FARFindIt item is malformed');
 req(out.trapsCount >= 10, 'trick-question bank too small: ' + out.trapsCount);
