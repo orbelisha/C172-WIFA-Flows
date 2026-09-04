@@ -41,10 +41,21 @@ Those warnings appearing in a sandbox run is also the offline-degradation
 path being exercised — the run must still report 0 drill and 0 navigation
 problems, which is the proof that sync stayed optional.
 
-Two extra suites cover what `test-flows.mjs` does not:
+A healthy run currently reports ~21,600 questions and 94/94 topics; those
+numbers grow as banks are added, so treat the paragraph above as a shape, not a
+constant. 0 failures is the part that matters.
+
+Three extra suites cover what `test-flows.mjs` does not:
 
     node check_ui24.mjs    # All / Not done yet mode, resource links
     node check_sync.mjs    # merge correctness + offline degradation
+    node check_pave.mjs    # sign-in banner states + the PAVE virtual category
+
+`check_pave.mjs` exists because `VIRTUAL_CATS` resolves ids through
+`FLOW_BY_ID` and then calls `.filter(Boolean)` — a typo'd id does not throw, it
+silently removes the topic from the category. It also asserts that shared
+topics are the SAME object as in their home category (so one set of progress
+stats follows a topic) and that the guest banner really says "guest".
 
 `check_sync.mjs` is the important one before touching sync: it asserts that
 the later answer wins in both directions, that no item from either side is

@@ -314,6 +314,39 @@
         .bank-review[open] > summary::before { content: '▾'; }
         .bank-review > summary:hover { color: var(--primary-color); }
         .bank-review-hint { font-size: 0.75rem; font-weight: 400; opacity: 0.65; }
+        /* Top-of-home sign-in banner. Loud while signed out so the sync
+           never gets forgotten; quiet and out of the way once signed in. */
+        .sync-banner {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 14px; flex-wrap: wrap;
+            padding: 12px 16px; margin: 0 0 22px 0;
+            border: 1px solid var(--border-color); border-left-width: 4px;
+            border-radius: 12px; background: var(--card-bg);
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .sync-banner-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .sync-banner-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; background: var(--text-muted); }
+        .sync-banner-title { font-size: 0.95rem; font-weight: 700; color: var(--text-main); line-height: 1.3; }
+        .sync-banner-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 3px; line-height: 1.4; }
+        .sync-banner-btn {
+            flex: 0 0 auto; padding: 9px 16px; border-radius: 8px; cursor: pointer;
+            font-family: inherit; font-size: 0.83rem; font-weight: 700;
+            border: 1px solid var(--border-color); background: transparent; color: var(--text-muted);
+        }
+        .sync-banner-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .sync-banner-btn:disabled { opacity: 0.45; cursor: default; }
+        /* guest — the state he must not miss */
+        .sync-banner.is-guest { border-color: #d99400; border-left-color: #d99400; background: rgba(217, 148, 0, 0.07); }
+        .sync-banner.is-guest .sync-banner-dot { background: #d99400; }
+        .sync-banner.is-guest .sync-banner-btn { border-color: #d99400; color: #b37b00; }
+        .sync-banner.is-guest .sync-banner-btn:hover { background: #d99400; color: #fff; }
+        /* signed in — confirmation, nothing more */
+        .sync-banner.is-synced { border-left-color: #2e9e5b; }
+        .sync-banner.is-synced .sync-banner-dot { background: #2e9e5b; }
+        @media (max-width: 460px) {
+            .sync-banner { align-items: stretch; }
+            .sync-banner-btn { width: 100%; }
+        }
         .sync-block { display: block; padding: 4px 0 10px 0; }
         .sync-status { font-size: 0.78rem; color: var(--text-muted); padding: 2px 4px 8px 4px; line-height: 1.4; }
         .sync-btn { width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
@@ -448,6 +481,16 @@
 
             <!-- HOME SCREEN -->
             <div class="page active" id="homeScreen">
+                <div class="sync-banner is-guest" id="syncBanner">
+                    <div class="sync-banner-main">
+                        <span class="sync-banner-dot" id="syncBannerDot"></span>
+                        <div>
+                            <div class="sync-banner-title" id="syncBannerTitle">Guest — not signed in</div>
+                            <div class="sync-banner-sub" id="syncBannerSub">Progress is saved on this device only.</div>
+                        </div>
+                    </div>
+                    <button class="sync-banner-btn" id="syncBannerBtn">Sign in with Google</button>
+                </div>
                 <h1>C172 PPL Memory Items</h1>
                 <div class="subtitle">Master Your Flows &amp; Acronyms</div>
                 <div class="section-label">Practice</div>
@@ -531,7 +574,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">Version 3 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
+        <div class="footer">Version 4 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -653,9 +696,42 @@
                     /* CORRECTION v2.0.0: the first two A/T pairs were swapped in v1.2.2.
                        The standard FAR 91.205(b) mnemonic order is
                        Airspeed, Tachometer, Oil pressure, Manifold pressure, Altimeter, ... */
-                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205).", items: ["A ➔ Airspeed", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Altimeter", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
-                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
-                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
+                    { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205b). Sits under the A of PAVE. Several items are CONDITIONAL, which is where the traps are: manifold pressure only for altitude (turbo/supercharged) engines, the temperature gauge only for liquid-cooled engines, oil temp for air-cooled, landing gear position only for retractables, and anti-collision lights for aircraft certificated after 11 March 1996.", items: ["A ➔ Airspeed", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Altimeter", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
+                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight (91.205c) — these are ON TOP of A TOMATO FLAMES, never instead of it. Traps: fuses means one spare set or three of each kind, and only if the fuses are accessible in flight; the landing light is required ONLY if the aircraft is operated for hire; and position lights must be displayed sunset to sunrise (91.209), which is a different clock from the definition of night for logging and from the 1-hour-after-sunset rule for passenger currency.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
+                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight. Traps: the Airworthiness Certificate never expires as long as the aircraft is maintained per 91.409 and 91.403; the Registration DOES expire — 7 years since the 2023 rule change (14 CFR 47.40); the Radio Station License is only needed for international flights; and Weight and Balance data is tail-number specific, so a sister ship's data is not legal for this airplane.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
+                ],
+                "Risk & Preflight (PAVE)": [
+                    { id: "PAVE", type: "definition", title: "PAVE", text: "Master Risk Framework", desc: "The master framework for the oral. Every other acronym hangs off one of these four pillars — P feeds IM SAFE (Part 61 plus aeromedical), A feeds ARROW / AV1ATE / A TOMATO FLAMES / FLAPS (Part 91 subparts C and E), V feeds NWKRAFT and the NOTAM types (91.103), and E has no checklist at all, which is exactly why it is the one that kills people.", items: ["P ➔ Pilot — am I legal and safe to fly? (IM SAFE)", "A ➔ Aircraft — is the machine legal and safe? (ARROW, AV1ATE, A TOMATO FLAMES, FLAPS)", "V ➔ enVironment — is it safe where I am flying? (NWKRAFT, NOTAMs, weather, airspace)", "E ➔ External Pressures — why am I pushing to make this flight?"] },
+                    { id: "FARParts", type: "definition", title: "Where The Rules Live", text: "Navigating the FARs", desc: "Before you can apply PAVE you have to know which Part the answer lives in. The examiner cares less about the citation than about whether you open the right book.", items: ["Part 1 ➔ Definitions and abbreviations — V-speeds, and the legal definition of night (end of evening civil twilight to beginning of morning civil twilight)", "Part 61 ➔ The Pilot — certificates, medicals, flight reviews, passenger currency, the 30-day address change rule (61.60)", "Part 91 ➔ The Aircraft and the Environment — right-of-way, weather minimums, airspace, required equipment, required inspections", "Part 141 ➔ Structured pilot schools — an approved syllabus, which is what allows the reduced minimum flight hours (35 vs 40 for the PPL)"] },
+                    { id: "IMSAFE", type: "definition", title: "IM SAFE", text: "P — The Pilot", desc: "The personal-minimums checklist under the P of PAVE. This is a self-assessment before every flight, not a one-time thing. The A is the one with hard numbers attached (91.17), so that is the one the examiner will push on.", items: ["I ➔ Illness — any symptom at all, however minor", "M ➔ Medication — prescription AND over-the-counter; check before you take it, not after", "S ➔ Stress — money, work, family, checkride pressure", "A ➔ Alcohol — 8 hours bottle to throttle AND below 0.04% BAC AND not under the influence (91.17)", "F ➔ Fatigue — the one pilots rationalize away most often", "E ➔ Emotion / Eating — emotionally stable, and actually fed and hydrated"] },
+                    { id: "AV1ATE", type: "definition", title: "AV1ATE", text: "A — Inspections", desc: "The required-inspections half of the Aircraft pillar. The pattern worth memorizing: 12 calendar months for Annual and ELT, 24 calendar months for Altimeter/static and Transponder, 30 days for the VOR check, 100 hours for the 100-hour. Note which ones are IFR-only — the examiner's favorite trap is applying an IFR requirement to a VFR question.", items: ["A ➔ Annual — every 12 calendar months, requires an A and P mechanic with Inspection Authorization (91.409a)", "A ➔ Airworthiness Directives — mandatory FAA recalls; can be emergency or routine, one-time or recurring (91.403)", "V ➔ VOR check — every 30 days, IFR ONLY (91.171)", "1 ➔ 100-hour — ONLY for carrying persons for hire or flight instruction for hire in an aircraft the instructor provides; may be exceeded by up to 10 hours only to reach a maintenance base, and the excess is subtracted from the next interval (91.409b)", "A ➔ Altimeter and pitot-static system — every 24 calendar months, IFR ONLY (91.411)", "T ➔ Transponder — every 24 calendar months, VFR too (91.413)", "E ➔ ELT — inspected every 12 calendar months; battery replaced after 1 cumulative hour of use or when 50 percent of useful life has expired (91.207d) — remember it as 121.5: the frequency, 1 hour, 50 percent"] },
+                    { id: "NWKRAFT", type: "definition", title: "NWKRAFT", text: "V — Preflight Action", desc: "The enVironment pillar, and the mnemonic for 91.103 preflight action — 'each pilot in command shall, before beginning a flight, become familiar with all available information concerning that flight.' Runway lengths and takeoff/landing data are required for EVERY flight; the rest is required for any flight not in the vicinity of an airport.", items: ["N ➔ NOTAMs — all types, including the FDC NOTAMs that carry TFRs", "W ➔ Weather reports and forecasts", "K ➔ Known ATC delays", "R ➔ Runway lengths at the airports of intended use", "A ➔ Alternates available if the flight cannot be completed as planned", "F ➔ Fuel requirements — day VFR destination plus 30 minutes, night VFR destination plus 45 minutes, at normal cruising speed (91.151)", "T ➔ Takeoff and landing distance data from the POH, for the actual conditions"] },
+                    { id: "NOTAMTypes", type: "definition", title: "NOTAM Types", text: "V — The N in NWKRAFT", desc: "The categories of NOTAM listed in AIM 5-1-3. The one that matters most for a checkride is FDC, because that is where TFRs live — and a TFR bust is a certificate action, not a debrief item.", items: ["NOTAM (D) ➔ Distant — runway closures, VOR out of service, unlit obstructions; anything affecting a facility beyond the local area", "FDC ➔ Flight Data Center — REGULATORY in nature: TFRs, and amendments to instrument approach procedures and other published charts", "Pointer ➔ Points to another NOTAM so a critical one is not overlooked", "Military ➔ Pertains to US military airspace and navaids", "SAA ➔ Special Activity Airspace — when special-use airspace will be active outside its published schedule"] },
+                    { id: "ExternalP", type: "definition", title: "External Pressures", text: "E — The Killer", desc: "The fourth pillar, and the only one with no checklist, no regulation and no gauge. It is the most common thread in fatal GA accident reports. The mitigation is not willpower — it is deciding your outs BEFORE you leave, out loud, and giving yourself permission to use them.", items: ["Get-there-itis ➔ pressing on to a destination because you planned to, not because it is still safe", "Passenger pressure ➔ people on board who need to be somewhere at a certain time", "Financial pressure ➔ money already spent on the rental, the trip or the checkride", "Ego and self-induced pressure ➔ not wanting to look hesitant in front of an instructor, an examiner or a passenger", "The mitigation ➔ a personal minimums sheet set on the ground, and a pre-declared out for every leg"] },
+                    {
+                        id: "PAVETraps",
+                        type: "mcq",
+                        title: "FAA Trick Questions",
+                        text: "PAVE — The Traps",
+                        desc: "The questions the FAA writes to catch you applying a correct rule in the wrong context. Every one of these has a right answer that is only right under specific conditions.",
+                        resources: [{ label: "Required inspections explained", url: "https://www.youtube.com/results?search_query=AV1ATE+required+aircraft+inspections+explained+private+pilot" }, { label: "ARROW documents and airworthiness", url: "https://www.youtube.com/results?search_query=ARROW+documents+airworthiness+private+pilot+oral+exam" }, { label: "91.205 required equipment", url: "https://www.youtube.com/results?search_query=91.205+required+equipment+ATOMATOFLAMES+explained" }, { label: "PAVE and risk management", url: "https://www.youtube.com/results?search_query=PAVE+checklist+risk+management+private+pilot+oral" }],
+                        items: [
+                            { question: "You rent a C-172 from your flight school and fly it solo, not for hire and with no instructor. The aircraft is 12 hours past its last 100-hour inspection. Is the flight legal?", options: ["Yes — a 100-hour inspection is not required for this operation.", "No — any aircraft operated by a flight school needs a current 100-hour inspection.", "No — but only because it is more than 10 hours past."], correctAnswer: 0, explanation: "91.409(b) attaches the 100-hour to the OPERATION, not the airplane. It is required only for carrying persons for hire, or for flight instruction for hire in an aircraft the instructor provides. Renting an airplane to fly yourself is neither. The airplane still needs a current Annual — that one attaches to every aircraft. This is the classic right-rule-wrong-context trap: you know the 100-hour rule, and the FAA is testing whether you know when it applies." },
+                            { question: "Your last drink was 9 hours ago. You feel fine but your BAC is still 0.045%. May you act as pilot in command?", options: ["No — 91.17 sets three separate barriers and you only cleared one.", "Yes — 8 hours have passed, which is the legal standard.", "Yes — 0.045% is under the 0.08% limit."], correctAnswer: 0, explanation: "91.17 is an AND, not an OR: 8 hours bottle to throttle, AND below 0.04% BAC, AND not under the influence. Clearing the clock does not clear the blood. Note the aviation limit is 0.04%, half the common driving limit of 0.08% — the FAA writes questions specifically to see whether you imported the driving number." },
+                            { question: "Is a landing light required for a night flight?", options: ["Only if the aircraft is operated for hire.", "Always, for any night flight.", "Only when landing at a towered airport."], correctAnswer: 0, explanation: "91.205(c) requires a landing light only for aircraft operated for hire. For your own private night flight it is not legally required — though flying at night without one is a decision you would have to defend. Keep the L in FLAPS filed next to the 100-hour rule: both are triggered by 'for hire', not by the aircraft." },
+                            { question: "When must an aircraft registration certificate be renewed?", options: ["Every 7 years.", "Every 3 years.", "Never — it is valid for the life of the aircraft."], correctAnswer: 0, explanation: "14 CFR 47.40. The FAA extended registration from 3 years to 7 in a rule effective January 2023, so older study material and older CFIs will still say 3. The Airworthiness certificate is the one that does not expire — as long as the aircraft is maintained per 91.403 and 91.409. Do not swap the two R's and the A in ARROW." },
+                            { question: "You are planning a night VFR cross-country. What is the minimum fuel reserve?", options: ["Enough to reach the first point of intended landing, plus 45 minutes at normal cruising speed.", "Enough to reach the first point of intended landing, plus 30 minutes.", "45 minutes plus an alternate."], correctAnswer: 0, explanation: "91.151: day VFR is destination plus 30 minutes, night VFR is destination plus 45 minutes, both at normal cruising speed. The 45-minute figure also appears in 91.167 for IFR, which is why it is easy to attach it to the wrong rule. Reserve is computed at normal cruise consumption, not at your most economical setting." },
+                            { question: "Your VOR has not been checked in 45 days. You are planning a day VFR cross-country and intend to navigate using that VOR. Legal?", options: ["Yes — the 30-day VOR check is required only for IFR operations.", "No — the VOR check is required within 30 days for any use of the equipment.", "No — VOR navigation requires an operational check before every flight."], correctAnswer: 0, explanation: "91.171 applies to VOR equipment used under IFR. Under VFR you may use an unchecked VOR — you are simply responsible for the navigation either way. This sits next to the altimeter/pitot-static check (91.411, 24 calendar months, also IFR only). The transponder check (91.413, 24 calendar months) is the odd one out: it applies regardless of whether you are VFR or IFR." },
+                            { question: "The transponder was last inspected 26 calendar months ago. You are flying VFR in Class E airspace below 10,000 ft, outside any Mode C veil. Legal?", options: ["No — the transponder check is required every 24 calendar months regardless of VFR or IFR.", "Yes — the check is only required for IFR flight.", "Yes — a transponder is not required in that airspace."], correctAnswer: 0, explanation: "91.413 requires the test and inspection every 24 calendar months for any use of the transponder — this is the one inspection in AV1ATE that is not IFR-only. Note the separate question of whether a transponder is REQUIRED in that airspace (91.215); if it is installed and you intend to use it, it must be current." },
+                            { question: "When must an ELT battery be replaced?", options: ["After 1 hour of cumulative use, or when 50 percent of its useful life has expired.", "Every 12 calendar months, with the ELT inspection.", "After any use, or every 24 calendar months."], correctAnswer: 0, explanation: "91.207(d). Remember it as the frequency itself — 121.5: transmits on 121.5 MHz, battery after 1 hour cumulative use or .5 (50 percent) of useful life. The 12 calendar months is the ELT INSPECTION interval, which is a separate requirement — the trap is answering the inspection interval when asked about the battery." },
+                            { question: "A manifold pressure gauge is required equipment under 91.205(b) for:", options: ["Each altitude engine — in practice, turbocharged or supercharged.", "Every engine, on every aircraft.", "Every aircraft with a constant-speed propeller."], correctAnswer: 0, explanation: "The M in A TOMATO FLAMES is conditional, like several others in that list: manifold pressure applies to altitude engines, the temperature gauge applies to liquid-cooled engines, the landing gear position indicator applies only to retractables, and anti-collision lights apply to aircraft certificated after 11 March 1996. Reciting the mnemonic is not the same as knowing which items your airplane actually needs." },
+                            { question: "You have a radio station license question on the oral. When is one required?", options: ["Only for flights outside the United States.", "Whenever the aircraft has a radio installed.", "Whenever operating in Class B, C or D airspace."], correctAnswer: 0, explanation: "The second R in ARROW is an FCC document, not an FAA one, and domestic flights have not required it since 1996. It comes back the moment you cross a border. This is a good example of a document that must be aboard only under a specific condition — the same logic as the 100-hour and the landing light." },
+                            { question: "An aircraft is 6 hours past its 100-hour inspection while being flown for hire. Under what circumstance is this legal?", options: ["Only when en route to a place where the inspection can be done — and those 6 hours are subtracted from the next interval.", "Any time, as long as it is within 10 hours.", "It is never legal to exceed a 100-hour inspection."], correctAnswer: 0, explanation: "91.409(b) allows exceeding by up to 10 hours ONLY while en route to reach a place where the inspection can be performed, and the excess time must be included in computing the next 100 hours. It is not a 10-hour grace period you can burn on revenue flights — that is precisely the misreading the question is built to catch." },
+                            { question: "You move to a new address. How long do you have to notify the FAA?", options: ["30 days.", "60 days.", "You must notify them before exercising pilot privileges again."], correctAnswer: 0, explanation: "61.60 — 30 days after a permanent change of address, and you may not exercise certificate privileges after those 30 days until you have notified them. This is a Part 61 rule, so it belongs under the P of PAVE. Do not confuse it with the aircraft registration address change, which is a Part 47 matter." },
+                            { question: "Which type of NOTAM carries a Temporary Flight Restriction?", options: ["FDC NOTAM — Flight Data Center, which is regulatory in nature.", "NOTAM (D) — Distant.", "Pointer NOTAM."], correctAnswer: 0, explanation: "FDC NOTAMs are the regulatory ones: TFRs and amendments to instrument procedures and charts. NOTAM (D) covers facility status — closed runways, out-of-service navaids, unlit towers. A Pointer NOTAM only calls attention to another NOTAM. Under NWKRAFT the N is the first item for a reason: a TFR bust is a certificate action, not a debrief point." },
+                            { question: "Under 91.103, which preflight information is required for EVERY flight, including a local one in the traffic pattern?", options: ["Runway lengths at the airports of intended use, and takeoff and landing distance data.", "Weather reports and forecasts, and fuel requirements.", "All of NWKRAFT applies equally to every flight."], correctAnswer: 0, explanation: "91.103 splits into two tiers. Runway lengths and takeoff/landing distance data are required for any flight. Weather reports and forecasts, fuel requirements, alternatives and known traffic delays are required specifically for a flight not in the vicinity of an airport. NWKRAFT is the industry mnemonic covering both tiers — knowing which half applies to a pattern flight is what separates a recited list from understanding." }
+                        ]
+                    }
                 ]
             },
             "Personal Focus": {
@@ -840,6 +916,17 @@
                 'Takeoff & Landing Profiles': ['ShortField', 'SoftField'],
                 'Emergencies': ['ABCD', 'ABCDE', 'WOSSS', 'EngFailTakeoffRoll', 'EngineRestart',
                     'EngineSecuring', 'EngineFireStart', 'EngineFireFlight', 'ElecFire', 'Ammeter', 'FlatTire']
+            },
+            // Oral-exam view: PAVE as the master framework, with every other acronym
+            // filed under the pillar it belongs to. Nothing here is a copy — these are
+            // the same flow objects as in Acronyms, so progress follows the topic.
+            'Oral Exam — PAVE': {
+                'The Framework': ['PAVE', 'FARParts'],
+                'P — Pilot': ['IMSAFE', 'SAFETY'],
+                'A — Aircraft': ['ARROW', 'AV1ATE', 'ATOMATO', 'FLAPS'],
+                'V — enVironment': ['NWKRAFT', 'NOTAMTypes'],
+                'E — External Pressures': ['ExternalP'],
+                'FAA Trick Questions': ['PAVETraps']
             }
         };
 
@@ -2017,6 +2104,10 @@
            --------------------------------------------------------- */
         function wire() {
             $('menuBtn').addEventListener('click', openLeftMenu);
+            const banner = $('syncBannerBtn');
+            if (banner) banner.addEventListener('click', function () {
+                try { if (Sync.isSignedIn()) Sync.signOut(); else Sync.signIn(); } catch (e) {}
+            });
             $('backBtn').addEventListener('click', goBackLogic);
             $('studyBtn').addEventListener('click', openRightMenu);
             $('themeToggleBtn').addEventListener('click', toggleTheme);
@@ -2125,10 +2216,33 @@
                 b.textContent = label;
                 b.disabled = !!disabled;
             }
+            // The banner at the top of the home screen and the block in the side
+            // menu show the same three states. Guest is styled loudly on purpose:
+            // signing in is the thing that is easy to forget and expensive to miss.
+            function setBanner(state, title, sub, label, disabled) {
+                const box = $('syncBanner');
+                if (box) box.className = 'sync-banner ' + state;
+                const t = $('syncBannerTitle'); if (t) t.textContent = title;
+                const s = $('syncBannerSub'); if (s) s.textContent = sub;
+                const b = $('syncBannerBtn');
+                if (b) { b.textContent = label; b.disabled = !!disabled; }
+            }
             function refreshUi() {
-                if (!ready) { setStatus('Sync unavailable offline'); setBtn('Sign in with Google', true); return; }
-                if (user) { setStatus('Synced as ' + (user.email || 'signed in')); setBtn('Sign out', false); }
-                else { setStatus('Not signed in — progress stays on this device'); setBtn('Sign in with Google', false); }
+                if (!ready) {
+                    setStatus('Sync unavailable offline');
+                    setBtn('Sign in with Google', true);
+                    setBanner('is-guest', 'Guest — not signed in', 'Sync is unavailable right now. Progress is saved on this device only.', 'Sign in with Google', true);
+                    return;
+                }
+                if (user) {
+                    setStatus('Synced as ' + (user.email || 'signed in'));
+                    setBtn('Sign out', false);
+                    setBanner('is-synced', 'Synced — ' + (user.email || 'signed in'), 'Progress follows you on every device.', 'Sign out', false);
+                } else {
+                    setStatus('Not signed in — progress stays on this device');
+                    setBtn('Sign in with Google', false);
+                    setBanner('is-guest', 'Guest — not signed in', 'Progress is saved on this device only. Sign in to keep the phone and the laptop in step.', 'Sign in with Google', false);
+                }
             }
 
             // Merge two progress objects. Per item the later answer wins;
@@ -2250,6 +2364,7 @@
 
         window.__ppl = {
             ALL_FLOWS: ALL_FLOWS, appDatabase: appDatabase, Store: Store,
+            CATS: CATS, FLOW_BY_ID: FLOW_BY_ID, VIRTUAL_CATS: VIRTUAL_CATS,
             generateOne: generateOne, buildTopicDrill: buildTopicDrill, buildMixedDrill: buildMixedDrill,
             splitItem: splitItem, norm: norm, validOptions: validOptions,
             renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices, Sync: Sync,
