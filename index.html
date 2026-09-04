@@ -308,6 +308,11 @@
             border-radius: 100px; padding: 10px 20px; font-size: 0.95rem; font-weight: 600;
             font-family: inherit; cursor: pointer; transition: all 0.2s ease; outline: none;
         }
+        .sync-block { display: block; padding: 4px 0 10px 0; }
+        .sync-status { font-size: 0.78rem; color: var(--text-muted); padding: 2px 4px 8px 4px; line-height: 1.4; }
+        .sync-btn { width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .sync-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .sync-btn:disabled { opacity: 0.5; cursor: default; }
         .resources { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
         .resources .cfg-label { width: 100%; margin: 0 0 2px 0; }
         .res-link { display: inline-block; padding: 7px 13px; border: 1px solid var(--border-color); border-radius: 999px; font-size: 0.82rem; font-weight: 600; text-decoration: none; color: var(--text-muted); }
@@ -398,6 +403,9 @@
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
     </style>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <!-- TOP NAVIGATION -->
@@ -517,7 +525,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">v2.6.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v3.0.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -1472,7 +1480,18 @@
                 '<div class="sidebar-item"><button class="sidebar-text" data-nav="home">Dashboard</button></div>' +
                 '<div class="sidebar-item"><button class="sidebar-text" data-nav="mixed">Mixed Drill</button></div>' +
                 '<div class="sidebar-item"><button class="sidebar-text" data-nav="progress">Progress</button></div>' +
-                '<div class="menu-header">Categories</div><div id="sidebarCats"></div>';
+                '<div class="menu-header">Categories</div><div id="sidebarCats"></div>' +
+                '<div class="menu-header">Sync</div>' +
+                '<div class="sidebar-item sync-block">' +
+                  '<div class="sync-status" id="syncStatus">Not signed in</div>' +
+                  '<button class="sync-btn" id="syncBtn">Sign in with Google</button>' +
+                '</div>';
+
+            const sb = $('syncBtn');
+            if (sb) sb.addEventListener('click', function () {
+                if (Sync.isSignedIn()) Sync.signOut(); else Sync.signIn();
+            });
+            try { Sync.refreshUi(); } catch (e) {}
 
             menu.querySelectorAll('[data-nav]').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2049,17 +2068,178 @@
             renderHome('none');
             navStack[0] = { page: 'home' };
             safeHistory(() => history.replaceState({ page: 'home', i: 0 }, ''));
+            try { Sync.init(); } catch (e) { }
         }
 
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
         else init();
 
         /* Exposed for automated testing only. */
+
+        /* =========================================================
+           CLOUD SYNC  (optional, additive, never load-bearing)
+
+           Progress lives in localStorage and the app works fully
+           offline. When signed in, the same object is mirrored to
+           Firestore at progress/<uid> so the phone and the laptop
+           converge. Every entry point is wrapped: if the SDK fails
+           to load, the network is down, or the user never signs in,
+           the app behaves exactly as it did before.
+
+           The Firebase web config below is public by design — it
+           identifies the project, it is not a secret. Access is
+           gated by the Firestore rule that ties progress/<uid> to
+           the signed-in uid.
+           ========================================================= */
+        const Sync = (function () {
+            const CFG = {
+                apiKey: "AIzaSyAdhdRgjd-hjjj5-_U1FgjX1AhSag_31Ns",
+                authDomain: "c172-flows.firebaseapp.com",
+                projectId: "c172-flows",
+                storageBucket: "c172-flows.firebasestorage.app",
+                messagingSenderId: "587376165631",
+                appId: "1:587376165631:web:b955ca17aa4c1c0d9f02ca"
+            };
+            let auth = null, db = null, user = null, ready = false, pushTimer = null, pulling = false;
+
+            function setStatus(txt) {
+                const el = $('syncStatus');
+                if (el) el.textContent = txt;
+            }
+            function setBtn(label, disabled) {
+                const b = $('syncBtn');
+                if (!b) return;
+                b.textContent = label;
+                b.disabled = !!disabled;
+            }
+            function refreshUi() {
+                if (!ready) { setStatus('Sync unavailable offline'); setBtn('Sign in with Google', true); return; }
+                if (user) { setStatus('Synced as ' + (user.email || 'signed in')); setBtn('Sign out', false); }
+                else { setStatus('Not signed in — progress stays on this device'); setBtn('Sign in with Google', false); }
+            }
+
+            // Merge two progress objects. Per item the later answer wins;
+            // per topic the later drill wins, but `best` is the max of both
+            // and `runs` the max rather than the sum, so repeated merges
+            // cannot inflate the counters.
+            function merge(local, remote) {
+                const out = { topics: {}, items: {}, settings: {} };
+                const items = Object.assign({}, remote.items || {}, {});
+                Object.keys(local.items || {}).forEach(k => {
+                    const a = local.items[k], b = (remote.items || {})[k];
+                    if (!b) { items[k] = a; return; }
+                    const at = a.at || 0, bt = b.at || 0;
+                    if (at > bt) items[k] = a;
+                    else if (bt > at) items[k] = b;
+                    else items[k] = ((a.r + a.w) >= (b.r + b.w)) ? a : b;
+                });
+                out.items = items;
+
+                const topics = Object.assign({}, remote.topics || {}, {});
+                Object.keys(local.topics || {}).forEach(k => {
+                    const a = local.topics[k], b = (remote.topics || {})[k];
+                    if (!b) { topics[k] = a; return; }
+                    const win = ((a.lastAt || 0) >= (b.lastAt || 0)) ? a : b;
+                    topics[k] = Object.assign({}, win, {
+                        best: Math.max(a.best || 0, b.best || 0),
+                        runs: Math.max(a.runs || 0, b.runs || 0),
+                        correct: Math.max(a.correct || 0, b.correct || 0),
+                        wrong: Math.max(a.wrong || 0, b.wrong || 0)
+                    });
+                });
+                out.topics = topics;
+
+                out.settings = Object.assign({}, remote.settings || {}, local.settings || {});
+                return out;
+            }
+
+            function pushSoon() {
+                if (!ready || !user || pulling) return;
+                clearTimeout(pushTimer);
+                pushTimer = setTimeout(function () {
+                    try {
+                        db.collection('progress').doc(user.uid).set({
+                            topics: Store.data.topics,
+                            items: Store.data.items,
+                            settings: Store.data.settings,
+                            updatedAt: Date.now()
+                        }).then(function () { setStatus('Synced as ' + (user.email || 'signed in')); })
+                          .catch(function () { setStatus('Saved locally — cloud sync failed'); });
+                    } catch (e) { setStatus('Saved locally — cloud sync failed'); }
+                }, 2000);
+            }
+
+            function pull() {
+                if (!ready || !user) return;
+                setStatus('Syncing…');
+                pulling = true;
+                db.collection('progress').doc(user.uid).get().then(function (snap) {
+                    if (snap.exists) {
+                        const merged = merge(Store.data, snap.data() || {});
+                        Store.data.topics = merged.topics;
+                        Store.data.items = merged.items;
+                        Store.data.settings = Object.assign(Store.data.settings, merged.settings);
+                        Store.save();
+                    }
+                    pulling = false;
+                    refreshUi();
+                    try { if (currentStudyFlow) renderStudyScreen(currentStudyFlow, 'replace', currentStudyCat); } catch (e) {}
+                    pushSoon();
+                }).catch(function () {
+                    pulling = false;
+                    setStatus('Signed in — could not read cloud copy');
+                });
+            }
+
+            function signIn() {
+                if (!ready) return;
+                const provider = new firebase.auth.GoogleAuthProvider();
+                setBtn('Opening Google…', true);
+                auth.signInWithPopup(provider).catch(function () {
+                    // popup blocked (common on mobile) — fall back to a redirect
+                    try { auth.signInWithRedirect(provider); }
+                    catch (e) { refreshUi(); setStatus('Sign-in failed'); }
+                });
+            }
+            function signOut() { if (ready) auth.signOut(); }
+
+            function init() {
+                try {
+                    if (typeof firebase === 'undefined' || !firebase.initializeApp) return;
+                    firebase.initializeApp(CFG);
+                    auth = firebase.auth();
+                    db = firebase.firestore();
+                    ready = true;
+                    auth.onAuthStateChanged(function (u) {
+                        user = u || null;
+                        refreshUi();
+                        if (user) pull();
+                    });
+                } catch (e) { ready = false; }
+                refreshUi();
+            }
+
+            return { init: init, pushSoon: pushSoon, signIn: signIn, signOut: signOut,
+                     refreshUi: refreshUi, isReady: function () { return ready; },
+                     isSignedIn: function () { return !!user; },
+                     _merge: merge };
+        })();
+
+        // Every mutation in the app funnels through Store.save(), so wrapping
+        // it once is enough to keep the cloud copy current.
+        (function () {
+            const origSave = Store.save;
+            Store.save = function () {
+                origSave.apply(Store, arguments);
+                try { Sync.pushSoon(); } catch (e) {}
+            };
+        })();
+
         window.__ppl = {
             ALL_FLOWS: ALL_FLOWS, appDatabase: appDatabase, Store: Store,
             generateOne: generateOne, buildTopicDrill: buildTopicDrill, buildMixedDrill: buildMixedDrill,
             splitItem: splitItem, norm: norm, validOptions: validOptions,
-            renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices,
+            renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices, Sync: Sync,
             distractorPool: distractorPool, uniqueIndices: uniqueIndices, stripTags: stripTags
         };
 

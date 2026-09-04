@@ -1,6 +1,13 @@
 # C172-WIFA-Flows
 
-Single self-contained app: `index.html`. No build step, no dependencies.
+Single self-contained app: `index.html`. No build step.
+
+As of v3.0.0 it loads the Firebase compat SDK from the gstatic CDN for
+optional cross-device progress sync. That is the ONLY dependency, it is
+loaded by `<script src>` with no bundler, and everything behind it is
+guarded: if the CDN is unreachable or the user never signs in, the app runs
+exactly as before on localStorage alone. Keep it that way — sync must never
+become load-bearing.
 Served live from `main` via GitHub Pages at
 https://orbelisha.github.io/C172-WIFA-Flows/
 
@@ -27,8 +34,22 @@ A healthy run reports 18,000 questions generated with 0 soundness failures,
 The harness is a dev tool only — `index.html` never loads it and stays
 dependency-free.
 
-A `net::ERR_CONNECTION_RESET` network warning is an external resource and is
-not a push blocker; the harness classifies it as such itself.
+A `net::ERR_CONNECTION_RESET` or `ERR_TUNNEL_CONNECTION_FAILED` network
+warning is an external resource (Google Fonts, and since v3.0.0 the Firebase
+SDK) and is not a push blocker; the harness classifies it as such itself.
+Those warnings appearing in a sandbox run is also the offline-degradation
+path being exercised — the run must still report 0 drill and 0 navigation
+problems, which is the proof that sync stayed optional.
+
+Two extra suites cover what `test-flows.mjs` does not:
+
+    node check_ui24.mjs    # All / Not done yet mode, resource links
+    node check_sync.mjs    # merge correctness + offline degradation
+
+`check_sync.mjs` is the important one before touching sync: it asserts that
+the later answer wins in both directions, that no item from either side is
+lost, that `best` is a max and `runs` never inflates, that merging twice is
+idempotent, and that an EMPTY cloud document cannot wipe local progress.
 
 ## Conventions
 
