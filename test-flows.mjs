@@ -246,7 +246,10 @@ const run = async () => {
       const expect = (want, ctx) => { const got = activePage(); if (got !== want) problems.push(`${ctx}: expected ${want}, got ${got}`); };
 
       // --- 1. sidebar: every category, then every topic under it ---
-      const catDivs = Array.from(document.querySelectorAll('#sidebarCats > div'));
+      // Since Version 5 the sidebar interleaves group headings (.sidebar-group)
+      // with the category entries, so filter to the ones that are categories.
+      const catDivs = Array.from(document.querySelectorAll('#sidebarCats > div'))
+        .filter(d => d.querySelector('.sidebar-item .sidebar-text'));
       if (!catDivs.length) problems.push('left menu built no category entries');
       let opened = 0, topicLinkCount = 0;
 
@@ -287,7 +290,7 @@ const run = async () => {
       });
       let drills = 0;
       for (const flow of sample) {
-        const div = catDivs.find(d => d.querySelector('.sidebar-item .sidebar-text').textContent === flow.parentCat);
+        const div = catDivs.find(d => (d.querySelector('.sidebar-item .sidebar-text') || {}).textContent === flow.parentCat);
         if (!div) { problems.push(`no sidebar entry for category ${flow.parentCat}`); continue; }
         div.querySelector('.sidebar-icon').click(); await sleep(10);
         const tb = Array.from(div.querySelectorAll('.sidebar-sub button')).find(b => b.textContent === flow.title);

@@ -169,7 +169,7 @@
             border: 1.5px solid transparent;
             color: var(--text-main);
             border-radius: 20px;
-            padding: 30px 16px;
+            padding: 26px 16px;
             font-size: 1.2rem;
             font-weight: 600;
             text-align: center;
@@ -178,6 +178,8 @@
             transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
             outline: none;
         }
+        .parent-card small { display: block; margin-top: 6px; font-size: 0.78rem; font-weight: 500; color: var(--text-muted); transition: color 0.3s; }
+        .parent-card:hover small { color: var(--primary-color); }
 
         .category-section { margin-bottom: 40px; width: 100%; }
         .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.2px; }
@@ -347,6 +349,16 @@
             .sync-banner { align-items: stretch; }
             .sync-banner-btn { width: 100%; }
         }
+        /* Mixed Drill topic picker */
+        .topic-pick-head { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; margin-bottom: 8px; gap: 12px; }
+        .topic-pick-actions { display: flex; gap: 8px; }
+        .mini-btn { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-family: inherit; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+        .mini-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .topic-pick { display: flex; flex-wrap: wrap; gap: 8px; max-height: 232px; overflow-y: auto; padding: 4px 2px; }
+        .topic-chip { font-size: 0.8rem; padding: 6px 12px; opacity: 0.55; }
+        .topic-chip.selected { opacity: 1; }
+        .pick-warn { color: #b37b00; font-weight: 600; }
+        .sidebar-group { padding: 16px 20px 5px 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); opacity: 0.75; }
         .sync-block { display: block; padding: 4px 0 10px 0; }
         .sync-status { font-size: 0.78rem; color: var(--text-muted); padding: 2px 4px 8px 4px; line-height: 1.4; }
         .sync-btn { width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
@@ -456,6 +468,9 @@
             <button class="icon-btn" id="backBtn" aria-label="Go Back">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
+            <button class="icon-btn" id="homeBtn" aria-label="Go Home" title="Home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>
+            </button>
         </div>
         <div class="nav-group">
             <button class="icon-btn" id="studyBtn" aria-label="View Study Material">
@@ -495,7 +510,7 @@
                 <div class="subtitle">Master Your Flows &amp; Acronyms</div>
                 <div class="section-label">Practice</div>
                 <div class="quick-grid">
-                    <button class="quick-card" id="mixedEntryBtn">Mixed Drill<small>Random questions across every topic, weighted to your weak spots</small></button>
+                    <button class="quick-card" id="mixedEntryBtn">Mixed Drill<small>Pick your topics, then drill them at random — weighted to your weak spots</small></button>
                     <button class="quick-card" id="progressEntryBtn">Progress<small>Scores, weak items and drill history</small></button>
                 </div>
                 <div class="section-label">Categories</div>
@@ -530,10 +545,18 @@
             <div class="page" id="mixedScreen">
                 <h1>Mixed Drill</h1>
                 <div class="subtitle">Exam-Style Random Practice</div>
-                <div class="study-desc">Questions are pulled at random from across the database. Topics and items you keep getting wrong show up more often.</div>
+                <div class="study-desc">Questions are pulled at random from the topics you pick below. Topics and items you keep getting wrong show up more often.</div>
                 <div class="drill-setup">
                     <span class="cfg-label">Scope</span>
                     <div class="chips" id="scopeChips"></div>
+                    <div class="topic-pick-head">
+                        <span class="cfg-label" style="margin:0;">Topics</span>
+                        <div class="topic-pick-actions">
+                            <button class="mini-btn" id="topicPickAll">All</button>
+                            <button class="mini-btn" id="topicPickNone">None</button>
+                        </div>
+                    </div>
+                    <div class="topic-pick" id="topicPick"></div>
                     <span class="cfg-label" style="margin-top:20px;">Drill Length</span>
                     <div class="chips" id="mixedLengthChips"></div>
                     <div class="topic-stats" id="mixedStats"></div>
@@ -574,7 +597,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">Version 4 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
+        <div class="footer">Version 5 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -593,16 +616,6 @@
                     { id: "AfterLanding", type: "sequence", title: "After Landing", text: "Runway Cleared", desc: "Cleanup flow performed after exiting the active runway.", items: ["Flaps ➔ UP", "Mixture ➔ LEAN FOR TAXI", "Carburetor Heat ➔ OFF", "Trim ➔ RESET FOR TAKEOFF", "Pitot Heat ➔ OFF", "Taxi Light ➔ ON", "Landing Light ➔ OFF", "Contact/Monitor Ground ➔ AS REQUIRED"] },
                     { id: "ShutDown", type: "sequence", title: "Shut Down", text: "Engine Shutdown", desc: "Secure sequence to turn off the engine and electrical systems.", items: ["Parking Brake ➔ SET", "Radio Master ➔ OFF", "Exterior Lights (Except Beacon) ➔ OFF", "Cabin / Panel Lights ➔ OFF", "Throttle ➔ IDLE", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF & KEY OUT", "Master Switch ➔ OFF", "Parking Brake ➔ RELEASE"] },
                     { id: "Securing", type: "sequence", title: "Securing", text: "Airplane Securing", desc: "Final steps to tie down and secure the aircraft after shutdown.", items: ["Tie Downs & Chocks ➔ APPLY", "Control Lock & Pitot Cover ➔ INSTALL", "Fuel Selector ➔ LEFT or RIGHT", "Cabin Air/Heat ➔ OFF", "Windows ➔ CLOSE", "Flight Plan ➔ CLOSE", "Binder & Fuel Load ➔ RECORD", "FSP & Squawks ➔ COMPLETE", "Garbage ➔ VERIFY AIRPLANE IS CLEAN"] }
-                ],
-                "Emergency Procedures": [
-                    { id: "EngFailTakeoffRoll", type: "sequence", title: "Failure (T/O Roll)", text: "Engine Failure During Take-Off Roll", desc: "Abort actions for an engine failure while still on the runway.", items: ["Throttle ➔ IDLE", "Brakes ➔ APPLY", "Flaps ➔ RETRACT", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF"] },
-                    { id: "EngineRestart", type: "sequence", title: "Engine Restart", text: "Restart / Roughness", desc: "Restart attempt for a failed or rough-running engine, flown above 1,000' AGL as part of the ABCD checklist step.", items: ["Carb Heat ➔ ON", "Fuel Selector ➔ BOTH", "Mixture ➔ FULL", "Primer ➔ LOCKED", "Aux Fuel Pump ➔ ON (IF BELOW 0.5 PSI)", "Ignition Switch ➔ BOTH or START (IF PROP STOPPED)"] },
-                    { id: "EngineSecuring", type: "sequence", title: "Engine Securing", text: "Before Off-Field Touchdown", desc: "Securing the aircraft before an off-field landing, once a restart is not happening or you are below 1,000' AGL.", items: ["Mixture ➔ IDLE CUTOFF", "Fuel Selector ➔ OFF", "Ignition Switch ➔ OFF", "Flaps ➔ AS REQUIRED", "Master Switch ➔ OFF", "Doors ➔ OPEN", "Seatbelt ➔ FASTEN", "Touchdown ➔ SLIGHTLY NOSE HIGH", "Brakes ➔ APPLY HEAVILY"] },
-                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start. Two branches: the engine starts, or it fails to start.", items: ["Cranking ➔ CONTINUE", "If Engine Starts: Throttle ➔ 1,700 RPM for 3 MINS.", "If Engine Starts: Engine ➔ SHUTDOWN & INSPECT", "If Engine Fails to Start: Throttle ➔ FULL OPEN", "Mixture ➔ IDLE CUTOFF", "Cranking ➔ CONTINUE for 3 MINS.", "Fire Extinguisher ➔ OBTAIN", "Master Switch ➔ OFF", "Ignition Switch ➔ OFF", "Fuel Selector ➔ OFF"] },
-                    { id: "EngineFireFlight", type: "sequence", title: "Fire in Flight", text: "Engine Fire", desc: "Airborne engine fire. Flaps are unavailable after the master switch goes off, so Engine Securing is applied without them.", items: ["Source of Power ➔ CHECK", "Mixture ➔ IDLE CUTOFF", "Fuel Selector ➔ OFF", "Master Switch ➔ OFF", "Cabin Air & Heat ➔ OFF", "Airspeed ➔ 100 KIAS or MORE", "Engine Securing ➔ APPLY (FLAPS UNAVAILABLE)"] },
-                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or an electrical fire in the cabin.", items: ["Master Switch ➔ OFF", "All Other Switches (Except Ignition) ➔ OFF", "Cabin Air / Heat & Vents ➔ OFF", "Fire Extinguisher ➔ CONSIDER USING"] },
-                    { id: "Ammeter", type: "sequence", title: "Ammeter Discharge", text: "Ammeter Shows Discharge", desc: "Electrical system troubleshooting when the ammeter shows a discharge.", items: ["Circuit Breakers ➔ CHECK", "Alternator Switch ➔ RESET", "If Still Discharging: Alternator ➔ OFF", "Nonessential Electrical Equipment ➔ OFF", "Land ➔ AS SOON AS PRACTICAL"] },
-                    { id: "FlatTire", type: "sequence", title: "Flat Tire", text: "Landing With a Flat Tire", desc: "Landing technique for a flat main tire or a flat nose tire.", items: ["Main Tire: Approach ➔ NORMAL", "Main Tire: Touchdown ➔ GOOD TIRE FIRST", "Nose Tire ➔ SAME AS SOFT FIELD LANDING"] }
                 ]
             },
             "Flows": {
@@ -622,9 +635,23 @@
                 "Short & Soft Field": [
                     { id: "ShortField", type: "sequence", title: "Short Field", text: "Takeoff & Landing", desc: "Short field profile: maximum performance takeoff over an obstacle, and the shortest possible landing roll.", items: ["Takeoff: Flaps ➔ 10°", "Takeoff: All Available Runway ➔ FULL BRAKES", "Takeoff: Climb at Vx ➔ UNTIL CLEAR", "Takeoff: Climb at Vy ➔ UNTIL SAFE ALT", "Takeoff: Flaps ➔ RETRACT", "Landing: Approach ➔ FLAPS 30°, 60 KTS", "Landing: Flaps ➔ UP AFTER TOUCHDOWN", "Landing: Brakes ➔ SIMULATED FULL"] },
                     { id: "SoftField", type: "sequence", title: "Soft Field", text: "Takeoff & Landing", desc: "Soft field profile: keep weight off the nosewheel, use ground effect to accelerate, and touch down as softly as possible.", items: ["Takeoff: Flaps ➔ 10°", "Takeoff: Brakes ➔ NONE, ELEVATOR ALL UP", "Takeoff: Ground Effect ➔ STAY UNTIL SAFE SPEED", "Takeoff: Climb at Vy ➔ UNTIL SAFE ALT", "Takeoff: Flaps ➔ RETRACT", "Landing: Power ➔ ADD RIGHT BEFORE TOUCHDOWN IF NEEDED", "Landing: Elevator ➔ FULL UP AFTER TOUCHDOWN"] }
+                ]
+            },
+            "Emergencies": {
+                "Memory Flows": [
+                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight. Above 1,000' AGL the C step runs Engine Restart; if it will not restart, or below 1,000' AGL, you declare and secure.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "Above 1000' AGL: Engine Restart ➔ APPLY", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700", "Engine Securing ➔ APPLY"] },
+                    { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A ➔ Airspeed", "B ➔ Best Field", "C ➔ Checklist", "D ➔ Declare", "E ➔ Execute"] },
+                    { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W ➔ Wind", "O ➔ Obstructions", "S ➔ Size", "S ➔ Shape", "S ➔ Surface"] }
                 ],
-                "Emergencies": [
-                    { id: "ABCD", type: "sequence", title: "ABCD", text: "Engine Failure", desc: "Critical memory flow for an engine failure in flight. Above 1,000' AGL the C step runs Engine Restart; if it will not restart, or below 1,000' AGL, you declare and secure.", items: ["A ➔ Airspeed 68 KIAS", "B ➔ Best Place to Land FIND and TURN", "C ➔ Checklist PERFORM", "Above 1000' AGL: Engine Restart ➔ APPLY", "D ➔ Declare CURRENT FREQ/121.5 & SQK 7700", "Engine Securing ➔ APPLY"] }
+                "Emergency Checklists": [
+                    { id: "EngFailTakeoffRoll", type: "sequence", title: "Failure (T/O Roll)", text: "Engine Failure During Take-Off Roll", desc: "Abort actions for an engine failure while still on the runway.", items: ["Throttle ➔ IDLE", "Brakes ➔ APPLY", "Flaps ➔ RETRACT", "Mixture ➔ IDLE CUTOFF", "Ignition Switch ➔ OFF"] },
+                    { id: "EngineRestart", type: "sequence", title: "Engine Restart", text: "Restart / Roughness", desc: "Restart attempt for a failed or rough-running engine, flown above 1,000' AGL as part of the ABCD checklist step.", items: ["Carb Heat ➔ ON", "Fuel Selector ➔ BOTH", "Mixture ➔ FULL", "Primer ➔ LOCKED", "Aux Fuel Pump ➔ ON (IF BELOW 0.5 PSI)", "Ignition Switch ➔ BOTH or START (IF PROP STOPPED)"] },
+                    { id: "EngineSecuring", type: "sequence", title: "Engine Securing", text: "Before Off-Field Touchdown", desc: "Securing the aircraft before an off-field landing, once a restart is not happening or you are below 1,000' AGL.", items: ["Mixture ➔ IDLE CUTOFF", "Fuel Selector ➔ OFF", "Ignition Switch ➔ OFF", "Flaps ➔ AS REQUIRED", "Master Switch ➔ OFF", "Doors ➔ OPEN", "Seatbelt ➔ FASTEN", "Touchdown ➔ SLIGHTLY NOSE HIGH", "Brakes ➔ APPLY HEAVILY"] },
+                    { id: "EngineFireStart", type: "sequence", title: "Fire (Start)", text: "Engine Fire During Start", desc: "Memory items to execute if an engine fire occurs on the ground during start. Two branches: the engine starts, or it fails to start.", items: ["Cranking ➔ CONTINUE", "If Engine Starts: Throttle ➔ 1,700 RPM for 3 MINS.", "If Engine Starts: Engine ➔ SHUTDOWN & INSPECT", "If Engine Fails to Start: Throttle ➔ FULL OPEN", "Mixture ➔ IDLE CUTOFF", "Cranking ➔ CONTINUE for 3 MINS.", "Fire Extinguisher ➔ OBTAIN", "Master Switch ➔ OFF", "Ignition Switch ➔ OFF", "Fuel Selector ➔ OFF"] },
+                    { id: "EngineFireFlight", type: "sequence", title: "Fire in Flight", text: "Engine Fire", desc: "Airborne engine fire. Flaps are unavailable after the master switch goes off, so Engine Securing is applied without them.", items: ["Source of Power ➔ CHECK", "Mixture ➔ IDLE CUTOFF", "Fuel Selector ➔ OFF", "Master Switch ➔ OFF", "Cabin Air & Heat ➔ OFF", "Airspeed ➔ 100 KIAS or MORE", "Engine Securing ➔ APPLY (FLAPS UNAVAILABLE)"] },
+                    { id: "ElecFire", type: "sequence", title: "Electrical Fire", text: "Smoke in Cabin", desc: "Immediate actions for smoke or an electrical fire in the cabin.", items: ["Master Switch ➔ OFF", "All Other Switches (Except Ignition) ➔ OFF", "Cabin Air / Heat & Vents ➔ OFF", "Fire Extinguisher ➔ CONSIDER USING"] },
+                    { id: "Ammeter", type: "sequence", title: "Ammeter Discharge", text: "Ammeter Shows Discharge", desc: "Electrical system troubleshooting when the ammeter shows a discharge.", items: ["Circuit Breakers ➔ CHECK", "Alternator Switch ➔ RESET", "If Still Discharging: Alternator ➔ OFF", "Nonessential Electrical Equipment ➔ OFF", "Land ➔ AS SOON AS PRACTICAL"] },
+                    { id: "FlatTire", type: "sequence", title: "Flat Tire", text: "Landing With a Flat Tire", desc: "Landing technique for a flat main tire or a flat nose tire.", items: ["Main Tire: Approach ➔ NORMAL", "Main Tire: Touchdown ➔ GOOD TIRE FIRST", "Nose Tire ➔ SAME AS SOFT FIELD LANDING"] }
                 ]
             },
             "V-Speeds": {
@@ -687,27 +714,33 @@
                 ],
                 "Flight Operations": [
                     { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] }
+                ]
+            },
+            "Oral Exam — PAVE": {
+                "The Framework": [
+                    { id: "PAVE", type: "definition", title: "PAVE", text: "Master Risk Framework", desc: "The master framework for the oral. Every other acronym hangs off one of these four pillars — P feeds IM SAFE (Part 61 plus aeromedical), A feeds ARROW / AV1ATE / A TOMATO FLAMES / FLAPS (Part 91 subparts C and E), V feeds NWKRAFT and the NOTAM types (91.103), and E has no checklist at all, which is exactly why it is the one that kills people.", items: ["P ➔ Pilot — am I legal and safe to fly? (IM SAFE)", "A ➔ Aircraft — is the machine legal and safe? (ARROW, AV1ATE, A TOMATO FLAMES, FLAPS)", "V ➔ enVironment — is it safe where I am flying? (NWKRAFT, NOTAMs, weather, airspace)", "E ➔ External Pressures — why am I pushing to make this flight?"] },
+                    { id: "FARParts", type: "definition", title: "Where The Rules Live", text: "Navigating the FARs", desc: "Before you can apply PAVE you have to know which Part the answer lives in. The examiner cares less about the citation than about whether you open the right book.", items: ["Part 1 ➔ Definitions and abbreviations — V-speeds, and the legal definition of night (end of evening civil twilight to beginning of morning civil twilight)", "Part 61 ➔ The Pilot — certificates, medicals, flight reviews, passenger currency, the 30-day address change rule (61.60)", "Part 91 ➔ The Aircraft and the Environment — right-of-way, weather minimums, airspace, required equipment, required inspections", "Part 141 ➔ Structured pilot schools — an approved syllabus, which is what allows the reduced minimum flight hours (35 vs 40 for the PPL)"] }
                 ],
-                "Emergencies": [
-                    { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W ➔ Wind", "O ➔ Obstructions", "S ➔ Size", "S ➔ Shape", "S ➔ Surface"] },
-                    { id: "ABCDE", type: "sequence", title: "ABCDE", text: "Emergency Landing", desc: "Complete sequence for handling an engine failure and forced landing.", items: ["A ➔ Airspeed", "B ➔ Best Field", "C ➔ Checklist", "D ➔ Declare", "E ➔ Execute"] }
+                "P — Pilot": [
+                    { id: "IMSAFE", type: "definition", title: "IM SAFE", text: "P — The Pilot", desc: "The personal-minimums checklist under the P of PAVE. This is a self-assessment before every flight, not a one-time thing. The A is the one with hard numbers attached (91.17), so that is the one the examiner will push on.", items: ["I ➔ Illness — any symptom at all, however minor", "M ➔ Medication — prescription AND over-the-counter; check before you take it, not after", "S ➔ Stress — money, work, family, checkride pressure", "A ➔ Alcohol — 8 hours bottle to throttle AND below 0.04% BAC AND not under the influence (91.17)", "F ➔ Fatigue — the one pilots rationalize away most often", "E ➔ Emotion / Eating — emotionally stable, and actually fed and hydrated"] }
                 ],
-                "Equipment & Rules": [
+                "A — Aircraft": [
+                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight. Traps: the Airworthiness Certificate never expires as long as the aircraft is maintained per 91.409 and 91.403; the Registration DOES expire — 7 years since the 2023 rule change (14 CFR 47.40); the Radio Station License is only needed for international flights; and Weight and Balance data is tail-number specific, so a sister ship's data is not legal for this airplane.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] },
+                    { id: "AV1ATE", type: "definition", title: "AV1ATE", text: "A — Inspections", desc: "The required-inspections half of the Aircraft pillar. The pattern worth memorizing: 12 calendar months for Annual and ELT, 24 calendar months for Altimeter/static and Transponder, 30 days for the VOR check, 100 hours for the 100-hour. Note which ones are IFR-only — the examiner's favorite trap is applying an IFR requirement to a VFR question.", items: ["A ➔ Annual — every 12 calendar months, requires an A and P mechanic with Inspection Authorization (91.409a)", "A ➔ Airworthiness Directives — mandatory FAA recalls; can be emergency or routine, one-time or recurring (91.403)", "V ➔ VOR check — every 30 days, IFR ONLY (91.171)", "1 ➔ 100-hour — ONLY for carrying persons for hire or flight instruction for hire in an aircraft the instructor provides; may be exceeded by up to 10 hours only to reach a maintenance base, and the excess is subtracted from the next interval (91.409b)", "A ➔ Altimeter and pitot-static system — every 24 calendar months, IFR ONLY (91.411)", "T ➔ Transponder — every 24 calendar months, VFR too (91.413)", "E ➔ ELT — inspected every 12 calendar months; battery replaced after 1 cumulative hour of use or when 50 percent of useful life has expired (91.207d) — remember it as 121.5: the frequency, 1 hour, 50 percent"] },
                     /* CORRECTION v2.0.0: the first two A/T pairs were swapped in v1.2.2.
                        The standard FAR 91.205(b) mnemonic order is
                        Airspeed, Tachometer, Oil pressure, Manifold pressure, Altimeter, ... */
                     { id: "ATOMATO", type: "definition", title: "A TOMATO FLAMES", text: "VFR Day", desc: "Required instruments and equipment for VFR daytime flight (FAR 91.205b). Sits under the A of PAVE. Several items are CONDITIONAL, which is where the traps are: manifold pressure only for altitude (turbo/supercharged) engines, the temperature gauge only for liquid-cooled engines, oil temp for air-cooled, landing gear position only for retractables, and anti-collision lights for aircraft certificated after 11 March 1996.", items: ["A ➔ Airspeed", "T ➔ Tachometer", "O ➔ Oil Pressure", "M ➔ Manifold Pressure", "A ➔ Altimeter", "T ➔ Temperature Gauge", "O ➔ Oil Temp", "F ➔ Fuel Gauge", "L ➔ Landing Gear Pos", "A ➔ Anti-collision Lights", "M ➔ Magnetic Compass", "E ➔ ELT", "S ➔ Seatbelts"] },
-                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight (91.205c) — these are ON TOP of A TOMATO FLAMES, never instead of it. Traps: fuses means one spare set or three of each kind, and only if the fuses are accessible in flight; the landing light is required ONLY if the aircraft is operated for hire; and position lights must be displayed sunset to sunrise (91.209), which is a different clock from the definition of night for logging and from the 1-hour-after-sunset rule for passenger currency.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] },
-                    { id: "ARROW", type: "definition", title: "ARROW", text: "Required Docs", desc: "Mandatory documents that must be onboard the aircraft during flight. Traps: the Airworthiness Certificate never expires as long as the aircraft is maintained per 91.409 and 91.403; the Registration DOES expire — 7 years since the 2023 rule change (14 CFR 47.40); the Radio Station License is only needed for international flights; and Weight and Balance data is tail-number specific, so a sister ship's data is not legal for this airplane.", items: ["A ➔ Airworthiness Certificate", "R ➔ Registration", "R ➔ Radio license", "O ➔ Operating limitations", "W ➔ Weight and balance"] }
+                    { id: "FLAPS", type: "definition", title: "FLAPS", text: "VFR Night", desc: "Additional required instruments and equipment for VFR night flight (91.205c) — these are ON TOP of A TOMATO FLAMES, never instead of it. Traps: fuses means one spare set or three of each kind, and only if the fuses are accessible in flight; the landing light is required ONLY if the aircraft is operated for hire; and position lights must be displayed sunset to sunrise (91.209), which is a different clock from the definition of night for logging and from the 1-hour-after-sunset rule for passenger currency.", items: ["F ➔ Fuses", "L ➔ Landing Light", "A ➔ Anti-collision", "P ➔ Position lights", "S ➔ Source of power"] }
                 ],
-                "Risk & Preflight (PAVE)": [
-                    { id: "PAVE", type: "definition", title: "PAVE", text: "Master Risk Framework", desc: "The master framework for the oral. Every other acronym hangs off one of these four pillars — P feeds IM SAFE (Part 61 plus aeromedical), A feeds ARROW / AV1ATE / A TOMATO FLAMES / FLAPS (Part 91 subparts C and E), V feeds NWKRAFT and the NOTAM types (91.103), and E has no checklist at all, which is exactly why it is the one that kills people.", items: ["P ➔ Pilot — am I legal and safe to fly? (IM SAFE)", "A ➔ Aircraft — is the machine legal and safe? (ARROW, AV1ATE, A TOMATO FLAMES, FLAPS)", "V ➔ enVironment — is it safe where I am flying? (NWKRAFT, NOTAMs, weather, airspace)", "E ➔ External Pressures — why am I pushing to make this flight?"] },
-                    { id: "FARParts", type: "definition", title: "Where The Rules Live", text: "Navigating the FARs", desc: "Before you can apply PAVE you have to know which Part the answer lives in. The examiner cares less about the citation than about whether you open the right book.", items: ["Part 1 ➔ Definitions and abbreviations — V-speeds, and the legal definition of night (end of evening civil twilight to beginning of morning civil twilight)", "Part 61 ➔ The Pilot — certificates, medicals, flight reviews, passenger currency, the 30-day address change rule (61.60)", "Part 91 ➔ The Aircraft and the Environment — right-of-way, weather minimums, airspace, required equipment, required inspections", "Part 141 ➔ Structured pilot schools — an approved syllabus, which is what allows the reduced minimum flight hours (35 vs 40 for the PPL)"] },
-                    { id: "IMSAFE", type: "definition", title: "IM SAFE", text: "P — The Pilot", desc: "The personal-minimums checklist under the P of PAVE. This is a self-assessment before every flight, not a one-time thing. The A is the one with hard numbers attached (91.17), so that is the one the examiner will push on.", items: ["I ➔ Illness — any symptom at all, however minor", "M ➔ Medication — prescription AND over-the-counter; check before you take it, not after", "S ➔ Stress — money, work, family, checkride pressure", "A ➔ Alcohol — 8 hours bottle to throttle AND below 0.04% BAC AND not under the influence (91.17)", "F ➔ Fatigue — the one pilots rationalize away most often", "E ➔ Emotion / Eating — emotionally stable, and actually fed and hydrated"] },
-                    { id: "AV1ATE", type: "definition", title: "AV1ATE", text: "A — Inspections", desc: "The required-inspections half of the Aircraft pillar. The pattern worth memorizing: 12 calendar months for Annual and ELT, 24 calendar months for Altimeter/static and Transponder, 30 days for the VOR check, 100 hours for the 100-hour. Note which ones are IFR-only — the examiner's favorite trap is applying an IFR requirement to a VFR question.", items: ["A ➔ Annual — every 12 calendar months, requires an A and P mechanic with Inspection Authorization (91.409a)", "A ➔ Airworthiness Directives — mandatory FAA recalls; can be emergency or routine, one-time or recurring (91.403)", "V ➔ VOR check — every 30 days, IFR ONLY (91.171)", "1 ➔ 100-hour — ONLY for carrying persons for hire or flight instruction for hire in an aircraft the instructor provides; may be exceeded by up to 10 hours only to reach a maintenance base, and the excess is subtracted from the next interval (91.409b)", "A ➔ Altimeter and pitot-static system — every 24 calendar months, IFR ONLY (91.411)", "T ➔ Transponder — every 24 calendar months, VFR too (91.413)", "E ➔ ELT — inspected every 12 calendar months; battery replaced after 1 cumulative hour of use or when 50 percent of useful life has expired (91.207d) — remember it as 121.5: the frequency, 1 hour, 50 percent"] },
+                "V — enVironment": [
                     { id: "NWKRAFT", type: "definition", title: "NWKRAFT", text: "V — Preflight Action", desc: "The enVironment pillar, and the mnemonic for 91.103 preflight action — 'each pilot in command shall, before beginning a flight, become familiar with all available information concerning that flight.' Runway lengths and takeoff/landing data are required for EVERY flight; the rest is required for any flight not in the vicinity of an airport.", items: ["N ➔ NOTAMs — all types, including the FDC NOTAMs that carry TFRs", "W ➔ Weather reports and forecasts", "K ➔ Known ATC delays", "R ➔ Runway lengths at the airports of intended use", "A ➔ Alternates available if the flight cannot be completed as planned", "F ➔ Fuel requirements — day VFR destination plus 30 minutes, night VFR destination plus 45 minutes, at normal cruising speed (91.151)", "T ➔ Takeoff and landing distance data from the POH, for the actual conditions"] },
-                    { id: "NOTAMTypes", type: "definition", title: "NOTAM Types", text: "V — The N in NWKRAFT", desc: "The categories of NOTAM listed in AIM 5-1-3. The one that matters most for a checkride is FDC, because that is where TFRs live — and a TFR bust is a certificate action, not a debrief item.", items: ["NOTAM (D) ➔ Distant — runway closures, VOR out of service, unlit obstructions; anything affecting a facility beyond the local area", "FDC ➔ Flight Data Center — REGULATORY in nature: TFRs, and amendments to instrument approach procedures and other published charts", "Pointer ➔ Points to another NOTAM so a critical one is not overlooked", "Military ➔ Pertains to US military airspace and navaids", "SAA ➔ Special Activity Airspace — when special-use airspace will be active outside its published schedule"] },
-                    { id: "ExternalP", type: "definition", title: "External Pressures", text: "E — The Killer", desc: "The fourth pillar, and the only one with no checklist, no regulation and no gauge. It is the most common thread in fatal GA accident reports. The mitigation is not willpower — it is deciding your outs BEFORE you leave, out loud, and giving yourself permission to use them.", items: ["Get-there-itis ➔ pressing on to a destination because you planned to, not because it is still safe", "Passenger pressure ➔ people on board who need to be somewhere at a certain time", "Financial pressure ➔ money already spent on the rental, the trip or the checkride", "Ego and self-induced pressure ➔ not wanting to look hesitant in front of an instructor, an examiner or a passenger", "The mitigation ➔ a personal minimums sheet set on the ground, and a pre-declared out for every leg"] },
+                    { id: "NOTAMTypes", type: "definition", title: "NOTAM Types", text: "V — The N in NWKRAFT", desc: "The categories of NOTAM listed in AIM 5-1-3. The one that matters most for a checkride is FDC, because that is where TFRs live — and a TFR bust is a certificate action, not a debrief item.", items: ["NOTAM (D) ➔ Distant — runway closures, VOR out of service, unlit obstructions; anything affecting a facility beyond the local area", "FDC ➔ Flight Data Center — REGULATORY in nature: TFRs, and amendments to instrument approach procedures and other published charts", "Pointer ➔ Points to another NOTAM so a critical one is not overlooked", "Military ➔ Pertains to US military airspace and navaids", "SAA ➔ Special Activity Airspace — when special-use airspace will be active outside its published schedule"] }
+                ],
+                "E — External Pressures": [
+                    { id: "ExternalP", type: "definition", title: "External Pressures", text: "E — The Killer", desc: "The fourth pillar, and the only one with no checklist, no regulation and no gauge. It is the most common thread in fatal GA accident reports. The mitigation is not willpower — it is deciding your outs BEFORE you leave, out loud, and giving yourself permission to use them.", items: ["Get-there-itis ➔ pressing on to a destination because you planned to, not because it is still safe", "Passenger pressure ➔ people on board who need to be somewhere at a certain time", "Financial pressure ➔ money already spent on the rental, the trip or the checkride", "Ego and self-induced pressure ➔ not wanting to look hesitant in front of an instructor, an examiner or a passenger", "The mitigation ➔ a personal minimums sheet set on the ground, and a pre-declared out for every leg"] }
+                ],
+                "FAA Trick Questions": [
                     {
                         id: "PAVETraps",
                         type: "mcq",
@@ -910,25 +943,21 @@
            They reference the same flow objects by id, so the checklist stays a
            single source of truth and one set of progress stats follows a flow
            no matter which category you opened it from. */
-        const VIRTUAL_CATS = {
-            'Maneuvers & Emergencies': {
-                'Pre-Maneuver & Pattern': ['FourCs', 'ClimbCheck', 'CruiseCheck', 'ABC', 'CGUMPS', 'GoAround'],
-                'Takeoff & Landing Profiles': ['ShortField', 'SoftField'],
-                'Emergencies': ['ABCD', 'ABCDE', 'WOSSS', 'EngFailTakeoffRoll', 'EngineRestart',
-                    'EngineSecuring', 'EngineFireStart', 'EngineFireFlight', 'ElecFire', 'Ammeter', 'FlatTire']
-            },
-            // Oral-exam view: PAVE as the master framework, with every other acronym
-            // filed under the pillar it belongs to. Nothing here is a copy — these are
-            // the same flow objects as in Acronyms, so progress follows the topic.
-            'Oral Exam — PAVE': {
-                'The Framework': ['PAVE', 'FARParts'],
-                'P — Pilot': ['IMSAFE', 'SAFETY'],
-                'A — Aircraft': ['ARROW', 'AV1ATE', 'ATOMATO', 'FLAPS'],
-                'V — enVironment': ['NWKRAFT', 'NOTAMTypes'],
-                'E — External Pressures': ['ExternalP'],
-                'FAA Trick Questions': ['PAVETraps']
-            }
-        };
+        // DELIBERATELY EMPTY as of Version 5.
+        //
+        // Or's rule: a topic belongs to exactly ONE parent category. Virtual
+        // categories broke that — "Maneuvers & Emergencies" and the first cut of
+        // "Oral Exam — PAVE" showed the same topics that already lived under
+        // Checklists, Flows and Acronyms, which is what made the home screen read
+        // as a salad. Every topic now has one real home in `appDatabase`, so
+        // emergencies live under Emergencies and the PAVE pillars own ARROW,
+        // AV1ATE, A TOMATO FLAMES and FLAPS outright.
+        //
+        // The mechanism is kept because it costs nothing and a genuine
+        // cross-cutting view may earn its place later. If you use it again, be
+        // deliberate: it puts one topic under two parents, which is exactly what
+        // he asked not to have.
+        const VIRTUAL_CATS = {};
 
         // catName -> subCatName -> [flow]   (real categories first, then virtual ones)
         const CATS = {};
@@ -944,6 +973,31 @@
             });
             if (Object.keys(built).length) CATS[catName] = built;
         });
+        // How the categories are grouped on the home screen and in the side menu.
+        // Ten cards in one flat grid gave no sense of what belonged with what;
+        // these four headings answer "what am I actually studying right now".
+        // Anything not listed here still shows, under "More" — so adding a
+        // category can never make it disappear.
+        const CAT_GROUPS = [
+            { title: 'In the Cockpit', cats: ['Checklists', 'Flows', 'Emergencies'] },
+            { title: 'The Aircraft', cats: ['V-Speeds', 'POH Navigation'] },
+            { title: 'Ground Knowledge', cats: ['Weather', 'ATC Light Gun', 'Acronyms'] },
+            { title: 'Exam Prep', cats: ['Oral Exam — PAVE', 'Personal Focus'] }
+        ];
+        // [{title, cats:[name]}] with only categories that actually exist,
+        // plus a trailing "More" group for anything CAT_GROUPS forgot.
+        function groupedCats() {
+            const known = {};
+            const groups = CAT_GROUPS.map(g => {
+                const cats = g.cats.filter(c => CATS[c]);
+                cats.forEach(c => { known[c] = 1; });
+                return { title: g.title, cats: cats };
+            }).filter(g => g.cats.length);
+            const rest = Object.keys(CATS).filter(c => !known[c]);
+            if (rest.length) groups.push({ title: 'More', cats: rest });
+            return groups;
+        }
+
         function catFlows(catName) {
             const c = CATS[catName];
             if (!c) return [];
@@ -1390,8 +1444,28 @@
             return ALL_FLOWS.filter(f => f.type !== 'info' && (scope === 'all' || f.parentCat === scope));
         }
 
-        function buildMixedDrill(scope, length) {
+        // The topics Or has ticked, as a global set of ids. `null` means he has
+        // never narrowed it, i.e. everything. The selection is kept globally
+        // rather than per scope, so switching scope filters the same set instead
+        // of quietly discarding the topics that scope does not contain.
+        function mixedSelectedIds() {
+            const s = Store.data.settings.mixedTopics;
+            return Array.isArray(s) ? s : null;
+        }
+        function selectedFlows(scope) {
             const flows = scopeFlows(scope);
+            const sel = mixedSelectedIds();
+            if (!sel) return flows;
+            const set = new Set(sel);
+            const picked = flows.filter(f => set.has(f.id));
+            // Defensive: a programmatic call with an empty intersection should
+            // still produce a drill. The UI disables Start instead of relying
+            // on this, so he never sees a fallback he did not ask for.
+            return picked.length ? picked : flows;
+        }
+
+        function buildMixedDrill(scope, length) {
+            const flows = selectedFlows(scope);
             if (!flows.length) return [];
             const out = [], seen = new Set();
             const budget = Math.max(120, length * 20);
@@ -1603,7 +1677,14 @@
             });
 
             const catContainer = $('sidebarCats');
-            Object.keys(CATS).forEach(catName => {
+            const flatCats = [];
+            groupedCats().forEach(group => {
+                const gh = document.createElement('div');
+                gh.className = 'sidebar-group';
+                gh.textContent = group.title;
+                catContainer.appendChild(gh);
+                group.cats.forEach(c => flatCats.push(c));
+                group.cats.forEach(catName => {
                 const itemDiv = document.createElement('div');
                 itemDiv.innerHTML =
                     '<div class="sidebar-item">' +
@@ -1636,6 +1717,7 @@
                     }
                 });
                 catContainer.appendChild(itemDiv);
+                });
             });
         }
         function resetLeftMenuAccordions() {
@@ -1649,16 +1731,24 @@
         function renderHome(mode) {
             const container = $('homeCategories');
             container.innerHTML = '';
-            const grid = document.createElement('div');
-            grid.className = 'parent-grid';
-            Object.keys(CATS).forEach(catName => {
-                const btn = document.createElement('button');
-                btn.className = 'parent-card';
-                btn.textContent = catName;
-                btn.addEventListener('click', () => renderCategory(catName, 'push'));
-                grid.appendChild(btn);
+            groupedCats().forEach((group, i) => {
+                const label = document.createElement('div');
+                label.className = 'section-label';
+                if (i > 0) label.style.marginTop = '26px';
+                label.textContent = group.title;
+                container.appendChild(label);
+                const grid = document.createElement('div');
+                grid.className = 'parent-grid';
+                group.cats.forEach(catName => {
+                    const btn = document.createElement('button');
+                    btn.className = 'parent-card';
+                    const n = catFlows(catName).filter(f => f.type !== 'info').length;
+                    btn.innerHTML = esc(catName) + '<small>' + n + ' topic' + (n === 1 ? '' : 's') + '</small>';
+                    btn.addEventListener('click', () => renderCategory(catName, 'push'));
+                    grid.appendChild(btn);
+                });
+                container.appendChild(grid);
             });
-            container.appendChild(grid);
             showPage({ page: 'home' }, mode);
         }
 
@@ -1810,19 +1900,62 @@
                     Store.save();
                     scopeBox.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
                     b.classList.add('selected');
+                    renderTopicPicker();
                     updateMixedStats();
                 });
                 scopeBox.appendChild(b);
             });
+            renderTopicPicker();
             renderLengthChips($('mixedLengthChips'), 'mixedLength', 0);
             updateMixedStats();
             showPage({ page: 'mixed' }, mode);
         }
-        function updateMixedStats() {
+
+        function allDrillableIds() {
+            return ALL_FLOWS.filter(f => f.type !== 'info').map(f => f.id);
+        }
+        function renderTopicPicker() {
+            const box = $('topicPick');
+            if (!box) return;
+            box.innerHTML = '';
             const scope = Store.data.settings.mixedScope || 'all';
             const flows = scopeFlows(scope);
-            const weak = flows.reduce((n, f) => n + weakItemIndices(f).length, 0);
-            $('mixedStats').textContent = flows.length + ' topics in scope  ·  ' + weak + ' weak items tracked';
+            const sel = mixedSelectedIds();
+            const set = sel ? new Set(sel) : null;
+            flows.forEach(f => {
+                const on = !set || set.has(f.id);
+                const b = document.createElement('button');
+                b.className = 'chip topic-chip' + (on ? ' selected' : '');
+                b.textContent = f.title;
+                b.setAttribute('data-topic', f.id);
+                b.setAttribute('aria-pressed', on ? 'true' : 'false');
+                b.addEventListener('click', () => {
+                    const cur = new Set(mixedSelectedIds() || allDrillableIds());
+                    if (cur.has(f.id)) cur.delete(f.id); else cur.add(f.id);
+                    Store.data.settings.mixedTopics = Array.from(cur);
+                    Store.save();
+                    renderTopicPicker();
+                    updateMixedStats();
+                });
+                box.appendChild(b);
+            });
+        }
+        function updateMixedStats() {
+            const scope = Store.data.settings.mixedScope || 'all';
+            const inScope = scopeFlows(scope);
+            const sel = mixedSelectedIds();
+            const set = sel ? new Set(sel) : null;
+            const chosen = set ? inScope.filter(f => set.has(f.id)) : inScope;
+            const weak = chosen.reduce((n, f) => n + weakItemIndices(f).length, 0);
+            const start = $('mixedStartBtn');
+            if (!chosen.length) {
+                $('mixedStats').innerHTML = '<span class="pick-warn">No topics picked — choose at least one.</span>';
+                if (start) { start.disabled = true; start.style.opacity = '0.45'; }
+                return;
+            }
+            if (start) { start.disabled = false; start.style.opacity = ''; }
+            $('mixedStats').textContent = chosen.length + ' of ' + inScope.length
+                + ' topics picked  ·  ' + weak + ' weak items tracked';
         }
 
         function renderProgressScreen(mode) {
@@ -2104,6 +2237,11 @@
            --------------------------------------------------------- */
         function wire() {
             $('menuBtn').addEventListener('click', openLeftMenu);
+            // Straight to the dashboard without opening the drawer first.
+            $('homeBtn').addEventListener('click', () => {
+                closeLeftMenu();
+                renderHome('push');
+            });
             const banner = $('syncBannerBtn');
             if (banner) banner.addEventListener('click', function () {
                 try { if (Sync.isSignedIn()) Sync.signOut(); else Sync.signIn(); } catch (e) {}
@@ -2115,6 +2253,26 @@
             $('rightMenuOverlay').addEventListener('click', closeRightMenu);
 
             $('mixedEntryBtn').addEventListener('click', () => renderMixedScreen('push'));
+            // "All" clears the narrowing entirely rather than listing every id,
+            // so newly added topics are included by default instead of silently
+            // missing from a stale saved list.
+            $('topicPickAll').addEventListener('click', () => {
+                delete Store.data.settings.mixedTopics;
+                Store.save();
+                renderTopicPicker();
+                updateMixedStats();
+            });
+            // "None" clears only what is in the current scope, leaving picks in
+            // other categories alone.
+            $('topicPickNone').addEventListener('click', () => {
+                const scope = Store.data.settings.mixedScope || 'all';
+                const drop = new Set(scopeFlows(scope).map(f => f.id));
+                const cur = (mixedSelectedIds() || allDrillableIds()).filter(id => !drop.has(id));
+                Store.data.settings.mixedTopics = cur;
+                Store.save();
+                renderTopicPicker();
+                updateMixedStats();
+            });
             $('progressEntryBtn').addEventListener('click', () => renderProgressScreen('push'));
             $('mainStartBtn').addEventListener('click', () => { if (currentStudyFlow) startTopicDrill(currentStudyFlow); });
             $('mixedStartBtn').addEventListener('click', startMixedDrill);
@@ -2368,6 +2526,8 @@
             generateOne: generateOne, buildTopicDrill: buildTopicDrill, buildMixedDrill: buildMixedDrill,
             splitItem: splitItem, norm: norm, validOptions: validOptions,
             renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices, Sync: Sync,
+            renderHome: renderHome, renderMixedScreen: renderMixedScreen,
+            groupedCats: groupedCats, selectedFlows: selectedFlows,
             distractorPool: distractorPool, uniqueIndices: uniqueIndices, stripTags: stripTags
         };
 

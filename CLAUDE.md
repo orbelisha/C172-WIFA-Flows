@@ -41,7 +41,8 @@ Those warnings appearing in a sandbox run is also the offline-degradation
 path being exercised — the run must still report 0 drill and 0 navigation
 problems, which is the proof that sync stayed optional.
 
-A healthy run currently reports ~21,600 questions and 94/94 topics; those
+A healthy run currently reports ~21,600 questions and 63/63 topics
+(63 = every topic exactly once, which is itself the one-parent check); those
 numbers grow as banks are added, so treat the paragraph above as a shape, not a
 constant. 0 failures is the part that matters.
 
@@ -49,13 +50,13 @@ Three extra suites cover what `test-flows.mjs` does not:
 
     node check_ui24.mjs    # All / Not done yet mode, resource links
     node check_sync.mjs    # merge correctness + offline degradation
-    node check_pave.mjs    # sign-in banner states + the PAVE virtual category
+    node check_pave.mjs    # one-parent-only, grouped home, topic picker, banner
 
-`check_pave.mjs` exists because `VIRTUAL_CATS` resolves ids through
-`FLOW_BY_ID` and then calls `.filter(Boolean)` — a typo'd id does not throw, it
-silently removes the topic from the category. It also asserts that shared
-topics are the SAME object as in their home category (so one set of progress
-stats follows a topic) and that the guest banner really says "guest".
+`check_pave.mjs` guards the structural invariants that fail SILENTLY rather
+than throwing: a topic appearing under two parents, `parentCat` disagreeing with
+where the topic actually sits, a category unreachable from the home screen, and
+the Mixed Drill topic picker not actually filtering the drill it builds. It also
+checks the top-bar home button and the guest sign-in banner.
 
 `check_sync.mjs` is the important one before touching sync: it asserts that
 the later answer wins in both directions, that no item from either side is
@@ -71,7 +72,13 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   user-visible change and set the date to that day. No semver, no dot-releases —
   Or wants to read the footer and know at a glance which build he is on and
   whether it is current. Version 3 = 04.09.2026 is the baseline.
-- Categories can be added as *virtual* categories via `VIRTUAL_CATS`, which maps
-  sub-section names to existing flow ids. Nothing is copied, so the WIFA
-  checklist stays a single source of truth and one set of progress stats follows
-  a topic no matter which category it was opened from.
+- **A topic belongs to exactly ONE parent category.** Or asked for this
+  explicitly in Version 5: virtual categories used to show the same topic under
+  several parents, and that is what made the home screen unreadable. Every topic
+  now has one home in `appDatabase`. `VIRTUAL_CATS` still exists as a mechanism
+  but is deliberately empty — filling it puts a topic under two parents again.
+  `check_pave.mjs` fails the build if that happens.
+- The home screen and side menu group categories via `CAT_GROUPS`
+  (In the Cockpit / The Aircraft / Ground Knowledge / Exam Prep). A category
+  missing from that list still renders, under "More", so adding one can never
+  make it vanish — but put it in a group.
