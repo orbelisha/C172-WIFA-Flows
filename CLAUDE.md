@@ -55,8 +55,11 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
 
 - Line endings are LF, enforced by `.gitattributes` (`*.html text eol=lf`).
   Never reintroduce CRLF — it makes the diff look like the whole file changed.
-- Bump the version in the footer (`<div class="footer">vX.Y.Z | ...`) with each
-  user-visible change.
+- The footer version is a plain integer plus the date it shipped:
+  `<div class="footer">Version N &middot; DD.MM.YYYY | ...`. Bump N by 1 for each
+  user-visible change and set the date to that day. No semver, no dot-releases —
+  Or wants to read the footer and know at a glance which build he is on and
+  whether it is current. Version 3 = 04.09.2026 is the baseline.
 - Categories can be added as *virtual* categories via `VIRTUAL_CATS`, which maps
   sub-section names to existing flow ids. Nothing is copied, so the WIFA
   checklist stays a single source of truth and one set of progress stats follows
