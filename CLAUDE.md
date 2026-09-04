@@ -41,16 +41,27 @@ Those warnings appearing in a sandbox run is also the offline-degradation
 path being exercised — the run must still report 0 drill and 0 navigation
 problems, which is the proof that sync stayed optional.
 
-A healthy run currently reports ~21,600 questions and 63/63 topics
-(63 = every topic exactly once, which is itself the one-parent check); those
+A healthy run currently reports ~24,100 questions and 71/71 topics
+(71 = every topic exactly once, which is itself the one-parent check); those
 numbers grow as banks are added, so treat the paragraph above as a shape, not a
-constant. 0 failures is the part that matters.
+constant. 0 soundness failures is the part that matters.
+
+`null returns` in part A is NOT a failure and does not need chasing. It counts
+the times the generator declined to build a question from a random draw — most
+often because the only available distractors were too close to the answer to be
+fair. It went from 0 to ~280 in Version 6 purely because the new FAR banks have
+many items sharing a leading token ("Part 1 ➜", "Part 43 ➜", "91.3 ➜",
+"91.103 ➜"), so more draws get refused. The check that matters is the
+"could not fill a 20-question drill" list: only banks whose item COUNT is below
+20 should appear there. A definition topic with 20+ items showing up in that
+list is a real problem.
 
 Three extra suites cover what `test-flows.mjs` does not:
 
     node check_ui24.mjs    # All / Not done yet mode, resource links
     node check_sync.mjs    # merge correctness + offline degradation
-    node check_pave.mjs    # one-parent-only, grouped home, topic picker, banner
+    node check_pave.mjs    # one-parent-only, grouped home, topic picker, banner,
+                           # and that FAR Navigation stays a top-level category
 
 `check_pave.mjs` guards the structural invariants that fail SILENTLY rather
 than throwing: a topic appearing under two parents, `parentCat` disagreeing with
@@ -79,6 +90,6 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   but is deliberately empty — filling it puts a topic under two parents again.
   `check_pave.mjs` fails the build if that happens.
 - The home screen and side menu group categories via `CAT_GROUPS`
-  (In the Cockpit / The Aircraft / Ground Knowledge / Exam Prep). A category
+  (In the Cockpit / Look It Up / Ground Knowledge / Exam Prep). A category
   missing from that list still renders, under "More", so adding one can never
   make it vanish — but put it in a group.

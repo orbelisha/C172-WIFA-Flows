@@ -20,14 +20,14 @@ await page.goto(pathToFileURL(file).href);
 await page.waitForFunction(() => !!window.__ppl, null, { timeout: 15000 });
 
 const EXPECTED_PAVE = {
-    'The Framework': ['PAVE', 'FARParts'],
+    'The Framework': ['PAVE'],
     'P — Pilot': ['IMSAFE'],
     'A — Aircraft': ['ARROW', 'AV1ATE', 'ATOMATO', 'FLAPS'],
     'V — enVironment': ['NWKRAFT', 'NOTAMTypes'],
     'E — External Pressures': ['ExternalP'],
     'FAA Trick Questions': ['PAVETraps']
 };
-const EXPECTED_GROUPS = ['In the Cockpit', 'The Aircraft', 'Ground Knowledge', 'Exam Prep'];
+const EXPECTED_GROUPS = ['In the Cockpit', 'Look It Up', 'Ground Knowledge', 'Exam Prep'];
 
 const out = await page.evaluate((expected) => {
     const r = {};
@@ -73,6 +73,20 @@ const out = await page.evaluate((expected) => {
     // the emergency material has one home now
     r.emergenciesOwnsAbcd = !!byId['ABCD'] && byId['ABCD'].parentCat === 'Emergencies';
     r.emergenciesOwnsFire = !!byId['ElecFire'] && byId['ElecFire'].parentCat === 'Emergencies';
+    // FAR navigation is its own top-level category, a peer of POH Navigation,
+    // NOT a sub-section of PAVE.
+    r.farIsTopLevel = !!CATS['FAR Navigation'];
+    r.farPartsMoved = !!byId['FARParts'] && byId['FARParts'].parentCat === 'FAR Navigation';
+    r.farSubs = CATS['FAR Navigation'] ? Object.keys(CATS['FAR Navigation']) : [];
+    r.farTopics = CATS['FAR Navigation']
+        ? Object.values(CATS['FAR Navigation']).flat().map(f => f.id) : [];
+    const findIt = byId['FARFindIt'];
+    r.farFindItCount = findIt ? findIt.items.length : 0;
+    r.farFindItValid = !!findIt && findIt.items.every(it =>
+        it.question && Array.isArray(it.options) && it.options.length >= 2 &&
+        typeof it.correctAnswer === 'number' &&
+        it.correctAnswer >= 0 && it.correctAnswer < it.options.length &&
+        it.explanation && it.explanation.length > 40);
 
     const traps = byId['PAVETraps'];
     r.trapsCount = traps ? traps.items.length : 0;
@@ -151,6 +165,12 @@ req(out.paveMissing.length === 0, 'PAVE is missing: ' + out.paveMissing.join(', 
 req(out.safetyInAcronyms, 'SAFETY should live in Acronyms, not PAVE');
 req(out.emergenciesOwnsAbcd, 'ABCD should live in Emergencies');
 req(out.emergenciesOwnsFire, 'ElecFire should live in Emergencies');
+req(out.farIsTopLevel, 'FAR Navigation must be its own top-level category');
+req(out.farPartsMoved, 'FARParts should have moved out of PAVE into FAR Navigation');
+['FAR61', 'FAR91', 'FAR141', 'FARPeripheral', 'FAR43', 'NTSB830', 'FARCitation', 'FARFindIt']
+    .forEach(id => req(out.farTopics.indexOf(id) !== -1, 'FAR Navigation is missing ' + id));
+req(out.farFindItCount >= 10, 'FARFindIt bank too small: ' + out.farFindItCount);
+req(out.farFindItValid, 'a FARFindIt item is malformed');
 req(out.trapsCount >= 10, 'trick-question bank too small: ' + out.trapsCount);
 req(out.trapsAllValid, 'a PAVETraps item is malformed');
 req(out.noDoubleEscape, 'double-escaped entity in a resource label');
