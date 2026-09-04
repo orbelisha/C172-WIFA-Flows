@@ -308,6 +308,12 @@
             border-radius: 100px; padding: 10px 20px; font-size: 0.95rem; font-weight: 600;
             font-family: inherit; cursor: pointer; transition: all 0.2s ease; outline: none;
         }
+        .bank-review > summary { cursor: pointer; list-style: none; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); padding: 2px 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+        .bank-review > summary::-webkit-details-marker { display: none; }
+        .bank-review > summary::before { content: '▸'; color: var(--primary-color); font-size: 0.8rem; }
+        .bank-review[open] > summary::before { content: '▾'; }
+        .bank-review > summary:hover { color: var(--primary-color); }
+        .bank-review-hint { font-size: 0.75rem; font-weight: 400; opacity: 0.65; }
         .sync-block { display: block; padding: 4px 0 10px 0; }
         .sync-status { font-size: 0.78rem; color: var(--text-muted); padding: 2px 4px 8px 4px; line-height: 1.4; }
         .sync-btn { width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
@@ -525,7 +531,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">v3.0.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v3.0.1 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -1445,10 +1451,17 @@
            --------------------------------------------------------- */
         function buildFlowList(flow) {
             if (flow.type === 'mcq') {
-                return '<ul style="margin:0; padding-left:1.2rem;">' + flow.items.map(q =>
+                // Collapsed by default: dumping every question here buries the
+                // drill setup and hands over all the answers before you start.
+                const fresh = unseenIndices(flow).length;
+                const summary = flow.items.length + ' questions'
+                    + (fresh ? '  ·  ' + fresh + ' not answered yet' : '  ·  all answered');
+                return '<details class="bank-review"><summary>' + summary
+                    + '<span class="bank-review-hint">tap to review them</span></summary>'
+                    + '<ul style="margin:12px 0 0 0; padding-left:1.2rem;">' + flow.items.map(q =>
                     '<li style="margin-bottom:14px; font-size:1.05rem;"><strong style="color:var(--text-main)">Q:</strong> ' + esc(q.question) +
                     '<br><span style="color:var(--primary-color); display:block; margin-top:4px;"><strong>A:</strong> ' + esc(q.options[q.correctAnswer]) + '</span></li>'
-                ).join('') + '</ul>';
+                ).join('') + '</ul></details>';
             }
             const weak = new Set(weakItemIndices(flow));
             return '<ul style="margin:0; padding-left:1.2rem;">' + flow.items.map((item, i) => {
