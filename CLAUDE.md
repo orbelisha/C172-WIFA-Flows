@@ -1,6 +1,12 @@
-# C172-WIFA-Flows
+# C172-WIFA-Flows — "PPL Master"
 
 Single self-contained app: `index.html`. No build step.
+
+The app is called **PPL Master** (renamed from "C172 PPL Memory Items" in
+Version 8). The repo keeps its old name; only the product name changed.
+Its purpose is the whole Private Pilot certificate — flows and checklists,
+but also regulations, the POH, weather and the oral exam. Do not narrow new
+work back down to "flows and acronyms"; that was the old scope.
 
 As of v3.0.0 it loads the Firebase compat SDK from the gstatic CDN for
 optional cross-device progress sync. That is the ONLY dependency, it is
