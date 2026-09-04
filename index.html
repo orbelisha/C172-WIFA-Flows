@@ -517,7 +517,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">v2.5.0 | &copy; 2026 Or Belisha</div>
+        <div class="footer">v2.6.0 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -556,6 +556,7 @@
                 "Air": [
                     { id: "ClimbCheck", type: "sequence", title: "Climb", text: "500' AGL", desc: "\"Flaps Up, Climb Check\" — verification performed at 500' AGL to ensure safe climb configuration.", items: ["Flaps ➔ UP", "Taxi Light ➔ OFF", "Engine Instruments ➔ CHECK"] },
                     { id: "CruiseCheck", type: "sequence", title: "Cruise Check", text: "Level Flight", desc: "Standard cruise checklist configuration.", items: ["Aux Fuel Pump ➔ OFF", "Pitch Attitude ➔ OBTAIN", "Power ➔ CRUISE RPM", "DIMS Check ➔ PERFORM", "Next Frequencies ➔ PREPARE", "Map Range ➔ AS APPROPRIATE", "TOD ➔ DETERMINE"] },
+                    { id: "DIMS", type: "sequence", title: "DIMS", text: "Cruise Flow", desc: "The cruise flow, run once established in level flight. The WIFA checklist marks DIMS in blue as a FLOW name, and the Cruise Check calls it as a step.", items: ["D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED"] },
                     { id: "FourCs", type: "sequence", title: "4 C's", text: "Pre-Maneuver", desc: "Safety and situational awareness checks before commencing training maneuvers. The third C opens a five-item checklist.", items: ["Clearing Turns ➔ PERFORM", "Non Congested Area ➔ VERIFY", "Checklist ➔ PERFORM", "Checklist: Lights ➔ ALL ON", "Checklist: Mixture ➔ FULL RICH", "Checklist: Aux Fuel Pump ➔ ON", "Checklist: Engine Instruments ➔ CHECK", "Checklist: Seatbelts ➔ FASTENED", "deClare ➔ PERFORM"] },
                     { id: "ABC", type: "sequence", title: "ABC", text: "Descent", desc: "Descent preparation flow for ATIS, Briefing, and Checklists. The C opens a five-item checklist.", items: ["A ➔ ATIS/AWOS OBTAIN", "B ➔ Brief (Approach/Arrival) PERFORM", "C ➔ Checklist PERFORM", "Checklist: Frequencies ➔ SET", "Checklist: Engine Instruments ➔ CHECK", "Checklist: Lights ➔ AS REQUIRED", "Checklist: Mixture ➔ RICH <3000' D.A.", "Checklist: Seatbelts ➔ FASTENED"] },
                     { id: "CGUMPS", type: "sequence", title: "CGUMPS", text: "Final Check", desc: "\"Final Flap, Final Check\" — the pre-landing flow: Clearance & Carb Heat, Gas, Undercarriage, Mixture, Props & Pumps, Seatbelts & Switches.", items: ["C ➔ Clearance & Carb Heat OBTAIN", "G ➔ Gas BOTH", "U ➔ Undercarriage DOWN and WELDED", "M ➔ Mixture RICH <3000' D.A.", "P ➔ Props & Pumps ON", "S ➔ Seatbelts & Switches CHECK"] },
@@ -628,8 +629,7 @@
                     { id: "UNOS", type: "definition", title: "UNOS", text: "Compass Turn Errors", desc: "Magnetic compass errors when turning to North or South headings.", items: ["U ➔ Undershoot", "N ➔ North", "O ➔ Overshoot", "S ➔ South"] }
                 ],
                 "Flight Operations": [
-                    { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] },
-                    { id: "DIMS", type: "definition", title: "DIMS", text: "Cruise Mnemonic", desc: "Acronym check performed during cruise.", items: ["D ➔ Directional Gyro ADJUST", "I ➔ Instruments (Engine) CHECK", "M ➔ Mixture LEAN", "S ➔ Switches (Landing Light) AS REQUIRED"] }
+                    { id: "SAFETY", type: "definition", title: "SAFETY", text: "Passenger Briefing", desc: "Mandatory passenger briefing to be given prior to engine start.", items: ["S ➔ Seatbelts fastened for taxi, takeoff, landing", "A ➔ Air vents location and operation", "F ➔ Fire extinguisher location and operation", "E ➔ Exit doors and emergency evacuation plan", "T ➔ Traffic (scanning) and Talking (sterile cockpit)", "Y ➔ Your questions?"] }
                 ],
                 "Emergencies": [
                     { id: "WOSSS", type: "definition", title: "WOSSS", text: "Forced Landing", desc: "Criteria used to evaluate and select a suitable field for a forced landing.", items: ["W ➔ Wind", "O ➔ Obstructions", "S ➔ Size", "S ➔ Shape", "S ➔ Surface"] },
