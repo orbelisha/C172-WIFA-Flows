@@ -95,6 +95,11 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   now has one home in `appDatabase`. `VIRTUAL_CATS` still exists as a mechanism
   but is deliberately empty — filling it puts a topic under two parents again.
   `check_pave.mjs` fails the build if that happens.
+- Mixed Drill scope is a SET of categories (`settings.mixedScopes`), not one
+  category. "All Topics" is the empty state, not another member of the set.
+  `scopeFlows()` accepts 'all', one name, or an array, so older callers and the
+  test harness still work; the old single-string `settings.mixedScope` is
+  migrated on first read and kept roughly in sync for anything still reading it.
 - The home screen and side menu group categories via `CAT_GROUPS`
   (In the Cockpit / Look It Up / Ground Knowledge / Exam Prep). A category
   missing from that list still renders, under "More", so adding one can never

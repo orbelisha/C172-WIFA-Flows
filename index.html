@@ -363,7 +363,10 @@
         .topic-pick-actions { display: flex; gap: 8px; }
         .mini-btn { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-family: inherit; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
         .mini-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
-        .topic-pick { display: flex; flex-wrap: wrap; gap: 8px; max-height: 232px; overflow-y: auto; padding: 4px 2px; }
+        .topic-pick { max-height: 260px; overflow-y: auto; padding: 4px 2px; }
+        .topic-pick-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+        .topic-pick-cat { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); opacity: 0.7; margin: 12px 0 6px 2px; }
+        .topic-pick-cat:first-child { margin-top: 2px; }
         .topic-chip { font-size: 0.8rem; padding: 6px 12px; opacity: 0.55; }
         .topic-chip.selected { opacity: 1; }
         .pick-warn { color: #b37b00; font-weight: 600; }
@@ -554,7 +557,7 @@
             <div class="page" id="mixedScreen">
                 <h1>Mixed Drill</h1>
                 <div class="subtitle">Exam-Style Random Practice</div>
-                <div class="study-desc">Questions are pulled at random from the topics you pick below. Topics and items you keep getting wrong show up more often.</div>
+                <div class="study-desc">Pick any mix of categories and topics — Weather and Acronyms together, or the whole database. Questions are drawn at random from what you pick, and the ones you keep getting wrong show up more often.</div>
                 <div class="drill-setup">
                     <span class="cfg-label">Scope</span>
                     <div class="chips" id="scopeChips"></div>
@@ -606,7 +609,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">Version 8 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
+        <div class="footer">Version 9 &middot; 04.09.2026 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -1538,9 +1541,43 @@
             return out;
         }
 
+        // Scope is a SET of categories as of Version 9 — Or wanted to drill
+        // Weather and Acronyms together, which single-select could not express.
+        // `null` means every category. The old single-string `mixedScope`
+        // setting is migrated on first read so a synced device does not lose
+        // its scope on upgrade.
+        function mixedScopes() {
+            const s = Store.data.settings;
+            if (!Array.isArray(s.mixedScopes) && s.mixedScope && s.mixedScope !== 'all') {
+                s.mixedScopes = [s.mixedScope];
+            }
+            const list = Array.isArray(s.mixedScopes) ? s.mixedScopes.filter(c => CATS[c]) : [];
+            return list.length ? list : null;
+        }
+        function setMixedScopes(list) {
+            const s = Store.data.settings;
+            if (!list || !list.length) { delete s.mixedScopes; s.mixedScope = 'all'; }
+            else { s.mixedScopes = list; s.mixedScope = list.length === 1 ? list[0] : 'all'; }
+            Store.save();
+        }
+        function scopeLabel(scope) {
+            if (scope === 'all' || scope == null) return 'All Topics';
+            const names = Array.isArray(scope) ? scope : [scope];
+            if (!names.length) return 'All Topics';
+            if (names.length === 1) return names[0];
+            if (names.length === 2) return names[0] + ' + ' + names[1];
+            return names.length + ' categories';
+        }
+
+        // Accepts 'all', a single category name, or an array of names, so the
+        // older single-scope callers and the test harness keep working.
         function scopeFlows(scope) {
-            if (scope !== 'all' && VIRTUAL_CATS[scope]) return catFlows(scope).filter(f => f.type !== 'info');
-            return ALL_FLOWS.filter(f => f.type !== 'info' && (scope === 'all' || f.parentCat === scope));
+            const drillable = ALL_FLOWS.filter(f => f.type !== 'info');
+            if (scope === 'all' || scope == null) return drillable;
+            const names = Array.isArray(scope) ? scope : [scope];
+            if (!names.length) return drillable;
+            const set = new Set(names);
+            return drillable.filter(f => set.has(f.parentCat));
         }
 
         // The topics Or has ticked, as a global set of ids. `null` means he has
@@ -1986,26 +2023,7 @@
         }
 
         function renderMixedScreen(mode) {
-            const scopeBox = $('scopeChips');
-            scopeBox.innerHTML = '';
-            const scopes = ['all'].concat(Object.keys(CATS).filter(c => scopeFlows(c).length > 0));
-            let current = Store.data.settings.mixedScope || 'all';
-            if (scopes.indexOf(current) === -1) current = 'all';
-            Store.data.settings.mixedScope = current;
-            scopes.forEach(s => {
-                const b = document.createElement('button');
-                b.className = 'chip' + (s === current ? ' selected' : '');
-                b.textContent = (s === 'all') ? 'All Topics' : s;
-                b.addEventListener('click', () => {
-                    Store.data.settings.mixedScope = s;
-                    Store.save();
-                    scopeBox.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-                    b.classList.add('selected');
-                    renderTopicPicker();
-                    updateMixedStats();
-                });
-                scopeBox.appendChild(b);
-            });
+            renderScopeChips();
             renderTopicPicker();
             renderLengthChips($('mixedLengthChips'), 'mixedLength', 0);
             updateMixedStats();
@@ -2015,35 +2033,92 @@
         function allDrillableIds() {
             return ALL_FLOWS.filter(f => f.type !== 'info').map(f => f.id);
         }
-        function renderTopicPicker() {
-            const box = $('topicPick');
+
+        // Scope chips are a multi-select. "All Topics" is not one more option in
+        // the set — it is the empty state, so tapping it clears the others, and
+        // clearing the last category lands back on it rather than on nothing.
+        function renderScopeChips() {
+            const box = $('scopeChips');
             if (!box) return;
             box.innerHTML = '';
-            const scope = Store.data.settings.mixedScope || 'all';
-            const flows = scopeFlows(scope);
-            const sel = mixedSelectedIds();
-            const set = sel ? new Set(sel) : null;
-            flows.forEach(f => {
-                const on = !set || set.has(f.id);
+            const chosen = mixedScopes();
+            const set = new Set(chosen || []);
+
+            const all = document.createElement('button');
+            all.className = 'chip' + (chosen ? '' : ' selected');
+            all.textContent = 'All Topics';
+            all.setAttribute('data-scope', 'all');
+            all.addEventListener('click', () => {
+                setMixedScopes(null);
+                renderScopeChips(); renderTopicPicker(); updateMixedStats();
+            });
+            box.appendChild(all);
+
+            Object.keys(CATS).filter(c => scopeFlows(c).length > 0).forEach(cat => {
                 const b = document.createElement('button');
-                b.className = 'chip topic-chip' + (on ? ' selected' : '');
-                b.textContent = f.title;
-                b.setAttribute('data-topic', f.id);
+                const on = set.has(cat);
+                b.className = 'chip' + (on ? ' selected' : '');
+                b.textContent = cat;
+                b.setAttribute('data-scope', cat);
                 b.setAttribute('aria-pressed', on ? 'true' : 'false');
                 b.addEventListener('click', () => {
-                    const cur = new Set(mixedSelectedIds() || allDrillableIds());
-                    if (cur.has(f.id)) cur.delete(f.id); else cur.add(f.id);
-                    Store.data.settings.mixedTopics = Array.from(cur);
-                    Store.save();
-                    renderTopicPicker();
-                    updateMixedStats();
+                    const cur = new Set(mixedScopes() || []);
+                    if (cur.has(cat)) cur.delete(cat); else cur.add(cat);
+                    setMixedScopes(Array.from(cur));
+                    renderScopeChips(); renderTopicPicker(); updateMixedStats();
                 });
                 box.appendChild(b);
             });
         }
+
+        function renderTopicPicker() {
+            const box = $('topicPick');
+            if (!box) return;
+            box.innerHTML = '';
+            const flows = scopeFlows(mixedScopes() || 'all');
+            const sel = mixedSelectedIds();
+            const set = sel ? new Set(sel) : null;
+
+            // Grouped by category. With several categories in scope — or with
+            // all 70-odd topics showing — an ungrouped wall of chips is unusable.
+            const order = [];
+            const byCat = {};
+            flows.forEach(f => {
+                if (!byCat[f.parentCat]) { byCat[f.parentCat] = []; order.push(f.parentCat); }
+                byCat[f.parentCat].push(f);
+            });
+            const showHeads = order.length > 1;
+            order.forEach(cat => {
+                if (showHeads) {
+                    const h = document.createElement('div');
+                    h.className = 'topic-pick-cat';
+                    h.textContent = cat;
+                    box.appendChild(h);
+                }
+                const row = document.createElement('div');
+                row.className = 'topic-pick-row';
+                byCat[cat].forEach(f => {
+                    const on = !set || set.has(f.id);
+                    const b = document.createElement('button');
+                    b.className = 'chip topic-chip' + (on ? ' selected' : '');
+                    b.textContent = f.title;
+                    b.setAttribute('data-topic', f.id);
+                    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    b.addEventListener('click', () => {
+                        const cur = new Set(mixedSelectedIds() || allDrillableIds());
+                        if (cur.has(f.id)) cur.delete(f.id); else cur.add(f.id);
+                        Store.data.settings.mixedTopics = Array.from(cur);
+                        Store.save();
+                        renderTopicPicker();
+                        updateMixedStats();
+                    });
+                    row.appendChild(b);
+                });
+                box.appendChild(row);
+            });
+        }
         function updateMixedStats() {
-            const scope = Store.data.settings.mixedScope || 'all';
-            const inScope = scopeFlows(scope);
+            const inScope = scopeFlows(mixedScopes() || 'all');
             const sel = mixedSelectedIds();
             const set = sel ? new Set(sel) : null;
             const chosen = set ? inScope.filter(f => set.has(f.id)) : inScope;
@@ -2152,12 +2227,17 @@
         }
 
         function startMixedDrill() {
-            const scope = Store.data.settings.mixedScope || 'all';
+            const scopes = mixedScopes();
+            const scope = scopes || 'all';
+            // A stable string for the stats key, so "Weather + Acronyms" always
+            // maps to the same mixed-drill record however the chips were tapped.
+            const key = scopes ? scopes.slice().sort().join('+') : 'all';
             const len = Store.data.settings.mixedLength || 25;
             const questions = buildMixedDrill(scope, len);
             startDrill({
-                stateKey: 'mixed:' + scope + ':' + Date.now(),
-                topicId: 'mixed::' + scope, title: 'Mixed Drill (' + (scope === 'all' ? 'All Topics' : scope) + ')',
+                stateKey: 'mixed:' + key + ':' + Date.now(),
+                topicId: 'mixed::' + key,
+                title: 'Mixed Drill (' + scopeLabel(scope) + ')',
                 scope: scope, showSource: true, questions: questions
             });
         }
@@ -2366,8 +2446,7 @@
             // "None" clears only what is in the current scope, leaving picks in
             // other categories alone.
             $('topicPickNone').addEventListener('click', () => {
-                const scope = Store.data.settings.mixedScope || 'all';
-                const drop = new Set(scopeFlows(scope).map(f => f.id));
+                const drop = new Set(scopeFlows(mixedScopes() || 'all').map(f => f.id));
                 const cur = (mixedSelectedIds() || allDrillableIds()).filter(id => !drop.has(id));
                 Store.data.settings.mixedTopics = cur;
                 Store.save();
@@ -2628,6 +2707,7 @@
             splitItem: splitItem, norm: norm, validOptions: validOptions,
             renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices, Sync: Sync,
             renderHome: renderHome, renderMixedScreen: renderMixedScreen, renderCategory: renderCategory,
+            mixedScopes: mixedScopes, setMixedScopes: setMixedScopes, scopeFlows: scopeFlows, scopeLabel: scopeLabel,
             groupedCats: groupedCats, selectedFlows: selectedFlows,
             distractorPool: distractorPool, uniqueIndices: uniqueIndices, stripTags: stripTags
         };

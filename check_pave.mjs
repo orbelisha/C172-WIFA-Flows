@@ -151,6 +151,37 @@ const out = await page.evaluate((expected) => {
     const drill = P.buildMixedDrill('all', 40);
     r.drillSkipsDeselected = drill.length > 0 && !drill.some(q => q.sourceId === firstId);
 
+    // --- multi-select scope (Version 9) ------------------------------
+    P.setMixedScopes(null);
+    P.renderMixedScreen('replace');
+    const scopeChips = () => Array.from(document.querySelectorAll('#scopeChips .chip'));
+    r.scopeAllSelectedByDefault = (scopeChips().find(c => c.getAttribute('data-scope') === 'all') || {})
+        .className.indexOf('selected') !== -1;
+    const pick = name => scopeChips().find(c => c.getAttribute('data-scope') === name);
+    pick('Weather').click();
+    pick('Acronyms').click();
+    r.twoScopesSelected = ['Weather', 'Acronyms'].every(n => pick(n).className.indexOf('selected') !== -1);
+    r.allDeselectedWhenScoped = pick('all').className.indexOf('selected') === -1;
+    r.scopesStored = (P.Store.data.settings.mixedScopes || []).slice().sort().join(',');
+    // the picker and the drill must both honour BOTH categories
+    const pickedCats = new Set(P.scopeFlows(P.mixedScopes()).map(f => f.parentCat));
+    r.scopeFlowsSpansBoth = pickedCats.size === 2
+        && pickedCats.has('Weather') && pickedCats.has('Acronyms');
+    r.pickerHeadings = Array.from(document.querySelectorAll('#topicPick .topic-pick-cat')).map(e => e.textContent);
+    const multiDrill = P.buildMixedDrill(P.mixedScopes(), 40);
+    const drillCats = new Set(multiDrill.map(q => (P.FLOW_BY_ID[q.sourceId] || {}).parentCat));
+    r.drillSpansBoth = drillCats.size === 2 && drillCats.has('Weather') && drillCats.has('Acronyms');
+    r.drillLabel = P.scopeLabel(P.mixedScopes());
+    // tapping "All Topics" clears the set again
+    pick('all').click();
+    r.allTopicsClears = P.mixedScopes() === null;
+    // an old single-string setting must migrate rather than be ignored
+    delete P.Store.data.settings.mixedScopes;
+    P.Store.data.settings.mixedScope = 'Weather';
+    r.legacyMigrates = (P.mixedScopes() || []).join(',') === 'Weather';
+    P.setMixedScopes(null);
+    P.renderMixedScreen('replace');
+
     document.getElementById('topicPickNone').click();
     r.noneClearsAll = chips().every(c => !c.classList.contains('selected'));
     r.startDisabledWhenEmpty = document.getElementById('mixedStartBtn').disabled === true;
@@ -221,6 +252,18 @@ req(out.startDisabledWhenEmpty, 'Start is not disabled with no topics picked');
 req(out.allRestores, '"All" did not reselect everything');
 req(out.allClearsSetting, '"All" should delete the setting, not list every id');
 req(out.startEnabledAgain, 'Start stayed disabled after "All"');
+req(out.scopeAllSelectedByDefault, '"All Topics" should be selected when no category is chosen');
+req(out.twoScopesSelected, 'could not select two categories at once');
+req(out.allDeselectedWhenScoped, '"All Topics" should clear once a category is chosen');
+req(out.scopesStored === 'Acronyms,Weather', 'both scopes not stored, got: ' + out.scopesStored);
+req(out.scopeFlowsSpansBoth, 'scopeFlows did not span both selected categories');
+req(out.pickerHeadings.indexOf('Weather') !== -1 && out.pickerHeadings.indexOf('Acronyms') !== -1,
+    'topic picker is not grouped by category, got: ' + out.pickerHeadings.join(', '));
+req(out.drillSpansBoth, 'the mixed drill drew from only one of the two categories');
+req(/Weather/.test(out.drillLabel) && /Acronyms/.test(out.drillLabel),
+    'drill title does not name both categories: ' + out.drillLabel);
+req(out.allTopicsClears, '"All Topics" did not clear the scope set');
+req(out.legacyMigrates, 'an old single-string mixedScope did not migrate to mixedScopes');
 req(out.bannerIsGuest && out.bannerSaysGuest, 'guest sign-in banner regressed');
 req(pageErrors.length === 0, 'page errors: ' + pageErrors.join(' | '));
 
