@@ -106,6 +106,23 @@ const out = await page.evaluate((expected) => {
         it.correctAnswer >= 0 && it.correctAnswer < it.options.length &&
         it.explanation && it.explanation.length > 40);
 
+    // --- Stage 1 (Version 10) ----------------------------------------
+    const s1 = CATS['Stage 1'];
+    r.stage1Exists = !!s1;
+    r.stage1Banks = s1 ? Object.values(s1).flat().map(f => f.id + ':' + f.items.length) : [];
+    r.stage1Total = s1 ? Object.values(s1).flat().reduce((n, f) => n + f.items.length, 0) : 0;
+    r.stage1AllValid = !!s1 && Object.values(s1).flat().every(f =>
+        f.type === 'mcq' && Array.isArray(f.resources) && f.resources.length > 0 &&
+        f.items.every(it =>
+            it.question && Array.isArray(it.options) && it.options.length >= 3 &&
+            new Set(it.options).size === it.options.length &&
+            typeof it.correctAnswer === 'number' &&
+            it.correctAnswer >= 0 && it.correctAnswer < it.options.length &&
+            it.explanation && it.explanation.length > 60));
+    // the bank's `text` must match its real item count
+    r.stage1CountsMatch = !!s1 && Object.values(s1).flat().every(f =>
+        f.text === f.items.length + ' questions');
+
     const traps = byId['PAVETraps'];
     r.trapsCount = traps ? traps.items.length : 0;
     r.trapsAllValid = !!traps && traps.items.every(it =>
@@ -233,6 +250,13 @@ req(out.pohNumbersCount === 9, 'POHNumbers should have 9 items, got ' + out.pohN
 req(out.pohNumbersMapsBoth, 'POHNumbers items must be "Section N -> Title" so both directions drill');
 req(out.farFindItCount >= 10, 'FARFindIt bank too small: ' + out.farFindItCount);
 req(out.farFindItValid, 'a FARFindIt item is malformed');
+req(out.stage1Exists, 'Stage 1 category missing');
+['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather'].forEach(id =>
+    req(out.stage1Banks.some(b => b.indexOf(id + ':') === 0), 'Stage 1 is missing ' + id));
+req(out.stage1Total >= 120, 'Stage 1 bank is too small: ' + out.stage1Total);
+req(out.stage1AllValid, 'a Stage 1 item is malformed (options, answer index or explanation)');
+req(out.stage1CountsMatch, 'a Stage 1 bank\'s "N questions" label disagrees with its item count');
+req(out.homeCards.indexOf('Stage 1') !== -1, 'Stage 1 is not reachable from the home screen');
 req(out.trapsCount >= 10, 'trick-question bank too small: ' + out.trapsCount);
 req(out.trapsAllValid, 'a PAVETraps item is malformed');
 req(out.noDoubleEscape, 'double-escaped entity in a resource label');
