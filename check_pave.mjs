@@ -305,7 +305,7 @@ req(out.catDrill.onWeather === true, 'a multi-topic category should also get the
 req(out.stage1Exists, 'Stage 1 category missing');
 ['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather', 'S1Traps'].forEach(id =>
     req(out.stage1Banks.some(b => b.indexOf(id + ':') === 0), 'Stage 1 is missing ' + id));
-req(out.stage1Total >= 150, 'Stage 1 bank is too small: ' + out.stage1Total);
+req(out.stage1Total >= 160, 'Stage 1 bank is too small: ' + out.stage1Total);
 req(out.stage1AllValid, 'a Stage 1 item is malformed (options, answer index or explanation)');
 req(out.stage1CountsMatch, 'a Stage 1 bank\'s "N questions" label disagrees with its item count');
 req(out.homeCards.indexOf('Stage 1') !== -1, 'Stage 1 is not reachable from the home screen');
