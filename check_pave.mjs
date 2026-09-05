@@ -28,6 +28,9 @@ const EXPECTED_PAVE = {
     'FAA Trick Questions': ['PAVETraps']
 };
 const EXPECTED_GROUPS = ['In the Cockpit', 'Look It Up', 'Ground Knowledge', 'Exam Prep'];
+// PAVE is a risk-management framework, not an oral-exam topic — Or asked for
+// the exam framing dropped, so it lives under Ground Knowledge.
+const PAVE_CAT = 'PAVE — Risk Management';
 
 const out = await page.evaluate((expected) => {
     const r = {};
@@ -57,7 +60,7 @@ const out = await page.evaluate((expected) => {
         byId[id] && byId[id].parentCat !== homes[id][0].split('/')[0]);
 
     // --- PAVE contents ----------------------------------------------
-    const pave = CATS['Oral Exam — PAVE'];
+    const pave = CATS['PAVE — Risk Management'];
     r.paveExists = !!pave;
     r.paveMissing = [];
     if (pave) {
@@ -176,6 +179,8 @@ const out = await page.evaluate((expected) => {
     r.homeCards = Array.from(document.querySelectorAll('#homeCategories .parent-card'))
         .map(b => b.childNodes[0].textContent.trim());
     r.everyCatOnHome = Object.keys(CATS).every(c => r.homeCards.indexOf(c) !== -1);
+    r.paveCatName = Object.keys(CATS).find(c => /PAVE/.test(c)) || '';
+    r.paveGroup = (P.groupedCats().find(g => g.cats.indexOf(r.paveCatName) !== -1) || {}).title;
     r.noCardTwice = r.homeCards.length === new Set(r.homeCards).size;
 
     // --- top-bar home button -----------------------------------------
@@ -263,7 +268,7 @@ req(out.duplicatedInSameCat.length === 0, 'topic listed twice in one category: '
 req(out.parentCatWrong.length === 0, 'parentCat disagrees with the tree: ' + out.parentCatWrong.join(', '));
 req(out.allFlowsMatchesTree, 'ALL_FLOWS does not match the category tree');
 req(out.virtualCatsEmpty, 'VIRTUAL_CATS is non-empty — that reintroduces multi-parent topics');
-req(out.paveExists, 'Oral Exam — PAVE category missing');
+req(out.paveExists, 'PAVE — Risk Management category missing');
 req(out.paveMissing.length === 0, 'PAVE is missing: ' + out.paveMissing.join(', '));
 req(out.safetyInAcronyms, 'SAFETY should live in Acronyms, not PAVE');
 req(out.emergenciesOwnsAbcd, 'ABCD should live in Emergencies');
@@ -314,6 +319,9 @@ req(out.trapsAllValid, 'a PAVETraps item is malformed');
 req(out.noDoubleEscape, 'double-escaped entity in a resource label');
 EXPECTED_GROUPS.forEach(g => req(out.homeGroups.indexOf(g) !== -1, 'home group missing: ' + g));
 req(out.everyCatOnHome, 'a category is not reachable from the home screen');
+req(out.paveGroup === 'Ground Knowledge',
+    'PAVE should sit under Ground Knowledge, got: ' + out.paveGroup);
+req(!/oral/i.test(out.paveCatName), 'the PAVE category name still mentions the oral exam');
 req(out.noCardTwice, 'a category card appears twice on the home screen');
 req(out.homeBtnExists, 'top-bar home button missing');
 req(out.homeBtnLeftMixed, 'home-button test did not start from the mixed screen');

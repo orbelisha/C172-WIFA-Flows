@@ -106,6 +106,10 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   from the Mixed Drill's `settings.mixedTopics` — narrowing one must never
   narrow the other. Both drills share `buildDrillFromFlows()` so they weight
   weak items identically.
+- PAVE is filed as **risk management**, not as oral-exam prep — Or asked for the
+  exam framing dropped in Version 14, so the category is
+  "PAVE — Risk Management" and it sits under Ground Knowledge. He may revisit
+  the oral separately; do not re-attach PAVE to it on your own.
 - The home screen and side menu group categories via `CAT_GROUPS`
   (In the Cockpit / Look It Up / Ground Knowledge / Exam Prep). A category
   missing from that list still renders, under "More", so adding one can never
