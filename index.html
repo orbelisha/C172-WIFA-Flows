@@ -316,6 +316,9 @@
         .bank-review[open] > summary::before { content: '▾'; }
         .bank-review > summary:hover { color: var(--primary-color); }
         .bank-review-hint { font-size: 0.75rem; font-weight: 400; opacity: 0.65; }
+        .cat-drill { margin: 0 0 28px 0; padding: 16px 18px 18px 18px; border: 1px solid var(--border-color); border-radius: 14px; background: var(--card-bg); }
+        .cat-drill-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+        .cat-drill .start-btn { width: 100%; }
         .cat-note { margin: 0 0 26px 0; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--card-bg); }
         .cat-note-intro { margin: 12px 0 4px 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
         .cat-note-list { margin: 10px 0 2px 0; display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; align-items: baseline; }
@@ -609,7 +612,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">Version 10 &middot; 05.09.2026 | &copy; 2026 Or Belisha</div>
+        <div class="footer">Version 11 &middot; 05.09.2026 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -1287,6 +1290,130 @@
             return el;
         }
 
+        // --- per-category exam -------------------------------------------
+        // The same choice the home screen offers, but scoped to one category:
+        // sit the whole thing, or pick the subjects. Kept separate from the
+        // Mixed Drill's own selection so narrowing one never silently narrows
+        // the other.
+        function catPickedIds(catName) {
+            const all = Store.data.settings.catTopics;
+            const sel = all && all[catName];
+            return Array.isArray(sel) ? sel : null;     // null = every topic
+        }
+        function setCatPickedIds(catName, ids) {
+            const s = Store.data.settings;
+            if (!s.catTopics) s.catTopics = {};
+            if (!ids) delete s.catTopics[catName];
+            else s.catTopics[catName] = ids;
+            Store.save();
+        }
+        function catDrillFlows(catName) {
+            const flows = catFlows(catName).filter(f => f.type !== 'info');
+            const sel = catPickedIds(catName);
+            if (!sel) return flows;
+            const set = new Set(sel);
+            return flows.filter(f => set.has(f.id));
+        }
+
+        function buildCatDrill(catName) {
+            const flows = catFlows(catName).filter(f => f.type !== 'info');
+            if (flows.length < 2) return null;          // one topic — its own page is enough
+
+            const wrap = document.createElement('div');
+            wrap.className = 'cat-drill';
+            wrap.innerHTML =
+                '<div class="cat-drill-head">' +
+                  '<span class="cfg-label" style="margin:0;">Whole Category</span>' +
+                  '<div class="topic-pick-actions">' +
+                    '<button class="mini-btn" id="catPickAll">All</button>' +
+                    '<button class="mini-btn" id="catPickNone">None</button>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="topic-pick-row" id="catPick"></div>' +
+                '<span class="cfg-label" style="margin-top:16px;">Length</span>' +
+                '<div class="chips" id="catLengthChips"></div>' +
+                '<div class="topic-stats" id="catDrillStats"></div>' +
+                '<button class="primary-btn start-btn" id="catStartBtn" style="margin-top:16px;">Start</button>';
+
+            const draw = () => {
+                const box = wrap.querySelector('#catPick');
+                box.innerHTML = '';
+                const sel = catPickedIds(catName);
+                const set = sel ? new Set(sel) : null;
+                flows.forEach(f => {
+                    const on = !set || set.has(f.id);
+                    const b = document.createElement('button');
+                    b.className = 'chip topic-chip' + (on ? ' selected' : '');
+                    b.textContent = f.title;
+                    b.setAttribute('data-cat-topic', f.id);
+                    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    b.addEventListener('click', () => {
+                        const cur = new Set(catPickedIds(catName) || flows.map(x => x.id));
+                        if (cur.has(f.id)) cur.delete(f.id); else cur.add(f.id);
+                        // back to "everything" rather than a list, so a topic
+                        // added later is included instead of missing from a
+                        // stale saved selection
+                        setCatPickedIds(catName, cur.size === flows.length ? null : Array.from(cur));
+                        draw(); stats();
+                    });
+                    box.appendChild(b);
+                });
+            };
+            const stats = () => {
+                const chosen = catDrillFlows(catName);
+                const btn = wrap.querySelector('#catStartBtn');
+                const el = wrap.querySelector('#catDrillStats');
+                const whole = chosen.length === flows.length;
+                if (!chosen.length) {
+                    el.innerHTML = '<span class="pick-warn">No subjects picked — choose at least one.</span>';
+                    btn.disabled = true; btn.style.opacity = '0.45';
+                    btn.textContent = 'Start';
+                    return;
+                }
+                btn.disabled = false; btn.style.opacity = '';
+                btn.textContent = whole ? 'Start Full Exam' : 'Start Drill';
+                const weak = chosen.reduce((n, f) => n + weakItemIndices(f).length, 0);
+                const pool = chosen.reduce((n, f) => n + (f.type === 'mcq' ? f.items.length : 0), 0);
+                el.textContent = (whole ? 'All ' + flows.length + ' subjects' :
+                        chosen.length + ' of ' + flows.length + ' subjects')
+                    + (pool ? '  ·  ' + pool + ' questions in the pool' : '')
+                    + '  ·  ' + weak + ' weak items tracked';
+            };
+
+            // Wired synchronously on the detached node — querySelector and
+            // addEventListener both work before it is in the document, and
+            // deferring would leave a frame where the block is empty.
+            draw();
+            renderLengthChips(wrap.querySelector('#catLengthChips'), 'catLength', 0);
+            stats();
+            wrap.querySelector('#catPickAll').addEventListener('click', () => {
+                setCatPickedIds(catName, null); draw(); stats();
+            });
+            wrap.querySelector('#catPickNone').addEventListener('click', () => {
+                setCatPickedIds(catName, []); draw(); stats();
+            });
+            wrap.querySelector('#catStartBtn').addEventListener('click', () => {
+                startCatDrill(catName);
+            });
+            return wrap;
+        }
+
+        function startCatDrill(catName) {
+            const flows = catDrillFlows(catName);
+            if (!flows.length) return;
+            const all = catFlows(catName).filter(f => f.type !== 'info');
+            const whole = flows.length === all.length;
+            const len = Store.data.settings.catLength || 25;
+            const questions = buildDrillFromFlows(flows, len);
+            const key = whole ? catName : catName + ':' + flows.map(f => f.id).sort().join('+');
+            startDrill({
+                stateKey: 'cat:' + key + ':' + Date.now(),
+                topicId: 'cat::' + key,
+                title: catName + (whole ? ' — Full Exam' : ' — ' + flows.length + ' subjects'),
+                scope: catName, showSource: true, questions: questions
+            });
+        }
+
         function catFlows(catName) {
             const c = CATS[catName];
             if (!c) return [];
@@ -1788,7 +1915,12 @@
         }
 
         function buildMixedDrill(scope, length) {
-            const flows = selectedFlows(scope);
+            return buildDrillFromFlows(selectedFlows(scope), length);
+        }
+        // Shared by the Mixed Drill and by the per-category exam on a category
+        // page, so both draw questions the same way — same weighting toward weak
+        // items, same duplicate rejection.
+        function buildDrillFromFlows(flows, length) {
             if (!flows.length) return [];
             const out = [], seen = new Set();
             const budget = Math.max(120, length * 20);
@@ -2081,6 +2213,8 @@
             container.innerHTML = '';
             const note = buildCatNote(catName);
             if (note) container.appendChild(note);
+            const drill = buildCatDrill(catName);
+            if (drill) container.appendChild(drill);
             Object.keys(CATS[catName]).forEach(subCatName => {
                 const section = document.createElement('div');
                 section.className = 'category-section';
@@ -2895,6 +3029,8 @@
             renderStudyScreen: renderStudyScreen, unseenIndices: unseenIndices, Sync: Sync,
             renderHome: renderHome, renderMixedScreen: renderMixedScreen, renderCategory: renderCategory,
             mixedScopes: mixedScopes, setMixedScopes: setMixedScopes, scopeFlows: scopeFlows, scopeLabel: scopeLabel,
+            buildDrillFromFlows: buildDrillFromFlows, catDrillFlows: catDrillFlows,
+            catPickedIds: catPickedIds, setCatPickedIds: setCatPickedIds, startCatDrill: startCatDrill,
             groupedCats: groupedCats, selectedFlows: selectedFlows,
             distractorPool: distractorPool, uniqueIndices: uniqueIndices, stripTags: stripTags
         };

@@ -123,6 +123,43 @@ const out = await page.evaluate((expected) => {
     r.stage1CountsMatch = !!s1 && Object.values(s1).flat().every(f =>
         f.text === f.items.length + ' questions');
 
+    // --- per-category exam block (Version 11) -------------------------
+    r.catDrill = (function () {
+        P.setCatPickedIds('Stage 1', null);
+        P.renderCategory('Stage 1', 'replace');
+        const box = document.querySelector('#catContent .cat-drill');
+        if (!box) return { exists: false };
+        const chips = () => Array.from(box.querySelectorAll('[data-cat-topic]'));
+        const btn = () => box.querySelector('#catStartBtn');
+        const res = { exists: true, chips: chips().length,
+                      allSelected: chips().every(c => c.classList.contains('selected')),
+                      fullLabel: btn().textContent };
+        // deselect one subject -> label changes and the drill narrows
+        chips()[0].click();
+        res.afterDeselectLabel = btn().textContent;
+        res.stored = (P.catPickedIds('Stage 1') || []).length;
+        const narrowed = P.catDrillFlows('Stage 1');
+        res.narrowedCount = narrowed.length;
+        res.narrowedExcludesFirst = !narrowed.some(f => f.id === 'S1Aero');
+        // and it must NOT have touched the Mixed Drill's own selection
+        res.mixedUntouched = P.Store.data.settings.mixedTopics === undefined;
+        // the drill it builds must only use the picked subjects
+        const q = P.buildDrillFromFlows(narrowed, 30);
+        res.drillOnlyPicked = q.length > 0 && q.every(x =>
+            narrowed.some(f => f.id === x.sourceId));
+        // None disables Start, All restores it
+        box.querySelector('#catPickNone').click();
+        res.noneDisables = btn().disabled === true;
+        box.querySelector('#catPickAll').click();
+        res.allRestores = chips().every(c => c.classList.contains('selected'))
+            && btn().disabled === false && P.catPickedIds('Stage 1') === null;
+        res.restoredLabel = btn().textContent;
+        // a single-topic category gets no block
+        P.renderCategory('Weather', 'replace');
+        res.onWeather = !!document.querySelector('#catContent .cat-drill');
+        return res;
+    })();
+
     const traps = byId['PAVETraps'];
     r.trapsCount = traps ? traps.items.length : 0;
     r.trapsAllValid = !!traps && traps.items.every(it =>
@@ -250,6 +287,21 @@ req(out.pohNumbersCount === 9, 'POHNumbers should have 9 items, got ' + out.pohN
 req(out.pohNumbersMapsBoth, 'POHNumbers items must be "Section N -> Title" so both directions drill');
 req(out.farFindItCount >= 10, 'FARFindIt bank too small: ' + out.farFindItCount);
 req(out.farFindItValid, 'a FARFindIt item is malformed');
+req(out.catDrill.exists, 'the per-category exam block is missing from the Stage 1 page');
+req(out.catDrill.chips === 5, 'category exam should offer 5 subject chips, got ' + out.catDrill.chips);
+req(out.catDrill.allSelected, 'category exam subjects should all start selected');
+req(/full exam/i.test(out.catDrill.fullLabel),
+    'with everything picked the button should offer a full exam, got: ' + out.catDrill.fullLabel);
+req(!/full exam/i.test(out.catDrill.afterDeselectLabel),
+    'the button still says full exam after a subject was deselected');
+req(out.catDrill.narrowedCount === 4, 'deselecting one subject should leave 4, got ' + out.catDrill.narrowedCount);
+req(out.catDrill.narrowedExcludesFirst, 'the deselected subject is still in the drill pool');
+req(out.catDrill.drillOnlyPicked, 'the category drill drew from a subject that was not picked');
+req(out.catDrill.mixedUntouched, 'the category picker clobbered the Mixed Drill selection');
+req(out.catDrill.noneDisables, '"None" should disable Start on the category page');
+req(out.catDrill.allRestores, '"All" should reselect everything and clear the stored list');
+req(/full exam/i.test(out.catDrill.restoredLabel), 'the button should offer a full exam again after All');
+req(out.catDrill.onWeather === true, 'a multi-topic category should also get the exam block');
 req(out.stage1Exists, 'Stage 1 category missing');
 ['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather'].forEach(id =>
     req(out.stage1Banks.some(b => b.indexOf(id + ':') === 0), 'Stage 1 is missing ' + id));

@@ -100,6 +100,12 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   `scopeFlows()` accepts 'all', one name, or an array, so older callers and the
   test harness still work; the old single-string `settings.mixedScope` is
   migrated on first read and kept roughly in sync for anything still reading it.
+- Every category page with more than one topic carries a per-category exam
+  block (`buildCatDrill`): sit the whole category, or pick the subjects. Its
+  selection lives in `settings.catTopics[catName]` and is deliberately SEPARATE
+  from the Mixed Drill's `settings.mixedTopics` — narrowing one must never
+  narrow the other. Both drills share `buildDrillFromFlows()` so they weight
+  weak items identically.
 - The home screen and side menu group categories via `CAT_GROUPS`
   (In the Cockpit / Look It Up / Ground Knowledge / Exam Prep). A category
   missing from that list still renders, under "More", so adding one can never
