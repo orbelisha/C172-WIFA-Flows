@@ -288,13 +288,13 @@ req(out.pohNumbersMapsBoth, 'POHNumbers items must be "Section N -> Title" so bo
 req(out.farFindItCount >= 10, 'FARFindIt bank too small: ' + out.farFindItCount);
 req(out.farFindItValid, 'a FARFindIt item is malformed');
 req(out.catDrill.exists, 'the per-category exam block is missing from the Stage 1 page');
-req(out.catDrill.chips === 5, 'category exam should offer 5 subject chips, got ' + out.catDrill.chips);
+req(out.catDrill.chips === 6, 'category exam should offer 6 subject chips, got ' + out.catDrill.chips);
 req(out.catDrill.allSelected, 'category exam subjects should all start selected');
 req(/full exam/i.test(out.catDrill.fullLabel),
     'with everything picked the button should offer a full exam, got: ' + out.catDrill.fullLabel);
 req(!/full exam/i.test(out.catDrill.afterDeselectLabel),
     'the button still says full exam after a subject was deselected');
-req(out.catDrill.narrowedCount === 4, 'deselecting one subject should leave 4, got ' + out.catDrill.narrowedCount);
+req(out.catDrill.narrowedCount === 5, 'deselecting one subject should leave 5, got ' + out.catDrill.narrowedCount);
 req(out.catDrill.narrowedExcludesFirst, 'the deselected subject is still in the drill pool');
 req(out.catDrill.drillOnlyPicked, 'the category drill drew from a subject that was not picked');
 req(out.catDrill.mixedUntouched, 'the category picker clobbered the Mixed Drill selection');
@@ -303,9 +303,9 @@ req(out.catDrill.allRestores, '"All" should reselect everything and clear the st
 req(/full exam/i.test(out.catDrill.restoredLabel), 'the button should offer a full exam again after All');
 req(out.catDrill.onWeather === true, 'a multi-topic category should also get the exam block');
 req(out.stage1Exists, 'Stage 1 category missing');
-['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather'].forEach(id =>
+['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather', 'S1Traps'].forEach(id =>
     req(out.stage1Banks.some(b => b.indexOf(id + ':') === 0), 'Stage 1 is missing ' + id));
-req(out.stage1Total >= 120, 'Stage 1 bank is too small: ' + out.stage1Total);
+req(out.stage1Total >= 150, 'Stage 1 bank is too small: ' + out.stage1Total);
 req(out.stage1AllValid, 'a Stage 1 item is malformed (options, answer index or explanation)');
 req(out.stage1CountsMatch, 'a Stage 1 bank\'s "N questions" label disagrees with its item count');
 req(out.homeCards.indexOf('Stage 1') !== -1, 'Stage 1 is not reachable from the home screen');
