@@ -106,6 +106,16 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   from the Mixed Drill's `settings.mixedTopics` — narrowing one must never
   narrow the other. Both drills share `buildDrillFromFlows()` so they weight
   weak items identically.
+- **Stay inside PPL scope.** Or is training for a PRIVATE certificate and asked
+  not to be quizzed on things he is not meant to know yet. Flight by reference
+  to instruments IS in scope — 61.109 requires 3 hours of it, and escaping an
+  inadvertent cloud entry is a PPL skill. Operating IFR is NOT: do not frame a
+  scenario as "you are in IMC", do not use "partial panel", and do not assume he
+  can fly an approach. Regulatory facts that merely CARRY an IFR qualifier stay
+  in — the VOR check and the altimeter/static check being IFR-only, night
+  Special VFR needing an instrument-rated pilot — because knowing when a rule
+  does not apply to him is exactly the point. `check_pave.mjs` fails on the
+  out-of-scope phrasings.
 - PAVE is filed as **risk management**, not as oral-exam prep — Or asked for the
   exam framing dropped in Version 14, so the category is
   "PAVE — Risk Management" and it sits under Ground Knowledge. He may revisit

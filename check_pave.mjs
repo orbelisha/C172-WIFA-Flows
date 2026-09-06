@@ -163,6 +163,30 @@ const out = await page.evaluate((expected) => {
         return res;
     })();
 
+    // --- PPL scope guard (Version 15) --------------------------------
+    // Or is training for a PRIVATE certificate. Content must not assume he
+    // holds, or is training for, an instrument rating. Flight by reference to
+    // instruments IS in scope (61.109 hood work, escaping an inadvertent cloud
+    // entry); operating IFR is not. These phrasings presume the latter.
+    r.outOfScope = [];
+    (function () {
+        const BAD = /\b(in IMC|partial[- ]panel|when you are flying IFR|as an instrument pilot|on the approach plate|shooting an approach)\b/i;
+        Object.keys(CATS).forEach(cat => Object.keys(CATS[cat]).forEach(sub =>
+            CATS[cat][sub].forEach(f => {
+                const blobs = f.type === 'mcq'
+                    ? f.items.map((it, i) => [i, it.question + ' ' + it.options.join(' ') + ' ' + it.explanation])
+                    : (f.items || []).map((it, i) => [i, it]);
+                blobs.forEach(function (pair) {
+                    const hit = String(pair[1]).match(BAD);
+                    if (hit) r.outOfScope.push(f.id + ' #' + pair[0] + ' -> "' + hit[0] + '"');
+                });
+                if (f.desc) {
+                    const hit = f.desc.match(BAD);
+                    if (hit) r.outOfScope.push(f.id + ' DESC -> "' + hit[0] + '"');
+                }
+            })));
+    })();
+
     const traps = byId['PAVETraps'];
     r.trapsCount = traps ? traps.items.length : 0;
     r.trapsAllValid = !!traps && traps.items.every(it =>
@@ -307,6 +331,8 @@ req(out.catDrill.noneDisables, '"None" should disable Start on the category page
 req(out.catDrill.allRestores, '"All" should reselect everything and clear the stored list');
 req(/full exam/i.test(out.catDrill.restoredLabel), 'the button should offer a full exam again after All');
 req(out.catDrill.onWeather === true, 'a multi-topic category should also get the exam block');
+req(out.outOfScope.length === 0,
+    'content assumes an instrument rating, which is beyond the PPL: ' + out.outOfScope.join(' | '));
 req(out.stage1Exists, 'Stage 1 category missing');
 ['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather', 'S1Traps'].forEach(id =>
     req(out.stage1Banks.some(b => b.indexOf(id + ':') === 0), 'Stage 1 is missing ' + id));
