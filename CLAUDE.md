@@ -116,6 +116,10 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   Special VFR needing an instrument-rated pilot — because knowing when a rule
   does not apply to him is exactly the point. `check_pave.mjs` fails on the
   out-of-scope phrasings.
+- Written-exam banks live in ONE category, "Written Exams", with a sub-section
+  per exam ("Stage 1", "Pre-Solo"). Add the next stage as another sub-section
+  rather than another top-level category — the per-category exam block then lets
+  him sit any combination of them.
 - PAVE is filed as **risk management**, not as oral-exam prep — Or asked for the
   exam framing dropped in Version 14, so the category is
   "PAVE — Risk Management" and it sits under Ground Knowledge. He may revisit

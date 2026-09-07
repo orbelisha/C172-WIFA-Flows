@@ -110,8 +110,9 @@ const out = await page.evaluate((expected) => {
         it.explanation && it.explanation.length > 40);
 
     // --- Stage 1 (Version 10) ----------------------------------------
-    const s1 = CATS['Stage 1'];
+    const s1 = CATS['Written Exams'];
     r.stage1Exists = !!s1;
+    r.writtenSubs = s1 ? Object.keys(s1) : [];
     r.stage1Banks = s1 ? Object.values(s1).flat().map(f => f.id + ':' + f.items.length) : [];
     r.stage1Total = s1 ? Object.values(s1).flat().reduce((n, f) => n + f.items.length, 0) : 0;
     r.stage1AllValid = !!s1 && Object.values(s1).flat().every(f =>
@@ -128,8 +129,8 @@ const out = await page.evaluate((expected) => {
 
     // --- per-category exam block (Version 11) -------------------------
     r.catDrill = (function () {
-        P.setCatPickedIds('Stage 1', null);
-        P.renderCategory('Stage 1', 'replace');
+        P.setCatPickedIds('Written Exams', null);
+        P.renderCategory('Written Exams', 'replace');
         const box = document.querySelector('#catContent .cat-drill');
         if (!box) return { exists: false };
         const chips = () => Array.from(box.querySelectorAll('[data-cat-topic]'));
@@ -140,8 +141,8 @@ const out = await page.evaluate((expected) => {
         // deselect one subject -> label changes and the drill narrows
         chips()[0].click();
         res.afterDeselectLabel = btn().textContent;
-        res.stored = (P.catPickedIds('Stage 1') || []).length;
-        const narrowed = P.catDrillFlows('Stage 1');
+        res.stored = (P.catPickedIds('Written Exams') || []).length;
+        const narrowed = P.catDrillFlows('Written Exams');
         res.narrowedCount = narrowed.length;
         res.narrowedExcludesFirst = !narrowed.some(f => f.id === 'S1Aero');
         // and it must NOT have touched the Mixed Drill's own selection
@@ -317,13 +318,13 @@ req(out.pohNumbersMapsBoth, 'POHNumbers items must be "Section N -> Title" so bo
 req(out.farFindItCount >= 10, 'FARFindIt bank too small: ' + out.farFindItCount);
 req(out.farFindItValid, 'a FARFindIt item is malformed');
 req(out.catDrill.exists, 'the per-category exam block is missing from the Stage 1 page');
-req(out.catDrill.chips === 6, 'category exam should offer 6 subject chips, got ' + out.catDrill.chips);
+req(out.catDrill.chips === 7, 'category exam should offer 7 subject chips, got ' + out.catDrill.chips);
 req(out.catDrill.allSelected, 'category exam subjects should all start selected');
 req(/full exam/i.test(out.catDrill.fullLabel),
     'with everything picked the button should offer a full exam, got: ' + out.catDrill.fullLabel);
 req(!/full exam/i.test(out.catDrill.afterDeselectLabel),
     'the button still says full exam after a subject was deselected');
-req(out.catDrill.narrowedCount === 5, 'deselecting one subject should leave 5, got ' + out.catDrill.narrowedCount);
+req(out.catDrill.narrowedCount === 6, 'deselecting one subject should leave 6, got ' + out.catDrill.narrowedCount);
 req(out.catDrill.narrowedExcludesFirst, 'the deselected subject is still in the drill pool');
 req(out.catDrill.drillOnlyPicked, 'the category drill drew from a subject that was not picked');
 req(out.catDrill.mixedUntouched, 'the category picker clobbered the Mixed Drill selection');
@@ -333,13 +334,15 @@ req(/full exam/i.test(out.catDrill.restoredLabel), 'the button should offer a fu
 req(out.catDrill.onWeather === true, 'a multi-topic category should also get the exam block');
 req(out.outOfScope.length === 0,
     'content assumes an instrument rating, which is beyond the PPL: ' + out.outOfScope.join(' | '));
-req(out.stage1Exists, 'Stage 1 category missing');
-['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather', 'S1Traps'].forEach(id =>
+req(out.stage1Exists, 'Written Exams category missing');
+['S1Aero', 'S1Systems', 'S1Airspace', 'S1Perf', 'S1Weather', 'S1Traps', 'PSTraps'].forEach(id =>
     req(out.stage1Banks.some(b => b.indexOf(id + ':') === 0), 'Stage 1 is missing ' + id));
-req(out.stage1Total >= 160, 'Stage 1 bank is too small: ' + out.stage1Total);
+req(out.stage1Total >= 175, 'Written Exams is too small: ' + out.stage1Total);
 req(out.stage1AllValid, 'a Stage 1 item is malformed (options, answer index or explanation)');
-req(out.stage1CountsMatch, 'a Stage 1 bank\'s "N questions" label disagrees with its item count');
-req(out.homeCards.indexOf('Stage 1') !== -1, 'Stage 1 is not reachable from the home screen');
+req(out.stage1CountsMatch, 'a bank\'s "N questions" label disagrees with its item count');
+req(out.homeCards.indexOf('Written Exams') !== -1, 'Written Exams is not reachable from the home screen');
+req(out.writtenSubs.join(',') === 'Stage 1,Pre-Solo',
+    'Written Exams should hold Stage 1 then Pre-Solo, got: ' + out.writtenSubs.join(', '));
 req(out.trapsCount >= 10, 'trick-question bank too small: ' + out.trapsCount);
 req(out.trapsAllValid, 'a PAVETraps item is malformed');
 req(out.noDoubleEscape, 'double-escaped entity in a resource label');
