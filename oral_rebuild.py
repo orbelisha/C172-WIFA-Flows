@@ -10,6 +10,7 @@ and that is not part of the key.
 import pathlib, sys
 import oral_data as D1
 import oral_data2 as D2
+import oral_data3 as D3
 
 # ---------------------------------------------------------------- helpers
 def js(s):
@@ -35,6 +36,7 @@ MCQ_DESC = {
     'OralXC': "The planned cross-country you bring to the checkride is the spine of the oral — the examiner starts there and branches into weather, performance, airspace, fuel and diversion. Know your own plan cold.",
 }
 MCQ_DESC.update(D2.MCQ_DESC2)
+MCQ_DESC.update(D3.MCQ_DESC3)
 
 topics = {}
 
@@ -71,10 +73,25 @@ for tid, title, sub, desc, items in D2.SEQS2:
 for tid, title, items, resources in D2.BANKS2:
     add_mcq(tid, title, items, resources)
 
+# part 3 (gap-fill: the guide's unanswered headings, and questions for the
+# three sub-sections that were recall-only)
+for tid, title, sub, desc, items in D3.DEFS3:
+    add_def(tid, title, sub, desc, items)
+for tid, title, items, resources in D3.BANKS3:
+    add_mcq(tid, title, items, resources)
+
+# SPEC2 is the sub-section order; part 3 appends into existing sub-sections
+# rather than adding new ones, so the ACS Task map stays intact.
+bad = set(D3.INSERTS) - {t for t, _ in D2.SPEC2}
+if bad:
+    print('INSERTS names a sub-section that does not exist: %s' % sorted(bad), file=sys.stderr)
+    sys.exit(1)
+SPEC = [(t, list(ids) + D3.INSERTS.get(t, [])) for t, ids in D2.SPEC2]
+
 # ---------------------------------------------------------------- assemble
 seen = set()
 secs = []
-for sec_title, ids in D2.SPEC2:
+for sec_title, ids in SPEC:
     for i in ids:
         if i not in topics:
             print('UNKNOWN TOPIC ID: %s' % i, file=sys.stderr); sys.exit(1)
@@ -103,5 +120,6 @@ s = s[:start] + cat + s[end:]
 p.write_text(s, encoding='utf-8')
 print('Oral Exam rebuilt: %d sub-sections, %d topics, %d questions'
       % (len(secs), len(topics),
-         sum(len(b[2]) for b in D1.BANKS) + sum(len(b[2]) for b in D2.BANKS2)),
+         sum(len(b[2]) for b in D1.BANKS) + sum(len(b[2]) for b in D2.BANKS2)
+         + sum(len(b[2]) for b in D3.BANKS3)),
       file=sys.stderr)

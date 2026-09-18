@@ -153,6 +153,8 @@ const out = await page.evaluate((expected) => {
     r.oralDefValid = !!or_ && Object.values(or_).flat().filter(f => f.type === 'definition').every(f =>
         f.items.length >= 8 && f.desc && f.desc.length > 40 &&
         f.items.every(it => typeof it === 'string' && it.indexOf('➔') !== -1));
+    r.oralNoQuestionSubs = or_ ? Object.keys(or_).filter(sub =>
+        !or_[sub].some(f => f.type === 'mcq' && f.items.length >= 8)) : ['<no category>'];
     r.basicMedCurrent = (function () {
         const f = byId['OralBasicMed'];
         if (!f) return false;
@@ -413,9 +415,15 @@ req(out.oralSubs.join('|') === [
  'OralAltitudes', 'OralSpeeds',
  'OralEngine', 'OralIgnition', 'OralElectrical', 'OralGyros', 'OralCompass', 'OralSystems',
  'OralHypoxia', 'OralIllusions', 'OralAttitudes', 'OralAeromed',
- 'OralTaxiBrief', 'OralTaxiCheck', 'OralPaxBrief', 'OralTakeoffBrief', 'OralGround'].forEach(id =>
+ 'OralTaxiBrief', 'OralTaxiCheck', 'OralPaxBrief', 'OralTakeoffBrief', 'OralGround',
+ 'OralCheckrideQ', 'OralWxHazards', 'OralWxQ', 'OralVFRMins', 'OralPersonalMins',
+ 'OralCG', 'OralTurning', 'OralWake', 'OralPerfQ'].forEach(id =>
     req(out.oralBanks.some(b => b.indexOf(id + ':') === 0), 'Oral Exam is missing ' + id));
-req(out.oralQuestions >= 95, 'the Oral Exam question banks are too small: ' + out.oralQuestions);
+req(out.oralQuestions >= 140, 'the Oral Exam question banks are too small: ' + out.oralQuestions);
+// Every ACS sub-section must carry questions, not just a recall bank. Three of
+// them shipped in Version 17 with none, which is the gap this guards.
+req(out.oralNoQuestionSubs.length === 0,
+    'an Oral Exam sub-section has no questions at all: ' + out.oralNoQuestionSubs.join(', '));
 // The guide Or studies from prints the ORIGINAL 2017 BasicMed limits. The app
 // carries the post-2024 figures and says so; if an edit ever reintroduces the
 // old numbers as current, this fails.
