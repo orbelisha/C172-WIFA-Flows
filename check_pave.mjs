@@ -127,6 +127,53 @@ const out = await page.evaluate((expected) => {
     r.stage1CountsMatch = !!s1 && Object.values(s1).flat().every(f =>
         f.text === f.items.length + ' questions');
 
+    // --- Oral Exam (Version 17) ---------------------------------------
+    // Four sub-sections, mixed definition and mcq. The definition banks are
+    // the recall spine (the ACS shape, the hypoxias, the antidotes); the mcq
+    // banks are the scenario half. Both must survive, so this checks the
+    // shape of each type separately rather than assuming one.
+    const or_ = CATS['Oral Exam'];
+    r.oralExists = !!or_;
+    r.oralSubs = or_ ? Object.keys(or_) : [];
+    r.oralBanks = or_ ? Object.values(or_).flat().map(f => f.id + ':' + f.type + ':' + f.items.length) : [];
+    r.oralQuestions = or_ ? Object.values(or_).flat()
+        .filter(f => f.type === 'mcq').reduce((n, f) => n + f.items.length, 0) : 0;
+    r.oralMcqValid = !!or_ && Object.values(or_).flat().filter(f => f.type === 'mcq').every(f =>
+        Array.isArray(f.resources) && f.resources.length > 0 &&
+        f.text === f.items.length + ' questions' &&
+        f.items.every(it =>
+            it.question && Array.isArray(it.options) && it.options.length >= 3 &&
+            new Set(it.options).size === it.options.length &&
+            typeof it.correctAnswer === 'number' &&
+            it.correctAnswer >= 0 && it.correctAnswer < it.options.length &&
+            it.explanation && it.explanation.length > 60));
+    // Every definition item must carry the ➔ separator: without it the
+    // generator cannot split term from meaning and the topic silently
+    // produces nothing to drill.
+    r.oralDefValid = !!or_ && Object.values(or_).flat().filter(f => f.type === 'definition').every(f =>
+        f.items.length >= 8 && f.desc && f.desc.length > 40 &&
+        f.items.every(it => typeof it === 'string' && it.indexOf('➔') !== -1));
+    r.basicMedCurrent = (function () {
+        const f = byId['OralBasicMed'];
+        if (!f) return false;
+        const blob = f.items.join(' | ');
+        return /\b7 occupants\b/.test(blob) && /12,500 pounds/.test(blob)
+            && /not more than 6 passengers/.test(blob);
+    })();
+    // The hazardous-attitude antidotes are graded verbatim, so guard the
+    // five exact phrases rather than trusting a reworded edit later.
+    r.antidotes = (function () {
+        const f = byId['OralAttitudes'];
+        if (!f) return null;
+        const blob = f.items.join(' | ');
+        return ['Follow the rules. They are usually right.',
+                'Not so fast. Think first.',
+                'It could happen to me.',
+                'Taking chances is foolish.',
+                "I'm not helpless. I can make a difference."]
+            .filter(a => blob.indexOf(a) === -1);
+    })();
+
     // --- per-category exam block (Version 11) -------------------------
     r.catDrill = (function () {
         P.setCatPickedIds('Written Exams', null);
@@ -343,6 +390,41 @@ req(out.stage1CountsMatch, 'a bank\'s "N questions" label disagrees with its ite
 req(out.homeCards.indexOf('Written Exams') !== -1, 'Written Exams is not reachable from the home screen');
 req(out.writtenSubs.join(',') === 'Stage 1,Pre-Solo',
     'Written Exams should hold Stage 1 then Pre-Solo, got: ' + out.writtenSubs.join(', '));
+req(out.oralExists, 'Oral Exam category missing');
+// The sub-sections follow the ACS Area/Task order of Or's own oral prep
+// guide. Reordering them silently breaks the map between the app and the
+// document he studies from, so the order is asserted, not just the set.
+req(out.oralSubs.join('|') === [
+        'The Checkride',
+        'I.A — Pilot Qualifications',
+        'I.B — Airworthiness',
+        'I.C — Weather',
+        'I.D & I.E — Cross-Country & Airspace',
+        'I.F — Performance',
+        'I.G — Systems',
+        'I.H — Human Factors',
+        'II — Preflight Procedures'].join('|'),
+    'Oral Exam sub-sections are wrong or reordered, got: ' + out.oralSubs.join(' / '));
+['OralACS', 'OralAreas', 'OralBring', 'OralOutcome',
+ 'OralQual', 'OralPrivileges', 'OralDocs', 'OralBasicMed', 'OralPrereq',
+ 'OralInspections', 'OralMaint', 'OralPOH', 'OralInop',
+ 'OralWxSources', 'OralWxProducts', 'OralWxCodes',
+ 'OralSUA', 'OralSquawk', 'OralNavaids', 'OralXC',
+ 'OralAltitudes', 'OralSpeeds',
+ 'OralEngine', 'OralIgnition', 'OralElectrical', 'OralGyros', 'OralCompass', 'OralSystems',
+ 'OralHypoxia', 'OralIllusions', 'OralAttitudes', 'OralAeromed',
+ 'OralTaxiBrief', 'OralTaxiCheck', 'OralPaxBrief', 'OralTakeoffBrief', 'OralGround'].forEach(id =>
+    req(out.oralBanks.some(b => b.indexOf(id + ':') === 0), 'Oral Exam is missing ' + id));
+req(out.oralQuestions >= 95, 'the Oral Exam question banks are too small: ' + out.oralQuestions);
+// The guide Or studies from prints the ORIGINAL 2017 BasicMed limits. The app
+// carries the post-2024 figures and says so; if an edit ever reintroduces the
+// old numbers as current, this fails.
+req(out.basicMedCurrent, 'the BasicMed bank no longer states the current 7 / 12,500 / 6 limits');
+req(out.oralMcqValid, 'an Oral Exam mcq item is malformed, or a "N questions" label disagrees with its count');
+req(out.oralDefValid, 'an Oral Exam definition item is missing its ➔ separator, so it drills as nothing');
+req(out.antidotes && out.antidotes.length === 0,
+    'a hazardous-attitude antidote is no longer verbatim: missing ' + JSON.stringify(out.antidotes));
+req(out.homeCards.indexOf('Oral Exam') !== -1, 'Oral Exam is not reachable from the home screen');
 req(out.trapsCount >= 10, 'trick-question bank too small: ' + out.trapsCount);
 req(out.trapsAllValid, 'a PAVETraps item is malformed');
 req(out.noDoubleEscape, 'double-escaped entity in a resource label');
