@@ -413,7 +413,8 @@ req(out.oralSubs.join('|') === [
         'I.F — Performance',
         'I.G — Systems',
         'I.H — Human Factors',
-        'II — Preflight Procedures'].join('|'),
+        'II — Preflight Procedures',
+        'Scenarios — The Real Oral'].join('|'),
     'Oral Exam sub-sections are wrong or reordered, got: ' + out.oralSubs.join(' / '));
 ['OralACS', 'OralAreas', 'OralBring', 'OralOutcome',
  'OralQual', 'OralPrivileges', 'OralDocs', 'OralBasicMed', 'OralPrereq',
@@ -425,7 +426,8 @@ req(out.oralSubs.join('|') === [
  'OralHypoxia', 'OralIllusions', 'OralAttitudes', 'OralAeromed',
  'OralTaxiBrief', 'OralTaxiCheck', 'OralPaxBrief', 'OralTakeoffBrief', 'OralGround',
  'OralCheckrideQ', 'OralWxHazards', 'OralWxQ', 'OralVFRMins', 'OralPersonalMins',
- 'OralCG', 'OralTurning', 'OralWake', 'OralPerfQ', 'OralADM'].forEach(id =>
+ 'OralCG', 'OralTurning', 'OralWake', 'OralPerfQ', 'OralADM',
+ 'ScenXC', 'ScenAirworthy', 'ScenWx', 'ScenInflight'].forEach(id =>
     req(out.oralBanks.some(b => b.indexOf(id + ':') === 0), 'Oral Exam is missing ' + id));
 req(out.oralQuestions >= 148, 'the Oral Exam question banks are too small: ' + out.oralQuestions);
 // Every ACS sub-section must carry questions, not just a recall bank. Three of

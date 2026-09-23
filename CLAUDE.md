@@ -133,6 +133,13 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   Every sub-section must carry a real question bank, not just a recall bank
   — three of them shipped in Version 17 with none, and `check_pave.mjs` now
   fails on a sub-section with no mcq of 8 items or more.
+  `oral_data4.py` is the coverage-and-scenarios layer. Its `APPENDS` map adds
+  questions to the END of an existing bank (appended, never inserted, so every
+  index and the progress keyed to it holds), and its `SCEN_BANKS` form a tenth
+  sub-section, "Scenarios — The Real Oral". Scenarios are ONE situation
+  developing across Tasks, because that is how a DPE runs the oral — the ACS
+  Tasks are how the material is organised, not how it is asked. Keep them
+  inside PPL scope like everything else.
   Where the guide is out of date or loose, the app carries the CORRECT figure
   and says so in the item, because he will be asked from the guide as written.
   The live example: the guide prints the 2017 BasicMed limits (5 passengers /

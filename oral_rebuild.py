@@ -11,6 +11,7 @@ import pathlib, sys
 import oral_data as D1
 import oral_data2 as D2
 import oral_data3 as D3
+import oral_data4 as D4
 
 # ---------------------------------------------------------------- helpers
 def js(s):
@@ -37,6 +38,7 @@ MCQ_DESC = {
 }
 MCQ_DESC.update(D2.MCQ_DESC2)
 MCQ_DESC.update(D3.MCQ_DESC3)
+MCQ_DESC.update(D4.SCEN_DESC)
 
 topics = {}
 
@@ -62,8 +64,13 @@ def add_mcq(tid, title, items, resources):
 # part 1 (unchanged content, ids and item order intact)
 for tid, title, sub, desc, items in D1.DEFS:
     add_def(tid, title, sub, desc, items)
+# Part 4 APPENDS extra questions onto an existing bank. Appended, never
+# inserted, so every existing index -- and the progress keyed to it -- holds.
+def with_appends(tid, items):
+    return list(items) + list(D4.APPENDS.get(tid, []))
+
 for tid, title, items, resources in D1.BANKS:
-    add_mcq(tid, title, items, resources)
+    add_mcq(tid, title, with_appends(tid, items), resources)
 
 # part 2 (from the guide)
 for tid, title, sub, desc, items in D2.DEFS2:
@@ -71,14 +78,14 @@ for tid, title, sub, desc, items in D2.DEFS2:
 for tid, title, sub, desc, items in D2.SEQS2:
     add_def(tid, title, sub, desc, items, kind='sequence')
 for tid, title, items, resources in D2.BANKS2:
-    add_mcq(tid, title, items, resources)
+    add_mcq(tid, title, with_appends(tid, items), resources)
 
 # part 3 (gap-fill: the guide's unanswered headings, and questions for the
 # three sub-sections that were recall-only)
 for tid, title, sub, desc, items in D3.DEFS3:
     add_def(tid, title, sub, desc, items)
 for tid, title, items, resources in D3.BANKS3:
-    add_mcq(tid, title, items, resources)
+    add_mcq(tid, title, with_appends(tid, items), resources)
 
 # SPEC2 is the sub-section order; part 3 appends into existing sub-sections
 # rather than adding new ones, so the ACS Task map stays intact.
@@ -87,6 +94,17 @@ if bad:
     print('INSERTS names a sub-section that does not exist: %s' % sorted(bad), file=sys.stderr)
     sys.exit(1)
 SPEC = [(t, list(ids) + D3.INSERTS.get(t, [])) for t, ids in D2.SPEC2]
+
+# Part 4's scenario banks form their own sub-section at the end: the ACS Tasks
+# are how the material is ORGANISED, scenarios are how it is ASKED.
+for tid, title, items, resources in D4.SCEN_BANKS:
+    add_mcq(tid, title, items, resources)
+SPEC.append((D4.SCEN_SUB, [b[0] for b in D4.SCEN_BANKS]))
+
+unused = set(D4.APPENDS) - set(topics)
+if unused:
+    print('APPENDS names a bank that does not exist: %s' % sorted(unused), file=sys.stderr)
+    sys.exit(1)
 
 # ---------------------------------------------------------------- assemble
 seen = set()
@@ -121,5 +139,6 @@ p.write_text(s, encoding='utf-8')
 print('Oral Exam rebuilt: %d sub-sections, %d topics, %d questions'
       % (len(secs), len(topics),
          sum(len(b[2]) for b in D1.BANKS) + sum(len(b[2]) for b in D2.BANKS2)
-         + sum(len(b[2]) for b in D3.BANKS3)),
+         + sum(len(b[2]) for b in D3.BANKS3) + sum(len(b[2]) for b in D4.SCEN_BANKS)
+         + sum(len(v) for v in D4.APPENDS.values())),
       file=sys.stderr)
