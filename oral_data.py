@@ -94,11 +94,11 @@ DEFS = [
   "Invulnerability (It won't happen to me) ➔ It could happen to me.",
   "Macho (I can do it) ➔ Taking chances is foolish.",
   "Resignation (What's the use?) ➔ I'm not helpless. I can make a difference.",
-  "DECIDE ➔ Detect, Estimate, Choose, Identify, Do, Evaluate — and it loops",
-  "3P ➔ Perceive the hazards, Process the risk, Perform the action",
-  "Perceive uses ➔ PAVE",
-  "Process uses ➔ CARE: Consequences, Alternatives, Reality, External pressures",
-  "Perform uses ➔ TEAM: Transfer, Eliminate, Accept, Mitigate"]),
+  "The drill ➔ recognise the thought, LABEL it with the attitude’s name, then recite the antidote. Saying the name out loud is what breaks it",
+  "Anti-authority in the wild ➔ ‘that hold-short line is overkill’, ‘this NOTAM does not really apply to me’",
+  "Invulnerability in the wild ➔ ‘accidents happen to other people’. The FAA calls it the most common of the five in low-time pilots",
+  "Macho in the wild ➔ ‘I can make this crosswind work’. Not a male trait — the FAA is explicit that anyone can have it",
+  "Operational pitfalls ➔ what the five attitudes actually produce: get-there-itis, scud running, continuing VFR into deteriorating weather, neglect of flight planning, peer pressure, and loss of positional awareness"]),
 ]
 
 # ---------------------------------------------------------------- mcq banks
@@ -338,6 +338,36 @@ AEROMED = [
   "Fly only short local flights in good weather until it passes.",
   "Continue flying, since flying is a recognised stress reliever."],
  "The FAA is unambiguous that chronic stress causes performance to fall sharply and that such pilots are not safe and should not exercise their privileges. Acute stress is different — a healthy person copes with a discrete threat, and that is the fight-or-flight response doing its job. It becomes chronic when it never lets up."),
+
+("Halfway to your destination the ceiling drops below your planned altitude. Which model applies, and what is its first step?",
+ ["DECIDE — and the first step is DETECT: recognise that a change has occurred.",
+  "3P, because you are perceiving a hazard.",
+  "TEAM, because a risk has appeared and must be mitigated."],
+ "DECIDE is REACTIVE — something has already changed and you are responding to it in flight. 3P is PROACTIVE, run before and throughout the flight to find hazards before they change anything. The trap is skipping straight to the action: the model deliberately starts by making you NAME the change, because a pilot who has not admitted the situation changed will keep flying the old plan."),
+
+("What is the difference between a hazard and a risk?",
+ ["A hazard is the condition itself; risk is how likely it is to hurt you and how badly.",
+  "They are the same thing described at different stages of flight.",
+  "A hazard exists in flight; a risk exists on the ground during planning."],
+ "PAVE finds HAZARDS — a low ceiling, a tired pilot, a short runway. CARE converts each one into RISK by asking the consequences, the alternatives, the reality and the external pressures. TEAM then does something about it. Naming a hazard is not risk management; deciding what it means for THIS flight, on THIS day, is."),
+
+("In the 3P model, what does TEAM give you?",
+ ["Transfer, Eliminate, Accept, Mitigate — the four things you can do about a risk.",
+  "Time, Energy, Altitude, Manoeuvre.",
+  "Terrain, Equipment, Airspace, Minimums."],
+ "TEAM supports PERFORM, the third P. TRANSFER it to someone else — ask ATC, take an instructor. ELIMINATE it — do not carry that load, do not go. ACCEPT it when the benefit genuinely outweighs it. MITIGATE it — more fuel, a longer runway, a later departure. Perceive uses PAVE, Process uses CARE, Perform uses TEAM."),
+
+("What is the 5P check and when is it run?",
+ ["Plan, Plane, Pilot, Passengers, Programming — at preflight, pre-takeoff, hourly en route, pre-descent and before the approach.",
+  "Pilot, Passengers, Performance, Power, Plan — once, before departure.",
+  "Plan, Plane, Pilot, Performance, Payload — only when the flight changes."],
+ "The five fixed points are what make it a model rather than a preflight: a check you run once is not decision-making. PLANE covers the aircraft and its equipment, PASSENGERS covers who is aboard and the pressure they bring, and PROGRAMMING covers the avionics and autopilot — the element that did not exist when DECIDE was written."),
+
+("Which is NOT one of the six elements of Single-Pilot Resource Management?",
+ ["Crew coordination — by definition there is no crew.",
+  "Automation management.",
+  "Controlled flight into terrain awareness."],
+ "SRM is CRM adapted for a cockpit with one seat filled. The six are aeronautical decision-making, risk management, task management, automation management, situational awareness and CFIT awareness. The point of the name is that single-pilot does not mean ALONE: ATC, Flight Service, the autopilot, the chart supplement and your passengers are all resources you are expected to use."),
 ]
 
 INOP = [

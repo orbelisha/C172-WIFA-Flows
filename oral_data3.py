@@ -150,6 +150,40 @@ WAKE = ("OralWake", "Wake Turbulence", "Avoidance",
         ])
 
 # ===================================================================
+# I.H — AERONAUTICAL DECISION MAKING
+# ===================================================================
+# DECIDE and the 3P family used to be five lines buried at the end of the
+# Hazardous Attitudes bank, which is a bank about something else. Your guide
+# gives DECIDE its own heading ("Acronym for ADM during flight") and a
+# separate "ADM & Risk Management" section, so it gets its own topic here.
+# PAVE, IMSAFE and NWKRAFT are NOT restated \u2014 they have a parent already.
+
+ADM = ("OralADM", "Decision Making \u2014 DECIDE & 3P", "ADM & Risk Management",
+       "Two models, and the examiner wants to hear that you know WHEN each one applies \u2014 DECIDE when something has already changed, 3P before it does. Everything else here hangs off those two.",
+        [
+ d('DECIDE', 'Detect, Estimate, Choose, Identify, Do, Evaluate. Six steps, and the last one feeds straight back into the first'),
+ d('D \u2014 Detect', 'that a change has occurred. Naming it out loud is the step people skip, and skipping it is how a pilot keeps flying the old plan'),
+ d('E \u2014 Estimate', 'the need to counter or react to that change'),
+ d('C \u2014 Choose', 'a desirable outcome for the flight'),
+ d('I \u2014 Identify', 'the actions that will control the change'),
+ d('D \u2014 Do', 'take the action'),
+ d('E \u2014 Evaluate', 'the effect of the action \u2014 then run the loop again'),
+ d('When DECIDE applies', 'REACTIVE. Something has already changed and you are responding to it in flight'),
+ d('3P', 'Perceive, Process, Perform. PROACTIVE \u2014 run before and throughout the flight to find hazards before they change anything'),
+ d('Perceive uses', 'PAVE \u2014 Pilot, Aircraft, enVironment, External pressures'),
+ d('Process uses', 'CARE \u2014 Consequences, Alternatives, Reality, External pressures'),
+ d('Perform uses', 'TEAM \u2014 Transfer, Eliminate, Accept, Mitigate'),
+ d('Hazard versus risk', 'a HAZARD is the condition itself \u2014 a low ceiling, a short runway, a tired pilot. RISK is how likely it is to hurt you and how badly. PAVE finds hazards; CARE turns them into risk'),
+ d('The risk matrix', 'likelihood \u2014 probable, occasional, remote, improbable \u2014 plotted against severity \u2014 catastrophic, critical, marginal, negligible'),
+ d('SRM', 'Single-Pilot Resource Management: using every resource you have when there is nobody in the right seat. Single-pilot does not mean alone'),
+ d('The six SRM elements', 'aeronautical decision-making, risk management, task management, automation management, situational awareness, and CFIT awareness'),
+ d('The 5P check', 'Plan, Plane, Pilot, Passengers, Programming \u2014 run at preflight, pre-takeoff, hourly en route, pre-descent and before the approach'),
+ d('Why five fixed points', 'a check you run once is a preflight, not a decision model. The schedule is what makes it work'),
+ d('Situational awareness', 'an accurate picture of the aircraft, the environment and yourself \u2014 and what all three will be doing next. Losing it is the common thread through most ADM accidents'),
+ d('Current versus proficient', 'current is the FAA legal minimum and means you may go. Proficient means you can fly it well TODAY. The examiner asks so they hear that you know the difference'),
+        ])
+
+# ===================================================================
 # MCQ — THE CHECKRIDE
 # ===================================================================
 
@@ -414,7 +448,7 @@ PERFQ = [
 # ASSEMBLY
 # ===================================================================
 
-DEFS3 = [WXHAZ, VFRMIN, PERSMIN, CG, TURN, WAKE]
+DEFS3 = [WXHAZ, VFRMIN, PERSMIN, CG, TURN, WAKE, ADM]
 
 BANKS3 = [
     ("OralCheckrideQ", "The Checkride — Scenarios", CHKQ,
@@ -444,4 +478,5 @@ INSERTS = {
     "I.C — Weather":                        ["OralWxHazards", "OralWxQ"],
     "I.D & I.E — Cross-Country & Airspace":  ["OralVFRMins", "OralPersonalMins"],
     "I.F — Performance":                    ["OralCG", "OralTurning", "OralWake", "OralPerfQ"],
+    "I.H — Human Factors":                 ["OralADM"],
 }

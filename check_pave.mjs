@@ -155,6 +155,14 @@ const out = await page.evaluate((expected) => {
         f.items.every(it => typeof it === 'string' && it.indexOf('➔') !== -1));
     r.oralNoQuestionSubs = or_ ? Object.keys(or_).filter(sub =>
         !or_[sub].some(f => f.type === 'mcq' && f.items.length >= 8)) : ['<no category>'];
+    r.decideHasOwnTopic = (function () {
+        const adm = byId['OralADM'], att = byId['OralAttitudes'];
+        if (!adm || !att) return false;
+        const a = adm.items.join(' | ');
+        return /Detect, Estimate, Choose, Identify, Do, Evaluate/.test(a)
+            && /Transfer, Eliminate, Accept, Mitigate/.test(a)
+            && att.items.join(' | ').indexOf('DECIDE') === -1;
+    })();
     r.basicMedCurrent = (function () {
         const f = byId['OralBasicMed'];
         if (!f) return false;
@@ -417,9 +425,9 @@ req(out.oralSubs.join('|') === [
  'OralHypoxia', 'OralIllusions', 'OralAttitudes', 'OralAeromed',
  'OralTaxiBrief', 'OralTaxiCheck', 'OralPaxBrief', 'OralTakeoffBrief', 'OralGround',
  'OralCheckrideQ', 'OralWxHazards', 'OralWxQ', 'OralVFRMins', 'OralPersonalMins',
- 'OralCG', 'OralTurning', 'OralWake', 'OralPerfQ'].forEach(id =>
+ 'OralCG', 'OralTurning', 'OralWake', 'OralPerfQ', 'OralADM'].forEach(id =>
     req(out.oralBanks.some(b => b.indexOf(id + ':') === 0), 'Oral Exam is missing ' + id));
-req(out.oralQuestions >= 140, 'the Oral Exam question banks are too small: ' + out.oralQuestions);
+req(out.oralQuestions >= 148, 'the Oral Exam question banks are too small: ' + out.oralQuestions);
 // Every ACS sub-section must carry questions, not just a recall bank. Three of
 // them shipped in Version 17 with none, which is the gap this guards.
 req(out.oralNoQuestionSubs.length === 0,
@@ -430,6 +438,8 @@ req(out.oralNoQuestionSubs.length === 0,
 req(out.basicMedCurrent, 'the BasicMed bank no longer states the current 7 / 12,500 / 6 limits');
 req(out.oralMcqValid, 'an Oral Exam mcq item is malformed, or a "N questions" label disagrees with its count');
 req(out.oralDefValid, 'an Oral Exam definition item is missing its ➔ separator, so it drills as nothing');
+req(out.decideHasOwnTopic,
+    'the DECIDE model is not in OralADM, or has leaked back into OralAttitudes');
 req(out.antidotes && out.antidotes.length === 0,
     'a hazardous-attitude antidote is no longer verbatim: missing ' + JSON.stringify(out.antidotes));
 req(out.homeCards.indexOf('Oral Exam') !== -1, 'Oral Exam is not reachable from the home screen');
