@@ -152,6 +152,12 @@ idempotent, and that an EMPTY cloud document cannot wipe local progress.
   exam framing dropped in Version 14, so the category is
   "PAVE — Risk Management" and it sits under Ground Knowledge. He may revisit
   the oral separately; do not re-attach PAVE to it on your own.
+- `EXTERNAL_LINKS` holds links OUT of the app, keyed by home group (Version 21:
+  "N2621Z POH" under Look It Up, a private claude.ai page that opens when Or is
+  signed in to claude.ai). Each renders as one more card in its group and as an
+  `<a class="sidebar-link">` in the side menu. They are not categories: no
+  topics, no drill. Keep the sidebar entry an `<a>` — `test-flows.mjs` treats
+  every `#sidebarCats > div` holding a `.sidebar-text` as a category and clicks it.
 - The home screen and side menu group categories via `CAT_GROUPS`
   (In the Cockpit / Look It Up / Ground Knowledge / Exam Prep). A category
   missing from that list still renders, under "More", so adding one can never

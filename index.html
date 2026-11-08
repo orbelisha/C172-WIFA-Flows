@@ -180,6 +180,13 @@
         }
         .parent-card small { display: block; margin-top: 6px; font-size: 0.78rem; font-weight: 500; color: var(--text-muted); transition: color 0.3s; }
         .parent-card:hover small { color: var(--primary-color); }
+        /* Links out of the app (EXTERNAL_LINKS): same card, but an <a> that opens a new tab. */
+        a.parent-card { display: block; text-decoration: none; }
+        .parent-card.ext-card small::after { content: " \2197"; }
+        .sidebar-link { display: block; padding: 18px 24px; margin-right: 16px; border-radius: 0 24px 24px 0; font-size: 1.1rem; font-weight: 600; color: var(--text-main); text-decoration: none; transition: all 0.2s; }
+        .sidebar-link:hover { background: var(--bg-color); color: var(--primary-color); padding-left: 28px; }
+        .sidebar-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+        .sidebar-link small { display: block; margin-top: 2px; font-size: 0.78rem; font-weight: 500; color: var(--text-muted); }
 
         .category-section { margin-bottom: 40px; width: 100%; }
         .category-title { color: var(--primary-color); margin: 0 0 16px 4px; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.2px; }
@@ -612,7 +619,7 @@
 
         </div>
         <!-- FOOTER -->
-        <div class="footer">Version 20 &middot; 23.09.2026 | &copy; 2026 Or Belisha</div>
+        <div class="footer">Version 21 &middot; 08.11.2026 | &copy; 2026 Or Belisha</div>
     </div>
 
     <script>
@@ -1741,6 +1748,26 @@
             { title: 'Ground Knowledge', cats: ['V-Speeds', 'Weather', 'ATC Light Gun', 'Acronyms', 'PAVE — Risk Management'] },
             { title: 'Exam Prep', cats: ['Oral Exam', 'Written Exams', 'Personal Focus'] }
         ];
+        // Links OUT of the app, listed under a home group. They are not
+        // categories: no topics and no drill. On the home screen they render as
+        // a card after the group's categories; in the side menu as a plain <a>
+        // (not a category <div>, so the test harness walks past them).
+        // The N2621Z POH is a private claude.ai page — it opens for Or when he
+        // is signed in to claude.ai in that browser.
+        const EXTERNAL_LINKS = {
+            'Look It Up': [
+                { title: 'N2621Z POH', sub: 'Checkride aircraft \u00b7 search, W&B, page photos', href: 'https://claude.ai/artifact/UuT4SVJP2uqJmXLLJWDokK' }
+            ]
+        };
+        function externalLinkEl(l, cls) {
+            const a = document.createElement('a');
+            a.className = cls;
+            a.href = l.href;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.innerHTML = esc(l.title) + '<small>' + esc(l.sub) + '</small>';
+            return a;
+        }
         // [{title, cats:[name]}] with only categories that actually exist,
         // plus a trailing "More" group for anything CAT_GROUPS forgot.
         function groupedCats() {
@@ -2683,6 +2710,7 @@
                 });
                 catContainer.appendChild(itemDiv);
                 });
+                (EXTERNAL_LINKS[group.title] || []).forEach(l => catContainer.appendChild(externalLinkEl(l, 'sidebar-link')));
             });
         }
         function resetLeftMenuAccordions() {
@@ -2712,6 +2740,7 @@
                     btn.addEventListener('click', () => renderCategory(catName, 'push'));
                     grid.appendChild(btn);
                 });
+                (EXTERNAL_LINKS[group.title] || []).forEach(l => grid.appendChild(externalLinkEl(l, 'parent-card ext-card')));
                 container.appendChild(grid);
             });
             showPage({ page: 'home' }, mode);
