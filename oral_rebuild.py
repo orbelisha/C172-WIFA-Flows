@@ -12,6 +12,7 @@ import oral_data as D1
 import oral_data2 as D2
 import oral_data3 as D3
 import oral_data4 as D4
+import oral_data5 as D5
 
 # ---------------------------------------------------------------- helpers
 def js(s):
@@ -67,7 +68,7 @@ for tid, title, sub, desc, items in D1.DEFS:
 # Part 4 APPENDS extra questions onto an existing bank. Appended, never
 # inserted, so every existing index -- and the progress keyed to it -- holds.
 def with_appends(tid, items):
-    return list(items) + list(D4.APPENDS.get(tid, []))
+    return list(items) + list(D4.APPENDS.get(tid, [])) + list(D5.APPENDS5.get(tid, []))
 
 for tid, title, items, resources in D1.BANKS:
     add_mcq(tid, title, with_appends(tid, items), resources)
@@ -101,7 +102,7 @@ for tid, title, items, resources in D4.SCEN_BANKS:
     add_mcq(tid, title, items, resources)
 SPEC.append((D4.SCEN_SUB, [b[0] for b in D4.SCEN_BANKS]))
 
-unused = set(D4.APPENDS) - set(topics)
+unused = (set(D4.APPENDS) | set(D5.APPENDS5)) - set(topics)
 if unused:
     print('APPENDS names a bank that does not exist: %s' % sorted(unused), file=sys.stderr)
     sys.exit(1)
@@ -140,5 +141,6 @@ print('Oral Exam rebuilt: %d sub-sections, %d topics, %d questions'
       % (len(secs), len(topics),
          sum(len(b[2]) for b in D1.BANKS) + sum(len(b[2]) for b in D2.BANKS2)
          + sum(len(b[2]) for b in D3.BANKS3) + sum(len(b[2]) for b in D4.SCEN_BANKS)
-         + sum(len(v) for v in D4.APPENDS.values())),
+         + sum(len(v) for v in D4.APPENDS.values())
+         + sum(len(v) for v in D5.APPENDS5.values())),
       file=sys.stderr)
